@@ -11,41 +11,41 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as StoreImport } from './routes/store'
-import { Route as RoofingMagazineImport } from './routes/roofing-magazine'
-import { Route as MoneyModesImport } from './routes/money-modes'
-import { Route as BrontosaurusImport } from './routes/brontosaurus'
-import { Route as IndexImport } from './routes/index'
+import { Route as StoreIndexImport } from './routes/store/index'
+import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
+import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
+import { Route as HomeIndexImport } from './routes/home/index'
+import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
 
 // Create/Update Routes
 
-const StoreRoute = StoreImport.update({
-  id: '/store',
-  path: '/store',
+const StoreIndexRoute = StoreIndexImport.update({
+  id: '/store/',
+  path: '/store/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const RoofingMagazineRoute = RoofingMagazineImport.update({
-  id: '/roofing-magazine',
-  path: '/roofing-magazine',
+const RoofingMagazineIndexRoute = RoofingMagazineIndexImport.update({
+  id: '/roofing-magazine/',
+  path: '/roofing-magazine/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const MoneyModesRoute = MoneyModesImport.update({
-  id: '/money-modes',
-  path: '/money-modes',
+const MoneyModesIndexRoute = MoneyModesIndexImport.update({
+  id: '/money-modes/',
+  path: '/money-modes/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const BrontosaurusRoute = BrontosaurusImport.update({
-  id: '/brontosaurus',
-  path: '/brontosaurus',
+const HomeIndexRoute = HomeIndexImport.update({
+  id: '/home/',
+  path: '/home/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const BrontosaurusIndexRoute = BrontosaurusIndexImport.update({
+  id: '/brontosaurus/',
+  path: '/brontosaurus/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,39 +53,39 @@ const IndexRoute = IndexImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/brontosaurus': {
-      id: '/brontosaurus'
+    '/brontosaurus/': {
+      id: '/brontosaurus/'
       path: '/brontosaurus'
       fullPath: '/brontosaurus'
-      preLoaderRoute: typeof BrontosaurusImport
+      preLoaderRoute: typeof BrontosaurusIndexImport
       parentRoute: typeof rootRoute
     }
-    '/money-modes': {
-      id: '/money-modes'
+    '/home/': {
+      id: '/home/'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/money-modes/': {
+      id: '/money-modes/'
       path: '/money-modes'
       fullPath: '/money-modes'
-      preLoaderRoute: typeof MoneyModesImport
+      preLoaderRoute: typeof MoneyModesIndexImport
       parentRoute: typeof rootRoute
     }
-    '/roofing-magazine': {
-      id: '/roofing-magazine'
+    '/roofing-magazine/': {
+      id: '/roofing-magazine/'
       path: '/roofing-magazine'
       fullPath: '/roofing-magazine'
-      preLoaderRoute: typeof RoofingMagazineImport
+      preLoaderRoute: typeof RoofingMagazineIndexImport
       parentRoute: typeof rootRoute
     }
-    '/store': {
-      id: '/store'
+    '/store/': {
+      id: '/store/'
       path: '/store'
       fullPath: '/store'
-      preLoaderRoute: typeof StoreImport
+      preLoaderRoute: typeof StoreIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -94,64 +94,69 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/brontosaurus': typeof BrontosaurusRoute
-  '/money-modes': typeof MoneyModesRoute
-  '/roofing-magazine': typeof RoofingMagazineRoute
-  '/store': typeof StoreRoute
+  '/brontosaurus': typeof BrontosaurusIndexRoute
+  '/home': typeof HomeIndexRoute
+  '/money-modes': typeof MoneyModesIndexRoute
+  '/roofing-magazine': typeof RoofingMagazineIndexRoute
+  '/store': typeof StoreIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/brontosaurus': typeof BrontosaurusRoute
-  '/money-modes': typeof MoneyModesRoute
-  '/roofing-magazine': typeof RoofingMagazineRoute
-  '/store': typeof StoreRoute
+  '/brontosaurus': typeof BrontosaurusIndexRoute
+  '/home': typeof HomeIndexRoute
+  '/money-modes': typeof MoneyModesIndexRoute
+  '/roofing-magazine': typeof RoofingMagazineIndexRoute
+  '/store': typeof StoreIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/brontosaurus': typeof BrontosaurusRoute
-  '/money-modes': typeof MoneyModesRoute
-  '/roofing-magazine': typeof RoofingMagazineRoute
-  '/store': typeof StoreRoute
+  '/brontosaurus/': typeof BrontosaurusIndexRoute
+  '/home/': typeof HomeIndexRoute
+  '/money-modes/': typeof MoneyModesIndexRoute
+  '/roofing-magazine/': typeof RoofingMagazineIndexRoute
+  '/store/': typeof StoreIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/brontosaurus'
+    | '/home'
     | '/money-modes'
     | '/roofing-magazine'
     | '/store'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/brontosaurus' | '/money-modes' | '/roofing-magazine' | '/store'
-  id:
-    | '__root__'
-    | '/'
+  to:
     | '/brontosaurus'
+    | '/home'
     | '/money-modes'
     | '/roofing-magazine'
     | '/store'
+  id:
+    | '__root__'
+    | '/brontosaurus/'
+    | '/home/'
+    | '/money-modes/'
+    | '/roofing-magazine/'
+    | '/store/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  BrontosaurusRoute: typeof BrontosaurusRoute
-  MoneyModesRoute: typeof MoneyModesRoute
-  RoofingMagazineRoute: typeof RoofingMagazineRoute
-  StoreRoute: typeof StoreRoute
+  BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
+  HomeIndexRoute: typeof HomeIndexRoute
+  MoneyModesIndexRoute: typeof MoneyModesIndexRoute
+  RoofingMagazineIndexRoute: typeof RoofingMagazineIndexRoute
+  StoreIndexRoute: typeof StoreIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  BrontosaurusRoute: BrontosaurusRoute,
-  MoneyModesRoute: MoneyModesRoute,
-  RoofingMagazineRoute: RoofingMagazineRoute,
-  StoreRoute: StoreRoute,
+  BrontosaurusIndexRoute: BrontosaurusIndexRoute,
+  HomeIndexRoute: HomeIndexRoute,
+  MoneyModesIndexRoute: MoneyModesIndexRoute,
+  RoofingMagazineIndexRoute: RoofingMagazineIndexRoute,
+  StoreIndexRoute: StoreIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -164,27 +169,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/brontosaurus",
-        "/money-modes",
-        "/roofing-magazine",
-        "/store"
+        "/brontosaurus/",
+        "/home/",
+        "/money-modes/",
+        "/roofing-magazine/",
+        "/store/"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/brontosaurus/": {
+      "filePath": "brontosaurus/index.tsx"
     },
-    "/brontosaurus": {
-      "filePath": "brontosaurus.tsx"
+    "/home/": {
+      "filePath": "home/index.tsx"
     },
-    "/money-modes": {
-      "filePath": "money-modes.tsx"
+    "/money-modes/": {
+      "filePath": "money-modes/index.tsx"
     },
-    "/roofing-magazine": {
-      "filePath": "roofing-magazine.tsx"
+    "/roofing-magazine/": {
+      "filePath": "roofing-magazine/index.tsx"
     },
-    "/store": {
-      "filePath": "store.tsx"
+    "/store/": {
+      "filePath": "store/index.tsx"
     }
   }
 }

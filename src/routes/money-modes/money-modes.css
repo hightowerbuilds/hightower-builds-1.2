@@ -1,0 +1,19 @@
+/* Money Modes Page Styles */
+.money-modes-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.money-modes-content .page-title {
+  font-size: 2.25rem;
+  margin-bottom: 1.25rem;
+  color: var(--primary-bg);
+}
+
+.money-modes-content .page-description {
+  font-size: 1.125rem;
+  color: var(--light-text);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+} 

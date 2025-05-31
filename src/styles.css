@@ -68,3 +68,17 @@ body {
   font-size: 1.125rem;
   line-height: 1.5;
 }
+
+/* Eagle Image */
+.eagle-image-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.eagle-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import './Navbar.css'
 
 export function Navbar() {
   return (
@@ -6,7 +7,7 @@ export function Navbar() {
       <div className="navbar-container">
         <div className="nav-links">
           <Link
-            to="/"
+            to="/home"
             className="nav-link"
             activeProps={{ className: 'nav-link active' }}
           >
@@ -45,4 +46,3 @@ export function Navbar() {
     </nav>
   )
 } 
-
