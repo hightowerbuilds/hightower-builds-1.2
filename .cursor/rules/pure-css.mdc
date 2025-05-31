@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Use pure CSS for all styling in this project. Follow these guidelines:
+- Use CSS variables (defined in :root) for colors and common values
+- Keep styles in src/styles.css
+- Use semantic class names (e.g., page-container, nav-link)
+- Follow the existing organization (Layout, Typography, Components)
+- Maintain consistent spacing using rem units
+- Use CSS transitions for interactive elements

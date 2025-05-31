@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Navbar } from '../components/Navbar'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -6,21 +7,14 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: 'white'
-    }}>
-      <h1 style={{ 
-        fontFamily: 'Courier New, Consolas, Monaco, monospace',
-        color: 'black',
-        fontSize: '2rem',
-        margin: 0
-      }}>
-        Welcome to Hightower Builds
-      </h1>
+    <div className="page-container">
+      <Navbar />
+      <main className="main-content">
+        <div>
+          <h1 className="page-title">Welcome to Hightower Builds</h1>
+          <p className="page-description">Your one-stop destination for various publications and services.</p>
+        </div>
+      </main>
     </div>
   )
 }

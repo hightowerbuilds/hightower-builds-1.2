@@ -5,3 +5,66 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Global styles */
+:root {
+  --primary-bg: #1f2937; /* gray-800 */
+  --primary-text: white;
+  --hover-text: #d1d5db; /* gray-300 */
+  --active-text: #60a5fa; /* blue-400 */
+}
+
+/* Layout */
+.page-container {
+  min-height: 100vh;
+}
+
+.main-content {
+  margin: 0 1rem;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  padding: 1rem;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--primary-text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--hover-text);
+}
+
+.nav-link.active {
+  color: var(--active-text);
+}
+
+/* Typography */
+.page-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}

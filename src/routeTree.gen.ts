@@ -11,9 +11,37 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StoreImport } from './routes/store'
+import { Route as RoofingMagazineImport } from './routes/roofing-magazine'
+import { Route as MoneyModesImport } from './routes/money-modes'
+import { Route as BrontosaurusImport } from './routes/brontosaurus'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const StoreRoute = StoreImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RoofingMagazineRoute = RoofingMagazineImport.update({
+  id: '/roofing-magazine',
+  path: '/roofing-magazine',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MoneyModesRoute = MoneyModesImport.update({
+  id: '/money-modes',
+  path: '/money-modes',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BrontosaurusRoute = BrontosaurusImport.update({
+  id: '/brontosaurus',
+  path: '/brontosaurus',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -32,6 +60,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/brontosaurus': {
+      id: '/brontosaurus'
+      path: '/brontosaurus'
+      fullPath: '/brontosaurus'
+      preLoaderRoute: typeof BrontosaurusImport
+      parentRoute: typeof rootRoute
+    }
+    '/money-modes': {
+      id: '/money-modes'
+      path: '/money-modes'
+      fullPath: '/money-modes'
+      preLoaderRoute: typeof MoneyModesImport
+      parentRoute: typeof rootRoute
+    }
+    '/roofing-magazine': {
+      id: '/roofing-magazine'
+      path: '/roofing-magazine'
+      fullPath: '/roofing-magazine'
+      preLoaderRoute: typeof RoofingMagazineImport
+      parentRoute: typeof rootRoute
+    }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +95,63 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/brontosaurus': typeof BrontosaurusRoute
+  '/money-modes': typeof MoneyModesRoute
+  '/roofing-magazine': typeof RoofingMagazineRoute
+  '/store': typeof StoreRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/brontosaurus': typeof BrontosaurusRoute
+  '/money-modes': typeof MoneyModesRoute
+  '/roofing-magazine': typeof RoofingMagazineRoute
+  '/store': typeof StoreRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/brontosaurus': typeof BrontosaurusRoute
+  '/money-modes': typeof MoneyModesRoute
+  '/roofing-magazine': typeof RoofingMagazineRoute
+  '/store': typeof StoreRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/brontosaurus'
+    | '/money-modes'
+    | '/roofing-magazine'
+    | '/store'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/brontosaurus' | '/money-modes' | '/roofing-magazine' | '/store'
+  id:
+    | '__root__'
+    | '/'
+    | '/brontosaurus'
+    | '/money-modes'
+    | '/roofing-magazine'
+    | '/store'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BrontosaurusRoute: typeof BrontosaurusRoute
+  MoneyModesRoute: typeof MoneyModesRoute
+  RoofingMagazineRoute: typeof RoofingMagazineRoute
+  StoreRoute: typeof StoreRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BrontosaurusRoute: BrontosaurusRoute,
+  MoneyModesRoute: MoneyModesRoute,
+  RoofingMagazineRoute: RoofingMagazineRoute,
+  StoreRoute: StoreRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +164,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/brontosaurus",
+        "/money-modes",
+        "/roofing-magazine",
+        "/store"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/brontosaurus": {
+      "filePath": "brontosaurus.tsx"
+    },
+    "/money-modes": {
+      "filePath": "money-modes.tsx"
+    },
+    "/roofing-magazine": {
+      "filePath": "roofing-magazine.tsx"
+    },
+    "/store": {
+      "filePath": "store.tsx"
     }
   }
 }
