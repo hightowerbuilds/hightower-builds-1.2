@@ -2,15 +2,20 @@
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
+  width: 100%;
 }
 
 .navbar-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav-links {
@@ -18,6 +23,10 @@
   gap: 2rem;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .nav-link {
@@ -27,6 +36,12 @@
   padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  min-width: fit-content;
+  font-weight: normal;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  display: inline-block;
 }
 
 .nav-link:hover {
@@ -36,6 +51,23 @@
 
 .nav-link.active {
   background-color: #f0f0f0;
-  font-weight: 600;
   color: #000;
+  border-color: #e2e8f0;
+}
+
+/* Add margin to main content to account for fixed navbar */
+.page-container {
+  padding-top: 4rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .nav-links {
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
 } 

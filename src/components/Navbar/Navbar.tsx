@@ -25,7 +25,7 @@ export function Navbar() {
             className="nav-link"
             activeProps={{ className: 'nav-link active' }}
           >
-            Clothing & Photography Store
+            General Store
           </Link>
           <Link
             to="/brontosaurus"

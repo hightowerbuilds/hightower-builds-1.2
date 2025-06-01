@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import './money-modes.css'
 
@@ -14,6 +14,11 @@ function MoneyModesPage() {
         <div className="money-modes-content">
           <h1 className="page-title">Money Modes</h1>
           <p className="page-description">Explore our financial publications and insights.</p>
+          <div className="money-modes-links">
+            <Link to="/pdf-extractor" className="money-mode-link">
+              PDF Extractor
+            </Link>
+          </div>
         </div>
       </main>
     </div>

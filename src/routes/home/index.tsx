@@ -13,7 +13,7 @@ function Home() {
       <main className="main-content">
         <div className="home-content">
           <h1 className="page-title">Welcome to Hightower Builds</h1>
-          <p className="page-description">Your one-stop destination for various publications and services.</p>
+       
         </div>
       </main>
     </div>

@@ -11,7 +11,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: monospace, 'Courier New', Consolas, Monaco, sans-serif;
   color: var(--text-color);
   line-height: 1.5;
 }
@@ -32,7 +32,7 @@ body {
 
 .page-title {
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: normal;
   color: var(--primary-bg);
   margin-bottom: 1rem;
 }
@@ -40,51 +40,6 @@ body {
 .page-description {
   color: var(--light-text);
   margin-bottom: 2rem;
-}
-
-/* Navigation */
-.nav-container {
-  background: var(--primary-bg);
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.nav-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-logo {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.nav-links {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-link {
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: #a0aec0;
-}
-
-.nav-link.active {
-  color: #63b3ed;
 }
 
 /* Eagle Image Container */

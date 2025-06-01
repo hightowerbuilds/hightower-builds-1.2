@@ -16,4 +16,29 @@
   color: var(--light-text);
   line-height: 1.6;
   margin-bottom: 2rem;
+}
+
+.money-modes-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.money-mode-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-bg);
+  color: white;
+  text-decoration: none;
+  border-radius: 1px;
+  transition: background-color 0.2s;
+  width: fit-content;
+}
+
+.money-mode-link:hover {
+  background: #2d3748;
+}
+
+.money-mode-link:active {
+  background: #1a202c;
 } 

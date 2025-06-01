@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Courier New', Consolas, Monaco, monospace;
+  font-family: monospace, 'Courier New', Consolas, Monaco, sans-serif;
   background-color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,44 +23,10 @@ body {
   margin: 0 1rem;
 }
 
-/* Navbar */
-.navbar {
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-  padding: 1rem;
-}
-
-.navbar-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.nav-link {
-  color: var(--primary-text);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: var(--hover-text);
-}
-
-.nav-link.active {
-  color: var(--active-text);
-}
-
 /* Typography */
 .page-title {
   font-size: 2.25rem;
-  font-weight: bold;
+  font-weight: normal;
   margin-bottom: 1rem;
 }
 

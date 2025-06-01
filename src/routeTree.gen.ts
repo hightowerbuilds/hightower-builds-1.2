@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as StoreIndexImport } from './routes/store/index'
 import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
+import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
 import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
@@ -28,6 +29,12 @@ const StoreIndexRoute = StoreIndexImport.update({
 const RoofingMagazineIndexRoute = RoofingMagazineIndexImport.update({
   id: '/roofing-magazine/',
   path: '/roofing-magazine/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PdfExtractorIndexRoute = PdfExtractorIndexImport.update({
+  id: '/pdf-extractor/',
+  path: '/pdf-extractor/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoneyModesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/pdf-extractor/': {
+      id: '/pdf-extractor/'
+      path: '/pdf-extractor'
+      fullPath: '/pdf-extractor'
+      preLoaderRoute: typeof PdfExtractorIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/roofing-magazine/': {
       id: '/roofing-magazine/'
       path: '/roofing-magazine'
@@ -97,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
+  '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
 }
@@ -105,6 +120,7 @@ export interface FileRoutesByTo {
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
+  '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
 }
@@ -114,6 +130,7 @@ export interface FileRoutesById {
   '/brontosaurus/': typeof BrontosaurusIndexRoute
   '/home/': typeof HomeIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
+  '/pdf-extractor/': typeof PdfExtractorIndexRoute
   '/roofing-magazine/': typeof RoofingMagazineIndexRoute
   '/store/': typeof StoreIndexRoute
 }
@@ -124,6 +141,7 @@ export interface FileRouteTypes {
     | '/brontosaurus'
     | '/home'
     | '/money-modes'
+    | '/pdf-extractor'
     | '/roofing-magazine'
     | '/store'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +149,7 @@ export interface FileRouteTypes {
     | '/brontosaurus'
     | '/home'
     | '/money-modes'
+    | '/pdf-extractor'
     | '/roofing-magazine'
     | '/store'
   id:
@@ -138,6 +157,7 @@ export interface FileRouteTypes {
     | '/brontosaurus/'
     | '/home/'
     | '/money-modes/'
+    | '/pdf-extractor/'
     | '/roofing-magazine/'
     | '/store/'
   fileRoutesById: FileRoutesById
@@ -147,6 +167,7 @@ export interface RootRouteChildren {
   BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
+  PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
   RoofingMagazineIndexRoute: typeof RoofingMagazineIndexRoute
   StoreIndexRoute: typeof StoreIndexRoute
 }
@@ -155,6 +176,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrontosaurusIndexRoute: BrontosaurusIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
+  PdfExtractorIndexRoute: PdfExtractorIndexRoute,
   RoofingMagazineIndexRoute: RoofingMagazineIndexRoute,
   StoreIndexRoute: StoreIndexRoute,
 }
@@ -172,6 +194,7 @@ export const routeTree = rootRoute
         "/brontosaurus/",
         "/home/",
         "/money-modes/",
+        "/pdf-extractor/",
         "/roofing-magazine/",
         "/store/"
       ]
@@ -184,6 +207,9 @@ export const routeTree = rootRoute
     },
     "/money-modes/": {
       "filePath": "money-modes/index.tsx"
+    },
+    "/pdf-extractor/": {
+      "filePath": "pdf-extractor/index.tsx"
     },
     "/roofing-magazine/": {
       "filePath": "roofing-magazine/index.tsx"
