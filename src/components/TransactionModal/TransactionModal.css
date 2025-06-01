@@ -81,6 +81,11 @@
   color: var(--text-color);
 }
 
+.summary-item .balance {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
 .summary-item .expenditure {
   color: var(--error-color);
 }
@@ -132,6 +137,16 @@
 
 .transactions-table .uncertain {
   color: var(--warning-color);
+}
+
+.transactions-table .balance {
+  font-weight: 500;
+  color: var(--text-color);
+  background: var(--background-color-light);
+}
+
+.transactions-table tr:hover .balance {
+  background: var(--background-color-hover);
 }
 
 .transaction-type-expenditure {

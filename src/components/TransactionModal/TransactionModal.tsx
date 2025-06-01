@@ -62,6 +62,11 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
     .filter(t => t.transaction_type === 'deposit')
     .reduce((sum, t) => sum + t.amount, 0)
 
+  // Get starting and ending balances
+  const startingBalance = transactions.length > 0 ? transactions[0].running_balance! - 
+    (transactions[0].transaction_type === 'deposit' ? transactions[0].amount : -transactions[0].amount) : 1000
+  const endingBalance = transactions.length > 0 ? transactions[transactions.length - 1].running_balance! : 1000
+
   return (
     <div className="modal-overlay">
       <div className="modal-content" ref={modalRef}>
@@ -78,6 +83,14 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
           <div className="summary-item">
             <span>Total Transactions:</span>
             <span>{transactions.length}</span>
+          </div>
+          <div className="summary-item">
+            <span>Starting Balance:</span>
+            <span className="balance">{formatAmount(startingBalance)}</span>
+          </div>
+          <div className="summary-item">
+            <span>Ending Balance:</span>
+            <span className="balance">{formatAmount(endingBalance)}</span>
           </div>
           <div className="summary-item">
             <span>Total Expenditures:</span>
@@ -98,6 +111,7 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
                 <th>Location</th>
                 <th>Type</th>
                 <th>Amount</th>
+                <th>Balance</th>
                 <th>Category</th>
               </tr>
             </thead>
@@ -110,6 +124,9 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
                   <td>{transaction.transaction_type}</td>
                   <td className={transaction.transaction_type}>
                     {formatAmount(transaction.amount)}
+                  </td>
+                  <td className="balance">
+                    {formatAmount(transaction.running_balance || 0)}
                   </td>
                   <td>{transaction.category || 'N/A'}</td>
                 </tr>

@@ -28,9 +28,9 @@ function StorePage() {
 
   const categories = [
     { id: 'all', name: 'All Items' },
-    { id: 'shirts', name: 'shirts', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/shirts.png' },
-    { id: 'hoodies', name: 'hoodies', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/sweatshirts.png' },
-    { id: 'bags', name: 'bags', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/bags.png' }
+    { id: 'shirts', name: 'shirts', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/shirtsNew.png' },
+    { id: 'hoodies', name: 'hoodies', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/hoodies.png' },
+    { id: 'bags', name: 'bags', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/bagsNew.png' }
   ]
 
   const thumbnailUrl = `${BASE_URL}/images/eagle-photos/${EAGLE_IMAGES[0]}`

@@ -23,6 +23,7 @@ export interface Transaction {
   transaction_type: 'expenditure' | 'deposit' | 'uncertain'
   category: string | null
   created_at: Date
+  running_balance?: number  // Optional field for balance tracking
 }
 
 export interface BankStatement {
@@ -34,6 +35,8 @@ export interface BankStatement {
   total_expenditures: number
   total_deposits: number
   transaction_count: number
+  starting_balance: number
+  ending_balance: number
 }
 
 // Test the connection
@@ -58,41 +61,46 @@ export const db = {
     const { data, error } = await supabase
       .from('financial_transactions')
       .select('*')
-      .order('transaction_date', { ascending: false })
+      .order('transaction_date', { ascending: true })  // Get in chronological order for balance calculation
 
     if (error) throw error
 
-    // Group transactions by month
-    const statements = new Map<string, BankStatement>()
-    
-    data.forEach(transaction => {
-      const date = new Date(transaction.transaction_date)
-      const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`
-      
-      if (!statements.has(monthKey)) {
-        statements.set(monthKey, {
-          id: parseInt(monthKey.replace('-', '')),
-          date_range: {
-            start: new Date(date.getFullYear(), date.getMonth(), 1),
-            end: new Date(date.getFullYear(), date.getMonth() + 1, 0)
-          },
-          total_expenditures: 0,
-          total_deposits: 0,
-          transaction_count: 0
-        })
-      }
+    // Calculate balances
+    const startingBalance = 1000 // Initial balance
+    let runningBalance = startingBalance
 
-      const statement = statements.get(monthKey)!
-      statement.transaction_count++
-      
+    // Calculate running balance for each transaction
+    data.forEach(transaction => {
       if (transaction.transaction_type === 'expenditure') {
-        statement.total_expenditures += transaction.amount
+        runningBalance -= transaction.amount
       } else if (transaction.transaction_type === 'deposit') {
-        statement.total_deposits += transaction.amount
+        runningBalance += transaction.amount
       }
     })
 
-    return Array.from(statements.values())
+    const endingBalance = runningBalance
+
+    // Create a single statement for all transactions
+    const statement: BankStatement = {
+      id: 1,
+      date_range: {
+        start: data.length > 0 
+          ? new Date(Math.min(...data.map(t => new Date(t.transaction_date).getTime())))
+          : new Date(),
+        end: data.length > 0 
+          ? new Date(Math.max(...data.map(t => new Date(t.transaction_date).getTime())))
+          : new Date()
+      },
+      total_expenditures: data.filter(t => t.transaction_type === 'expenditure')
+        .reduce((sum, t) => sum + t.amount, 0),
+      total_deposits: data.filter(t => t.transaction_type === 'deposit')
+        .reduce((sum, t) => sum + t.amount, 0),
+      transaction_count: data.length,
+      starting_balance: startingBalance,
+      ending_balance: endingBalance
+    }
+
+    return [statement]
   },
 
   // Get transactions for a specific date range
@@ -111,5 +119,36 @@ export const db = {
       transaction_date: new Date(transaction.transaction_date),
       created_at: new Date(transaction.created_at)
     }))
+  },
+
+  // Get transactions with running balance for a specific date range
+  async getTransactionsWithBalance(startDate: Date, endDate: Date, initialBalance: number = 1000): Promise<Transaction[]> {
+    const { data, error } = await supabase
+      .from('financial_transactions')
+      .select('*')
+      .gte('transaction_date', startDate.toISOString())
+      .lte('transaction_date', endDate.toISOString())
+      .order('transaction_date', { ascending: true })  // Get transactions in chronological order
+
+    if (error) throw error
+
+    let runningBalance = initialBalance
+    const transactionsWithBalance = data.map(transaction => {
+      // Calculate new balance based on transaction type
+      if (transaction.transaction_type === 'expenditure') {
+        runningBalance -= transaction.amount
+      } else if (transaction.transaction_type === 'deposit') {
+        runningBalance += transaction.amount
+      }
+
+      return {
+        ...transaction,
+        transaction_date: new Date(transaction.transaction_date),
+        created_at: new Date(transaction.created_at),
+        running_balance: runningBalance
+      }
+    })
+
+    return transactionsWithBalance  // Return in chronological order (earliest first)
   }
 } 

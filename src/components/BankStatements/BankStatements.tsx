@@ -34,7 +34,7 @@ export function BankStatements() {
     try {
       setLoading(true)
       setError(null)
-      const data = await db.getTransactions(statement.date_range.start, statement.date_range.end)
+      const data = await db.getTransactionsWithBalance(statement.date_range.start, statement.date_range.end)
       setTransactions(data)
       setSelectedStatement(statement)
       setIsModalOpen(true)
@@ -49,8 +49,23 @@ export function BankStatements() {
   const formatDate = (date: Date) => 
     date.toLocaleDateString('en-US', { 
       year: 'numeric', 
-      month: 'long' 
+      month: 'long',
+      day: 'numeric'
     })
+
+  const formatDateRange = (start: Date, end: Date) => {
+    const startStr = start.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long',
+      day: 'numeric'
+    })
+    const endStr = end.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long',
+      day: 'numeric'
+    })
+    return `${startStr} - ${endStr}`
+  }
 
   const formatAmount = (amount: number) => 
     new Intl.NumberFormat('en-US', { 
@@ -90,13 +105,25 @@ export function BankStatements() {
             onClick={() => handleStatementClick(statement)}
           >
             <div className="statement-header">
-              <h3>{formatDate(statement.date_range.start)}</h3>
+              <h3>{formatDateRange(statement.date_range.start, statement.date_range.end)}</h3>
               <span className="transaction-count">
                 {statement.transaction_count} transactions
               </span>
             </div>
             
             <div className="statement-summary">
+              <div className="summary-item">
+                <span>Starting Balance</span>
+                <span className="balance">
+                  {formatAmount(statement.starting_balance)}
+                </span>
+              </div>
+              <div className="summary-item">
+                <span>Ending Balance</span>
+                <span className="balance">
+                  {formatAmount(statement.ending_balance)}
+                </span>
+              </div>
               <div className="summary-item">
                 <span>Expenditures</span>
                 <span className="expenditure">
