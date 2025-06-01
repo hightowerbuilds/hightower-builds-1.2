@@ -1,4 +1,4 @@
-/* Home Page Styles */
+/* Home Page Specific Styles */
 .home-content {
   text-align: center;
   max-width: 800px;
@@ -8,11 +8,8 @@
 
 .home-content .page-title {
   font-size: 2.5rem;
-  margin-bottom: 1.5rem;
 }
 
 .home-content .page-description {
   font-size: 1.25rem;
-  color: var(--light-text);
-  line-height: 1.6;
 } 

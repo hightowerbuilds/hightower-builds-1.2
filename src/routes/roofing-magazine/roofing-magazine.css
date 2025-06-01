@@ -1,4 +1,4 @@
-/* Roofing Magazine Page Styles */
+/* Roofing Magazine Page Specific Styles */
 .roofing-content {
   max-width: 800px;
   margin: 0 auto;
@@ -8,7 +8,6 @@
 .roofing-content .page-title {
   font-size: 2.25rem;
   margin-bottom: 1.25rem;
-  color: var(--primary-bg);
 }
 
 .roofing-content .page-description {

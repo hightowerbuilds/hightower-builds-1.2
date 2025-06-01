@@ -2,7 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import './styles.css'
+import './styles/variables.css'
+import './styles/main.css'
 import reportWebVitals from './reportWebVitals.ts'
 
 // Create a new router instance

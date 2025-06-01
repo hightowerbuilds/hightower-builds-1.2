@@ -1,3 +1,6 @@
+/* Import main styles */
+@import './styles/main.css';
+
 body {
   margin: 0;
   font-family: monospace, 'Courier New', Consolas, Monaco, sans-serif;

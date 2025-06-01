@@ -1,4 +1,4 @@
-/* Money Modes Page Styles */
+/* Money Modes Page Specific Styles */
 .money-modes-content {
   max-width: 800px;
   margin: 0 auto;
@@ -8,7 +8,6 @@
 .money-modes-content .page-title {
   font-size: 2.25rem;
   margin-bottom: 1.25rem;
-  color: var(--primary-bg);
 }
 
 .money-modes-content .page-description {
@@ -36,9 +35,9 @@
 }
 
 .money-mode-link:hover {
-  background: #2d3748;
+  background: var(--secondary-bg);
 }
 
 .money-mode-link:active {
-  background: #1a202c;
+  background: var(--primary-bg);
 } 
