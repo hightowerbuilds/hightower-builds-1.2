@@ -1,20 +1,119 @@
 /* Money Modes Page Specific Styles */
 .money-modes-content {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 2rem;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.money-modes-content header {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-color);
 }
 
 .money-modes-content .page-title {
-  font-size: 2.25rem;
-  margin-bottom: 1.25rem;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
 }
 
 .money-modes-content .page-description {
-  font-size: 1.125rem;
-  color: var(--light-text);
-  line-height: 1.6;
-  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.money-modes-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.extract-statement-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 1.5rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.extract-statement-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  background: var(--primary-color-dark);
+  color: var(--text-color);
+}
+
+.extract-statement-btn .icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  color: var(--text-color);
+}
+
+.extract-statement-btn .description {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: normal;
+  color: var(--text-color);
+}
+
+.money-modes-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.statements-section {
+  background: var(--background-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.statements-section h2 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .money-modes-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .money-modes-content .page-title {
+    font-size: 2rem;
+  }
+
+  .money-modes-content .page-description {
+    font-size: 1rem;
+  }
+
+  .statements-section {
+    padding: 1rem;
+  }
+
+  .extract-statement-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+
+  .extract-statement-btn .description {
+    font-size: 0.8rem;
+  }
 }
 
 .money-modes-links {

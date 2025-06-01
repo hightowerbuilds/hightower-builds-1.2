@@ -57,6 +57,8 @@ function PDFExtractorPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysis, setAnalysis] = useState<string | null>(null)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
+  const [sqlTable, setSqlTable] = useState<string | null>(null)
+  const [isSqlMinimized, setIsSqlMinimized] = useState(false)
 
   const calculateTextStats = useCallback((text: string): TextStats => {
     const words = text.trim().split(/\s+/).filter(word => word.length > 0)
@@ -332,57 +334,119 @@ function PDFExtractorPage() {
     setUploadStatus({ message: 'Downloaded!', type: 'success' })
   }, [extractedText, currentFilename])
 
+  const generateSQLTable = useCallback((analysisText: string) => {
+    const tableName = 'financial_transactions'
+    
+    const createTableSQL = `CREATE TABLE ${tableName} (
+  id SERIAL PRIMARY KEY,
+  transaction_date DATE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  description TEXT,
+  location VARCHAR(255),
+  transaction_type VARCHAR(20) NOT NULL CHECK (transaction_type IN ('expenditure', 'deposit', 'uncertain')),
+  category VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);`
+
+    // Extract transactions from the analysis text
+    const transactionRegex = /(\d{4}-\d{2}-\d{2})\s*[-–]\s*\$?(\d+(?:\.\d{2})?)\s*[-–]\s*([^–-]+?)(?:\s*[-–]\s*([^–-]+))?/g
+    const transactions: Array<{
+      date: string
+      amount: number
+      description: string
+      location: string
+      type: 'expenditure' | 'deposit' | 'uncertain'
+      category?: string
+    }> = []
+
+    let match
+    while ((match = transactionRegex.exec(analysisText)) !== null) {
+      const [_, date, amount, description, location] = match
+      const type = description.toLowerCase().includes('deposit') || description.toLowerCase().includes('credit') 
+        ? 'deposit' 
+        : description.toLowerCase().includes('uncertain') 
+          ? 'uncertain' 
+          : 'expenditure'
+      
+      transactions.push({
+        date,
+        amount: parseFloat(amount),
+        description: description.trim(),
+        location: location ? location.trim() : '',
+        type,
+        category: undefined // Category can be added manually if needed
+      })
+    }
+
+    const insertStatements = transactions.map(t => {
+      return `INSERT INTO ${tableName} (transaction_date, amount, description, location, transaction_type, category)
+VALUES (
+  '${t.date}',
+  ${t.amount},
+  ${t.description ? `'${t.description.replace(/'/g, "''")}'` : 'NULL'},
+  ${t.location ? `'${t.location.replace(/'/g, "''")}'` : 'NULL'},
+  '${t.type}',
+  ${t.category ? `'${t.category.replace(/'/g, "''")}'` : 'NULL'}
+);`
+    }).join('\n\n')
+
+    return `${createTableSQL}\n\n-- Insert Statements\n${insertStatements}`
+  }, [])
+
   const analyzeText = useCallback(async () => {
     if (!extractedText.trim()) return
 
     setIsAnalyzing(true)
     setAnalysis(null)
     setAnalysisError(null)
+    setSqlTable(null)
 
     try {
-      const prompt = `Please analyze the following text extracted from a PDF document and extract financial transaction information. Focus specifically on:
+      const prompt = `Please analyze the following text extracted from a PDF document and extract financial transaction information. Format your response as follows:
 
-1. Expenditures (purchases, payments, withdrawals):
-   - List each expenditure with:
-     * Date
-     * Amount
-     * Location/Vendor
-     * Description (if available)
-   - Group expenditures by date if possible
-
-2. Deposits (income, credits, transfers in):
-   - List each deposit with:
-     * Date
-     * Amount
-     * Source
-     * Description (if available)
-   - Group deposits by date if possible
-
-3. Summary:
+1. First, provide a summary of the transactions including:
    - Total expenditures
    - Total deposits
    - Date range of transactions
-   - Any notable patterns or categories
+   - Any notable categories or patterns
 
-If you find any transaction that could be either an expenditure or deposit but you're unsure, please list it under "Uncertain Transactions" with a note about why it's unclear.
+2. Then, list all transactions in chronological order using this format:
+   YYYY-MM-DD - $AMOUNT - DESCRIPTION - LOCATION
 
-Format the output in clear sections with bullet points for easy reading.
+For example:
+2024-03-15 - $45.99 - Grocery shopping - Walmart
+2024-03-16 - $1200.00 - Salary deposit - Employer Inc.
+
+Guidelines:
+- Use YYYY-MM-DD format for dates
+- Include dollar amounts with 2 decimal places
+- For expenditures (purchases, payments, withdrawals), list as is
+- For deposits (income, credits, transfers in), include "deposit" or "credit" in the description
+- For uncertain transactions, include "uncertain" in the description
+- If a location is not available, omit it
+- Group transactions by date
+- Include any relevant context or notes about the transactions
 
 Here is the text to analyze:
 
-${extractedText.substring(0, 30000)}` // Limit to first 30k chars to avoid token limits
+${extractedText.substring(0, 30000)}`
 
       const result = await model.generateContent(prompt)
       const response = await result.response
-      const text = response.text()
-      setAnalysis(text)
+      const analysisText = response.text()
+      
+      setAnalysis(analysisText)
+      
+      // Generate SQL table from the analysis text
+      const sql = generateSQLTable(analysisText)
+      setSqlTable(sql)
     } catch (err: any) {
       console.error('Error analyzing text:', err)
       setAnalysisError(err.message || 'An error occurred while analyzing the text')
     } finally {
       setIsAnalyzing(false)
     }
-  }, [extractedText])
+  }, [extractedText, generateSQLTable])
 
   const handleClear = useCallback(() => {
     setShowResults(false)
@@ -392,6 +456,7 @@ ${extractedText.substring(0, 30000)}` // Limit to first 30k chars to avoid token
     setUploadStatus({ message: '', type: '' })
     setAnalysis(null)
     setAnalysisError(null)
+    setSqlTable(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -508,9 +573,38 @@ ${extractedText.substring(0, 30000)}` // Limit to first 30k chars to avoid token
                 )}
 
                 {analysis && (
-                  <div className="analysis-content">
-                    {analysis}
-                  </div>
+                  <>
+                    <div className="analysis-content">
+                      {analysis}
+                    </div>
+                    
+                    {sqlTable && (
+                      <div className="sql-section">
+                        <div className="sql-header">
+                          <h4>SQL Table</h4>
+                          <button 
+                            onClick={() => setIsSqlMinimized(!isSqlMinimized)}
+                            className="btn-icon"
+                            title={isSqlMinimized ? "Maximize" : "Minimize"}
+                          >
+                            {isSqlMinimized ? "🔽" : "🔼"}
+                          </button>
+                        </div>
+                        <div className={`sql-content ${isSqlMinimized ? 'minimized' : ''}`}>
+                          <pre>{sqlTable}</pre>
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText(sqlTable)
+                              setUploadStatus({ message: 'SQL copied to clipboard!', type: 'success' })
+                            }}
+                            className="btn-secondary"
+                          >
+                            📋 Copy SQL
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

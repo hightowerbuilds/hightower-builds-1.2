@@ -16,7 +16,9 @@
     "@tanstack/react-router": "^1.114.3",
     "@tanstack/react-router-devtools": "^1.114.3",
     "@tanstack/router-plugin": "^1.114.3",
+    "@types/pg": "^8.15.2",
     "pdfjs-dist": "3.11.174",
+    "pg": "^8.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

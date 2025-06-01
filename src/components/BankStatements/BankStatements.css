@@ -1,0 +1,162 @@
+.bank-statements {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bank-statements h2 {
+  color: var(--text-color);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.statements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.statement-card {
+  background: var(--background-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.statement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary-color);
+}
+
+.statement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.statement-header h3 {
+  color: var(--text-color);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.transaction-count {
+  background: var(--background-color-light);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+}
+
+.statement-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summary-item span:first-child {
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+}
+
+.summary-item span:last-child {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.summary-item .expenditure {
+  color: var(--error-color);
+}
+
+.summary-item .deposit {
+  color: var(--success-color);
+}
+
+.bank-statements-loading,
+.bank-statements-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1rem;
+  color: var(--text-color-secondary);
+  font-size: 1.1rem;
+}
+
+.bank-statements-error {
+  color: var(--error-color);
+}
+
+.btn-retry {
+  background: var(--button-background);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: var(--text-color);
+}
+
+.btn-retry:hover {
+  background: var(--button-background-hover);
+  border-color: var(--border-color-hover);
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .bank-statements {
+    padding: 1rem;
+  }
+
+  .bank-statements h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .statements-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statement-card {
+    padding: 1rem;
+  }
+
+  .statement-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .summary-item span:last-child {
+    font-size: 1rem;
+  }
+} 
