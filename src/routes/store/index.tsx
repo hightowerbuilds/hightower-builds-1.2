@@ -3,11 +3,6 @@ import { Navbar } from '../../components/Navbar/Navbar'
 import { useState } from 'react'
 import './store.css'
 
-interface CartItem {
-  name: string;
-  price: number;
-}
-
 const EAGLE_IMAGES = [
   'distant-eagle.JPG',
   'eagle-closeup-2.JPG',

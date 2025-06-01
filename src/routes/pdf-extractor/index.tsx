@@ -40,12 +40,6 @@ interface ProcessedContent {
   content: ParsedDocument
 }
 
-// Define our own types for text content items
-interface TextContentItem {
-  str?: string;
-  transform?: number[];
-}
-
 function PDFExtractorPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadStatus, setUploadStatus] = useState({ message: '', type: '' })
