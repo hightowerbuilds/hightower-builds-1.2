@@ -36,7 +36,7 @@ export interface BankStatement {
 // Test the connection
 export async function testConnection() {
   try {
-    const { error } = await supabase.from('financial_transactions').select('count').limit(1)
+    const { data, error } = await supabase.from('financial_transactions').select('count').limit(1)
     if (error) throw error
     console.log('Database connection successful!')
     return true
