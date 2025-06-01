@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
-import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
 import './PDFViewer.css';
 
 // Set the worker source

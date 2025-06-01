@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { useState, useRef, useCallback } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
-import type { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { parseTransactions, type ParsedDocument } from '../../lib/transaction-parser'
 import './pdf-extractor.css'
 
@@ -39,6 +39,12 @@ interface ProcessedContent {
     }
   }
   content: ParsedDocument
+}
+
+// Define our own types for text content items
+interface TextContentItem {
+  str?: string;
+  transform?: number[];
 }
 
 function PDFExtractorPage() {
@@ -97,9 +103,10 @@ function PDFExtractorPage() {
         // Get the average line height from the first few items
         const lineHeights: number[] = []
         let lastItemY: number | null = null
-        textContent.items.slice(0, 20).forEach((item: TextItem | TextMarkedContent) => {
-          if ('transform' in item) {
-            const y = Math.round(item.transform[5])
+        textContent.items.slice(0, 20).forEach((item: any) => {
+          const transform = item.transform
+          if (transform) {
+            const y = Math.round(transform[5])
             if (lastItemY !== null) {
               const diff = Math.abs(y - lastItemY)
               if (diff > 5) { // Only consider significant vertical differences
@@ -114,14 +121,16 @@ function PDFExtractorPage() {
           : 12 // Default to 12 if we can't calculate
         
         // Sort items by their position (top to bottom, left to right)
-        const sortedItems = [...textContent.items].sort((a: TextItem | TextMarkedContent, b: TextItem | TextMarkedContent) => {
-          if (!('transform' in a) || !('transform' in b)) return 0
-          const yDiff = Math.abs(a.transform[5] - b.transform[5])
+        const sortedItems = [...textContent.items].sort((a: any, b: any) => {
+          const transformA = a.transform
+          const transformB = b.transform
+          if (!transformA || !transformB) return 0
+          const yDiff = Math.abs(transformA[5] - transformB[5])
           if (yDiff > 5) { // Different line
-            return a.transform[5] - b.transform[5]
+            return transformA[5] - transformB[5]
           }
           // Same line, sort by x position
-          return a.transform[4] - b.transform[4]
+          return transformA[4] - transformB[4]
         })
         
         // Track the last line's Y position for paragraph detection
@@ -129,9 +138,10 @@ function PDFExtractorPage() {
         let paragraphBreaks: Set<number> = new Set()
         
         // First pass: identify paragraph breaks
-        sortedItems.forEach((item: TextItem | TextMarkedContent) => {
-          if ('transform' in item) {
-            const y = Math.round(item.transform[5])
+        sortedItems.forEach((item: any) => {
+          const transform = item.transform
+          if (transform) {
+            const y = Math.round(transform[5])
             if (lastLineY !== null && Math.abs(y - lastLineY) > avgLineHeight * 1.5) {
               // If the gap is significantly larger than average line height, mark as paragraph break
               paragraphBreaks.add(Math.min(y, lastLineY))
@@ -141,11 +151,13 @@ function PDFExtractorPage() {
         })
         
         // Second pass: process text items
-        sortedItems.forEach((item: TextItem | TextMarkedContent) => {
-          if (!('str' in item) || !('transform' in item)) return
+        sortedItems.forEach((item: any) => {
+          const str = item.str
+          const transform = item.transform
+          if (!str || !transform) return
           
-          const y = Math.round(item.transform[5])
-          const x = Math.round(item.transform[4])
+          const y = Math.round(transform[5])
+          const x = Math.round(transform[4])
           
           if (lastY === null) {
             lastY = y
@@ -165,7 +177,7 @@ function PDFExtractorPage() {
           // Check if we need to add a space between items
           if (lastX !== null && x - lastX > 5) {
             const lastItem = currentLine[currentLine.length - 1]
-            const currentItem = item.str
+            const currentItem = str
             
             const shouldAddSpace = !(
               (lastItem?.endsWith('-') && /^[a-zA-Z]/.test(currentItem)) ||
@@ -179,8 +191,8 @@ function PDFExtractorPage() {
             }
           }
           
-          currentLine.push(item.str)
-          lastX = x + (item.str.length * 6)
+          currentLine.push(str)
+          lastX = x + (str.length * 6)
         })
         
         // Add the last line
