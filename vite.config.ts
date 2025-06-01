@@ -1,28 +1,32 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { defineConfig, loadEnv } from "vite";
+import viteReact from "@vitejs/plugin-react";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'lib/pdf.js-submodule/build/generic/build/pdf.mjs',
-          dest: 'pdf.js',
-        },
-        {
-          src: 'lib/pdf.js-submodule/build/generic/build/pdf.worker.mjs',
-          dest: 'pdf.js',
-        },
-        {
-          src: 'lib/pdf.js-submodule/build/generic/web/cmaps/*',
-          dest: 'pdf.js/cmaps',
-        },
-      ],
-    }),
-  ],
-  // (Optional) You might want to add a resolve alias for easier imports, e.g.:
-  // resolve: { alias: { '@pdfjs': '/pdf.js' } },
-}) 
+export default defineConfig(({ mode }) => {
+  // Load env file based on `mode` in the current directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  const env = loadEnv(mode, process.cwd(), '')
+  
+  return {
+    plugins: [TanStackRouterVite({ autoCodeSplitting: true }), viteReact()],
+    build: {
+      chunkSizeWarningLimit: 1000, // Increase the chunk size warning limit
+    },
+    test: {
+      globals: true,
+      environment: "jsdom",
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+    },
+    // Expose env variables to the client
+    define: {
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
+    }
+  }
+}); 

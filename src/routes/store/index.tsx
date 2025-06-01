@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
-import { ImageCarousel } from '../../components/ImageCarousel/ImageCarousel'
+import { useState } from 'react'
 import './store.css'
 
 interface CartItem {
@@ -31,7 +30,6 @@ function StorePage() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
   const [isCartOpen, setIsCartOpen] = useState(false)
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
 
   const categories = [
     { id: 'all', name: 'All Items' },
@@ -69,17 +67,7 @@ function StorePage() {
                     </span>
                   </button>
                   <div className={`cart-dropdown ${isCartOpen ? 'open' : ''}`}>
-                    {cartItems.length === 0 ? (
-                      <p className="empty-cart">cart is empty</p>
-                    ) : (
-                      <div>
-                        {cartItems.map((item, index) => (
-                          <div key={index}>
-                            {item.name} - ${item.price}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {/* Placeholder for cart items */}
                   </div>
                 </div>
               </div>
@@ -143,12 +131,7 @@ function StorePage() {
 
         {isCarouselOpen && (
           <div className="carousel-wrapper">
-            <ImageCarousel 
-              isOpen={isCarouselOpen}
-              onClose={() => setIsCarouselOpen(false)}
-              bucket="images"
-              folder="eagle-photos"
-            />
+            {/* Placeholder for carousel component */}
           </div>
         )}
       </main>

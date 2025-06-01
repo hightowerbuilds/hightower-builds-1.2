@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { useState, useRef, useCallback } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
-import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { parseTransactions, type ParsedDocument } from '../../lib/transaction-parser'
 import './pdf-extractor.css'
 
