@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { useState, useRef, useCallback } from 'react'
-import * as pdfjsLib from '../../../pdf.js/build/generic/build/pdf.mjs'
+import * as pdfjsLib from 'pdfjs-dist'
+import type { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api'
 import { parseTransactions, type ParsedDocument } from '../../lib/transaction-parser'
 import './pdf-extractor.css'
 
 // Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.js/build/generic/build/pdf.worker.mjs'
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
 
 export const Route = createFileRoute('/pdf-extractor/')({
   component: PDFExtractorPage,
@@ -69,7 +70,7 @@ function PDFExtractorPage() {
   const extractTextFromPDF = useCallback(async (arrayBuffer: ArrayBuffer) => {
     const pdf = await pdfjsLib.getDocument({ 
       data: arrayBuffer,
-      cMapUrl: '/pdf.js/build/generic/web/cmaps/',
+      cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
       cMapPacked: true,
       verbosity: 0
     }).promise
@@ -96,22 +97,25 @@ function PDFExtractorPage() {
         // Get the average line height from the first few items
         const lineHeights: number[] = []
         let lastItemY: number | null = null
-        textContent.items.slice(0, 20).forEach((item: { transform: number[] }) => {
-          const y = Math.round(item.transform[5])
-          if (lastItemY !== null) {
-            const diff = Math.abs(y - lastItemY)
-            if (diff > 5) { // Only consider significant vertical differences
-              lineHeights.push(diff)
+        textContent.items.slice(0, 20).forEach((item: TextItem | TextMarkedContent) => {
+          if ('transform' in item) {
+            const y = Math.round(item.transform[5])
+            if (lastItemY !== null) {
+              const diff = Math.abs(y - lastItemY)
+              if (diff > 5) { // Only consider significant vertical differences
+                lineHeights.push(diff)
+              }
             }
+            lastItemY = y
           }
-          lastItemY = y
         })
         const avgLineHeight = lineHeights.length > 0 
           ? lineHeights.reduce((a, b) => a + b, 0) / lineHeights.length 
           : 12 // Default to 12 if we can't calculate
         
         // Sort items by their position (top to bottom, left to right)
-        const sortedItems = [...textContent.items].sort((a, b) => {
+        const sortedItems = [...textContent.items].sort((a: TextItem | TextMarkedContent, b: TextItem | TextMarkedContent) => {
+          if (!('transform' in a) || !('transform' in b)) return 0
           const yDiff = Math.abs(a.transform[5] - b.transform[5])
           if (yDiff > 5) { // Different line
             return a.transform[5] - b.transform[5]
@@ -125,17 +129,21 @@ function PDFExtractorPage() {
         let paragraphBreaks: Set<number> = new Set()
         
         // First pass: identify paragraph breaks
-        sortedItems.forEach((item: { transform: number[] }) => {
-          const y = Math.round(item.transform[5])
-          if (lastLineY !== null && Math.abs(y - lastLineY) > avgLineHeight * 1.5) {
-            // If the gap is significantly larger than average line height, mark as paragraph break
-            paragraphBreaks.add(Math.min(y, lastLineY))
+        sortedItems.forEach((item: TextItem | TextMarkedContent) => {
+          if ('transform' in item) {
+            const y = Math.round(item.transform[5])
+            if (lastLineY !== null && Math.abs(y - lastLineY) > avgLineHeight * 1.5) {
+              // If the gap is significantly larger than average line height, mark as paragraph break
+              paragraphBreaks.add(Math.min(y, lastLineY))
+            }
+            lastLineY = y
           }
-          lastLineY = y
         })
         
         // Second pass: process text items
-        sortedItems.forEach((item: { str: string; transform: number[] }) => {
+        sortedItems.forEach((item: TextItem | TextMarkedContent) => {
+          if (!('str' in item) || !('transform' in item)) return
+          
           const y = Math.round(item.transform[5])
           const x = Math.round(item.transform[4])
           

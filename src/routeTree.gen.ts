@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PdfTestImport } from './routes/pdf-test'
 import { Route as StoreIndexImport } from './routes/store/index'
 import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
@@ -19,6 +20,12 @@ import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
 
 // Create/Update Routes
+
+const PdfTestRoute = PdfTestImport.update({
+  id: '/pdf-test',
+  path: '/pdf-test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StoreIndexRoute = StoreIndexImport.update({
   id: '/store/',
@@ -60,6 +67,13 @@ const BrontosaurusIndexRoute = BrontosaurusIndexImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pdf-test': {
+      id: '/pdf-test'
+      path: '/pdf-test'
+      fullPath: '/pdf-test'
+      preLoaderRoute: typeof PdfTestImport
+      parentRoute: typeof rootRoute
+    }
     '/brontosaurus/': {
       id: '/brontosaurus/'
       path: '/brontosaurus'
@@ -108,6 +122,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
+  '/pdf-test': typeof PdfTestRoute
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
@@ -117,6 +132,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/pdf-test': typeof PdfTestRoute
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
@@ -127,6 +143,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/pdf-test': typeof PdfTestRoute
   '/brontosaurus/': typeof BrontosaurusIndexRoute
   '/home/': typeof HomeIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
@@ -138,6 +155,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/pdf-test'
     | '/brontosaurus'
     | '/home'
     | '/money-modes'
@@ -146,6 +164,7 @@ export interface FileRouteTypes {
     | '/store'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/pdf-test'
     | '/brontosaurus'
     | '/home'
     | '/money-modes'
@@ -154,6 +173,7 @@ export interface FileRouteTypes {
     | '/store'
   id:
     | '__root__'
+    | '/pdf-test'
     | '/brontosaurus/'
     | '/home/'
     | '/money-modes/'
@@ -164,6 +184,7 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
+  PdfTestRoute: typeof PdfTestRoute
   BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
@@ -173,6 +194,7 @@ export interface RootRouteChildren {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  PdfTestRoute: PdfTestRoute,
   BrontosaurusIndexRoute: BrontosaurusIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
@@ -191,6 +213,7 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/pdf-test",
         "/brontosaurus/",
         "/home/",
         "/money-modes/",
@@ -198,6 +221,9 @@ export const routeTree = rootRoute
         "/roofing-magazine/",
         "/store/"
       ]
+    },
+    "/pdf-test": {
+      "filePath": "pdf-test.tsx"
     },
     "/brontosaurus/": {
       "filePath": "brontosaurus/index.tsx"
