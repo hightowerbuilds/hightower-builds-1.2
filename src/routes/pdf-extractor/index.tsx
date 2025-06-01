@@ -2,11 +2,37 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { useState, useRef, useCallback } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
-import { parseTransactions, type ParsedDocument } from '../../lib/transaction-parser'
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import './pdf-extractor.css'
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+
+// Initialize the Google AI SDK
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY)
+
+// Configure the model
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-2.0-flash",
+  safetySettings: [
+    {
+      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+  ],
+})
 
 export const Route = createFileRoute('/pdf-extractor/')({
   component: PDFExtractorPage,
@@ -19,27 +45,6 @@ interface TextStats {
   charactersNoSpaces: number
 }
 
-interface DocumentStats extends TextStats {
-  totalPages: number
-  averageWordsPerPage: number
-  averageLinesPerPage: number
-  averageParagraphsPerPage: number
-}
-
-interface ProcessedContent {
-  metadata: {
-    filename: string
-    stats: DocumentStats
-    timestamp: string
-    processingInfo: {
-      version: string
-      format: string
-      encoding: string
-    }
-  }
-  content: ParsedDocument
-}
-
 function PDFExtractorPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadStatus, setUploadStatus] = useState({ message: '', type: '' })
@@ -47,10 +52,11 @@ function PDFExtractorPage() {
   const [textStats, setTextStats] = useState<TextStats | null>(null)
   const [showResults, setShowResults] = useState(false)
   const [currentFilename, setCurrentFilename] = useState('')
-  const [processedContent, setProcessedContent] = useState<ProcessedContent | null>(null)
-  const [jsonError, setJsonError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysis, setAnalysis] = useState<string | null>(null)
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
 
   const calculateTextStats = useCallback((text: string): TextStats => {
     const words = text.trim().split(/\s+/).filter(word => word.length > 0)
@@ -228,45 +234,6 @@ function PDFExtractorPage() {
     return fullText.trim()
   }, [])
 
-  const processTextToJSON = useCallback((text: string, filename: string, stats: TextStats) => {
-    try {
-      // Use the transaction parser to process the text
-      const parsedDocument = parseTransactions(text)
-      
-      const documentStats = {
-        ...stats,
-        totalPages: parsedDocument.pages.length,
-        averageWordsPerPage: Math.round(stats.words / parsedDocument.pages.length),
-        averageLinesPerPage: Math.round(stats.lines / parsedDocument.pages.length),
-        averageParagraphsPerPage: Math.round(
-          parsedDocument.pages.reduce((sum, page) => sum + page.paragraphs.length, 0) / parsedDocument.pages.length
-        )
-      }
-
-      const processed: ProcessedContent = {
-        metadata: {
-          filename,
-          stats: documentStats,
-          timestamp: new Date().toISOString(),
-          processingInfo: {
-            version: '1.0',
-            format: 'structured-text',
-            encoding: 'UTF-8'
-          }
-        },
-        content: parsedDocument
-      }
-
-      setProcessedContent(processed)
-      setJsonError(null)
-      return processed
-    } catch (error) {
-      console.error('Error processing text to JSON:', error)
-      setJsonError('Error processing text to JSON format')
-      return null
-    }
-  }, [])
-
   const processFile = useCallback(async (file: File) => {
     if (!file.type.includes('pdf')) {
       setUploadStatus({ message: 'Please select a PDF file.', type: 'error' })
@@ -290,8 +257,6 @@ function PDFExtractorPage() {
         const stats = calculateTextStats(text)
         setTextStats(stats)
         setShowResults(true)
-        // Process the text to JSON format
-        processTextToJSON(text, file.name, stats)
         setUploadStatus({ 
           message: `✅ Successfully extracted text from ${file.name}`, 
           type: 'success' 
@@ -309,7 +274,7 @@ function PDFExtractorPage() {
         type: 'error' 
       })
     }
-  }, [extractTextFromPDF, calculateTextStats, processTextToJSON])
+  }, [extractTextFromPDF, calculateTextStats])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -367,30 +332,70 @@ function PDFExtractorPage() {
     setUploadStatus({ message: 'Downloaded!', type: 'success' })
   }, [extractedText, currentFilename])
 
+  const analyzeText = useCallback(async () => {
+    if (!extractedText.trim()) return
+
+    setIsAnalyzing(true)
+    setAnalysis(null)
+    setAnalysisError(null)
+
+    try {
+      const prompt = `Please analyze the following text extracted from a PDF document and extract financial transaction information. Focus specifically on:
+
+1. Expenditures (purchases, payments, withdrawals):
+   - List each expenditure with:
+     * Date
+     * Amount
+     * Location/Vendor
+     * Description (if available)
+   - Group expenditures by date if possible
+
+2. Deposits (income, credits, transfers in):
+   - List each deposit with:
+     * Date
+     * Amount
+     * Source
+     * Description (if available)
+   - Group deposits by date if possible
+
+3. Summary:
+   - Total expenditures
+   - Total deposits
+   - Date range of transactions
+   - Any notable patterns or categories
+
+If you find any transaction that could be either an expenditure or deposit but you're unsure, please list it under "Uncertain Transactions" with a note about why it's unclear.
+
+Format the output in clear sections with bullet points for easy reading.
+
+Here is the text to analyze:
+
+${extractedText.substring(0, 30000)}` // Limit to first 30k chars to avoid token limits
+
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      const text = response.text()
+      setAnalysis(text)
+    } catch (err: any) {
+      console.error('Error analyzing text:', err)
+      setAnalysisError(err.message || 'An error occurred while analyzing the text')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }, [extractedText])
+
   const handleClear = useCallback(() => {
     setShowResults(false)
     setExtractedText('')
     setTextStats(null)
     setCurrentFilename('')
     setUploadStatus({ message: '', type: '' })
-    setProcessedContent(null)
-    setJsonError(null)
+    setAnalysis(null)
+    setAnalysisError(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }, [])
-
-  const handleCopyJSON = useCallback(() => {
-    if (processedContent) {
-      try {
-        navigator.clipboard.writeText(JSON.stringify(processedContent, null, 2))
-        setUploadStatus({ message: 'JSON copied to clipboard!', type: 'success' })
-      } catch (error) {
-        console.error('Error copying JSON:', error)
-        setUploadStatus({ message: 'Error copying JSON to clipboard', type: 'error' })
-      }
-    }
-  }, [processedContent])
 
   return (
     <div className="page-container">
@@ -431,81 +436,88 @@ function PDFExtractorPage() {
           </div>
 
           {showResults && (
-            <>
-              <div className="results-section fade-in">
-                <div className="results-header">
-                  <h2>Extracted Text</h2>
-                  <div className="results-actions">
-                    <button onClick={handleCopyToClipboard} className="btn-secondary">
-                      📋 Copy Text
-                    </button>
-                    <button onClick={handleDownload} className="btn-secondary">
-                      💾 Download as TXT
-                    </button>
-                    <button onClick={handleClear} className="btn-secondary">
-                      🗑️ Clear
-                    </button>
-                  </div>
-                </div>
-                
-                {textStats && (
-                  <div className="text-stats">
-                    <div className="stat-item">
-                      <span>📝</span>
-                      <span><strong>{textStats.words.toLocaleString()}</strong> words</span>
-                    </div>
-                    <div className="stat-item">
-                      <span>📄</span>
-                      <span><strong>{textStats.lines.toLocaleString()}</strong> lines</span>
-                    </div>
-                    <div className="stat-item">
-                      <span>🔤</span>
-                      <span><strong>{textStats.characters.toLocaleString()}</strong> characters</span>
-                    </div>
-                    <div className="stat-item">
-                      <span>📏</span>
-                      <span><strong>{textStats.charactersNoSpaces.toLocaleString()}</strong> characters (no spaces)</span>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="extracted-text">
-                  <textarea
-                    ref={textareaRef}
-                    value={extractedText}
-                    readOnly
-                    placeholder="Extracted text will appear here..."
-                  />
+            <div className="results-section fade-in">
+              <div className="results-header">
+                <h2>Extracted Text</h2>
+                <div className="results-actions">
+                  <button onClick={handleCopyToClipboard} className="btn-secondary">
+                    📋 Copy Text
+                  </button>
+                  <button onClick={handleDownload} className="btn-secondary">
+                    💾 Download as TXT
+                  </button>
+                  <button onClick={handleClear} className="btn-secondary">
+                    🗑️ Clear
+                  </button>
                 </div>
               </div>
-
-              <div className="results-section fade-in json-section">
-                <div className="results-header">
-                  <h2>Structured JSON</h2>
-                  <div className="results-actions">
-                    <button onClick={handleCopyJSON} className="btn-secondary">
-                      📋 Copy JSON
-                    </button>
+              
+              {textStats && (
+                <div className="text-stats">
+                  <div className="stat-item">
+                    <span>📝</span>
+                    <span><strong>{textStats.words.toLocaleString()}</strong> words</span>
+                  </div>
+                  <div className="stat-item">
+                    <span>📄</span>
+                    <span><strong>{textStats.lines.toLocaleString()}</strong> lines</span>
+                  </div>
+                  <div className="stat-item">
+                    <span>🔤</span>
+                    <span><strong>{textStats.characters.toLocaleString()}</strong> characters</span>
+                  </div>
+                  <div className="stat-item">
+                    <span>📏</span>
+                    <span><strong>{textStats.charactersNoSpaces.toLocaleString()}</strong> characters (no spaces)</span>
                   </div>
                 </div>
+              )}
+              
+              <div className="extracted-text">
+                <textarea
+                  ref={textareaRef}
+                  value={extractedText}
+                  readOnly
+                  placeholder="Extracted text will appear here..."
+                />
+              </div>
 
-                {jsonError ? (
-                  <div className="json-error">{jsonError}</div>
-                ) : processedContent ? (
-                  <div className="json-content">
-                    <pre>{JSON.stringify(processedContent, null, 2)}</pre>
+              <div className="analysis-section">
+                <div className="analysis-header">
+                  <h3>AI Analysis</h3>
+                  <button 
+                    onClick={analyzeText} 
+                    disabled={isAnalyzing || !extractedText.trim()}
+                    className="btn-secondary"
+                  >
+                    {isAnalyzing ? 'Analyzing...' : 'Analyze with Gemini'}
+                  </button>
+                </div>
+
+                {isAnalyzing && (
+                  <div className="analysis-loading">
+                    <span className="loading"></span>
+                    Analyzing document...
                   </div>
-                ) : (
-                  <div className="json-placeholder">
-                    JSON structure will appear here after text extraction
+                )}
+
+                {analysisError && (
+                  <div className="analysis-error">
+                    {analysisError}
+                  </div>
+                )}
+
+                {analysis && (
+                  <div className="analysis-content">
+                    {analysis}
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
 
           <footer>
-            <p>Powered by PDF.js (Character Maps Removed - English Only)</p>
+            <p>Powered by PDF.js and Google Gemini AI</p>
           </footer>
         </div>
       </main>

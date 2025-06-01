@@ -16,6 +16,7 @@ import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/i
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
 import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
+import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
 import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
 
 // Create/Update Routes
@@ -50,6 +51,12 @@ const HomeIndexRoute = HomeIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const GeminiChatIndexRoute = GeminiChatIndexImport.update({
+  id: '/gemini-chat/',
+  path: '/gemini-chat/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const BrontosaurusIndexRoute = BrontosaurusIndexImport.update({
   id: '/brontosaurus/',
   path: '/brontosaurus/',
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/brontosaurus'
       fullPath: '/brontosaurus'
       preLoaderRoute: typeof BrontosaurusIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/gemini-chat/': {
+      id: '/gemini-chat/'
+      path: '/gemini-chat'
+      fullPath: '/gemini-chat'
+      preLoaderRoute: typeof GeminiChatIndexImport
       parentRoute: typeof rootRoute
     }
     '/home/': {
@@ -109,6 +123,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/brontosaurus': typeof BrontosaurusIndexRoute
+  '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
@@ -118,6 +133,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/brontosaurus': typeof BrontosaurusIndexRoute
+  '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
@@ -128,6 +144,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/brontosaurus/': typeof BrontosaurusIndexRoute
+  '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
   '/pdf-extractor/': typeof PdfExtractorIndexRoute
@@ -139,6 +156,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/brontosaurus'
+    | '/gemini-chat'
     | '/home'
     | '/money-modes'
     | '/pdf-extractor'
@@ -147,6 +165,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/brontosaurus'
+    | '/gemini-chat'
     | '/home'
     | '/money-modes'
     | '/pdf-extractor'
@@ -155,6 +174,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/brontosaurus/'
+    | '/gemini-chat/'
     | '/home/'
     | '/money-modes/'
     | '/pdf-extractor/'
@@ -165,6 +185,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
+  GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
   PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
@@ -174,6 +195,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   BrontosaurusIndexRoute: BrontosaurusIndexRoute,
+  GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
   PdfExtractorIndexRoute: PdfExtractorIndexRoute,
@@ -192,6 +214,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/brontosaurus/",
+        "/gemini-chat/",
         "/home/",
         "/money-modes/",
         "/pdf-extractor/",
@@ -201,6 +224,9 @@ export const routeTree = rootRoute
     },
     "/brontosaurus/": {
       "filePath": "brontosaurus/index.tsx"
+    },
+    "/gemini-chat/": {
+      "filePath": "gemini-chat/index.tsx"
     },
     "/home/": {
       "filePath": "home/index.tsx"
