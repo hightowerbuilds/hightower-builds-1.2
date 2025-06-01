@@ -6,7 +6,10 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables')
+  const missingVars = []
+  if (!supabaseUrl) missingVars.push('VITE_SUPABASE_URL')
+  if (!supabaseKey) missingVars.push('VITE_SUPABASE_ANON_KEY')
+  throw new Error(`Missing required Supabase environment variables: ${missingVars.join(', ')}. Please add these to your deployment environment variables.`)
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey)
