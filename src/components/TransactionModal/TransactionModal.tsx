@@ -55,17 +55,17 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
     }).format(amount)
 
   const totalExpenditures = transactions
-    .filter(t => t.transaction_type === 'expenditure')
+    .filter(t => t.transactionType === 'expenditure')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const totalDeposits = transactions
-    .filter(t => t.transaction_type === 'deposit')
+    .filter(t => t.transactionType === 'deposit')
     .reduce((sum, t) => sum + t.amount, 0)
 
   // Get starting and ending balances
-  const startingBalance = transactions.length > 0 ? transactions[0].running_balance! - 
-    (transactions[0].transaction_type === 'deposit' ? transactions[0].amount : -transactions[0].amount) : 1000
-  const endingBalance = transactions.length > 0 ? transactions[transactions.length - 1].running_balance! : 1000
+  const startingBalance = transactions.length > 0 ? transactions[0].runningBalance! - 
+    (transactions[0].transactionType === 'deposit' ? transactions[0].amount : -transactions[0].amount) : 1000
+  const endingBalance = transactions.length > 0 ? transactions[transactions.length - 1].runningBalance! : 1000
 
   return (
     <div className="modal-overlay">
@@ -117,16 +117,16 @@ export function TransactionModal({ isOpen, onClose, transactions, dateRange }: T
             </thead>
             <tbody>
               {transactions.map(transaction => (
-                <tr key={transaction.id} className={`transaction-type-${transaction.transaction_type}`}>
-                  <td>{formatDate(transaction.transaction_date)}</td>
+                <tr key={transaction.id} className={`transaction-type-${transaction.transactionType}`}>
+                  <td>{formatDate(transaction.transactionDate)}</td>
                   <td>{transaction.description}</td>
                   <td>{transaction.location || 'N/A'}</td>
-                  <td>{transaction.transaction_type}</td>
-                  <td className={transaction.transaction_type}>
+                  <td>{transaction.transactionType}</td>
+                  <td className={transaction.transactionType}>
                     {formatAmount(transaction.amount)}
                   </td>
                   <td className="balance">
-                    {formatAmount(transaction.running_balance || 0)}
+                    {formatAmount(transaction.runningBalance || 0)}
                   </td>
                   <td>{transaction.category || 'N/A'}</td>
                 </tr>

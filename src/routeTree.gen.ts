@@ -18,6 +18,7 @@ import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
 import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
+import { Route as BalanceChartIndexImport } from './routes/balance-chart/index'
 
 // Create/Update Routes
 
@@ -63,10 +64,23 @@ const BrontosaurusIndexRoute = BrontosaurusIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const BalanceChartIndexRoute = BalanceChartIndexImport.update({
+  id: '/balance-chart/',
+  path: '/balance-chart/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/balance-chart/': {
+      id: '/balance-chart/'
+      path: '/balance-chart'
+      fullPath: '/balance-chart'
+      preLoaderRoute: typeof BalanceChartIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/brontosaurus/': {
       id: '/brontosaurus/'
       path: '/brontosaurus'
@@ -122,6 +136,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
+  '/balance-chart': typeof BalanceChartIndexRoute
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
@@ -132,6 +147,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/balance-chart': typeof BalanceChartIndexRoute
   '/brontosaurus': typeof BrontosaurusIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
@@ -143,6 +159,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/balance-chart/': typeof BalanceChartIndexRoute
   '/brontosaurus/': typeof BrontosaurusIndexRoute
   '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
@@ -155,6 +172,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/balance-chart'
     | '/brontosaurus'
     | '/gemini-chat'
     | '/home'
@@ -164,6 +182,7 @@ export interface FileRouteTypes {
     | '/store'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/balance-chart'
     | '/brontosaurus'
     | '/gemini-chat'
     | '/home'
@@ -173,6 +192,7 @@ export interface FileRouteTypes {
     | '/store'
   id:
     | '__root__'
+    | '/balance-chart/'
     | '/brontosaurus/'
     | '/gemini-chat/'
     | '/home/'
@@ -184,6 +204,7 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
+  BalanceChartIndexRoute: typeof BalanceChartIndexRoute
   BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
   GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
@@ -194,6 +215,7 @@ export interface RootRouteChildren {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  BalanceChartIndexRoute: BalanceChartIndexRoute,
   BrontosaurusIndexRoute: BrontosaurusIndexRoute,
   GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
@@ -213,6 +235,7 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/balance-chart/",
         "/brontosaurus/",
         "/gemini-chat/",
         "/home/",
@@ -221,6 +244,9 @@ export const routeTree = rootRoute
         "/roofing-magazine/",
         "/store/"
       ]
+    },
+    "/balance-chart/": {
+      "filePath": "balance-chart/index.tsx"
     },
     "/brontosaurus/": {
       "filePath": "brontosaurus/index.tsx"

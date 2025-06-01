@@ -180,4 +180,34 @@
   .summary-item span:last-child {
     font-size: 1rem;
   }
+}
+
+.statement-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+}
+
+.view-chart-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.view-chart-btn:hover {
+  background: var(--primary-color-dark);
+  transform: translateY(-1px);
+}
+
+.view-chart-btn .icon {
+  font-size: 1.1rem;
 } 

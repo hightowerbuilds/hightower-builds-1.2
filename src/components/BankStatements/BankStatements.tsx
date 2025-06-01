@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from '@tanstack/react-router'
 import type { BankStatement, Transaction } from '../../lib/db'
 import { db } from '../../lib/db'
 import { TransactionModal } from '../TransactionModal/TransactionModal'
@@ -21,7 +22,20 @@ export function BankStatements() {
       setLoading(true)
       setError(null)
       const data = await db.getBankStatements()
-      setStatements(data)
+      // Get the overall statement that spans all months
+      const overallStatement = {
+        id: 'overall',
+        dateRange: {
+          start: data[data.length - 1].dateRange.start,
+          end: data[0].dateRange.end
+        },
+        transactionCount: data.reduce((sum, s) => sum + s.transactionCount, 0),
+        startingBalance: data[data.length - 1].startingBalance,
+        endingBalance: data[0].endingBalance,
+        totalExpenditures: data.reduce((sum, s) => sum + s.totalExpenditures, 0),
+        totalDeposits: data.reduce((sum, s) => sum + s.totalDeposits, 0)
+      }
+      setStatements([overallStatement])
     } catch (err) {
       setError('Failed to load bank statements')
       console.error('Error loading bank statements:', err)
@@ -34,7 +48,7 @@ export function BankStatements() {
     try {
       setLoading(true)
       setError(null)
-      const data = await db.getTransactionsWithBalance(statement.date_range.start, statement.date_range.end)
+      const data = await db.getTransactionsWithBalance(statement.dateRange.start, statement.dateRange.end)
       setTransactions(data)
       setSelectedStatement(statement)
       setIsModalOpen(true)
@@ -102,12 +116,14 @@ export function BankStatements() {
           <div 
             key={statement.id}
             className="statement-card"
-            onClick={() => handleStatementClick(statement)}
           >
-            <div className="statement-header">
-              <h3>{formatDateRange(statement.date_range.start, statement.date_range.end)}</h3>
+            <div 
+              className="statement-header"
+              onClick={() => handleStatementClick(statement)}
+            >
+              <h3>{formatDateRange(statement.dateRange.start, statement.dateRange.end)}</h3>
               <span className="transaction-count">
-                {statement.transaction_count} transactions
+                {statement.transactionCount} transactions
               </span>
             </div>
             
@@ -115,27 +131,38 @@ export function BankStatements() {
               <div className="summary-item">
                 <span>Starting Balance</span>
                 <span className="balance">
-                  {formatAmount(statement.starting_balance)}
+                  {formatAmount(statement.startingBalance)}
                 </span>
               </div>
               <div className="summary-item">
                 <span>Ending Balance</span>
                 <span className="balance">
-                  {formatAmount(statement.ending_balance)}
+                  {formatAmount(statement.endingBalance)}
                 </span>
               </div>
               <div className="summary-item">
                 <span>Expenditures</span>
                 <span className="expenditure">
-                  {formatAmount(statement.total_expenditures)}
+                  {formatAmount(statement.totalExpenditures)}
                 </span>
               </div>
               <div className="summary-item">
                 <span>Deposits</span>
                 <span className="deposit">
-                  {formatAmount(statement.total_deposits)}
+                  {formatAmount(statement.totalDeposits)}
                 </span>
               </div>
+            </div>
+
+            <div className="statement-actions">
+              <Link
+                to="/balance-chart"
+                search={{ statementId: statement.id }}
+                className="view-chart-btn"
+              >
+                <span className="icon">📊</span>
+                View Balance Charts
+              </Link>
             </div>
           </div>
         ))}
@@ -146,7 +173,7 @@ export function BankStatements() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           transactions={transactions}
-          dateRange={selectedStatement.date_range}
+          dateRange={selectedStatement.dateRange}
         />
       )}
     </div>
