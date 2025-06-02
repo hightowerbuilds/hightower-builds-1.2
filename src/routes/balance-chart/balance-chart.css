@@ -11,27 +11,32 @@
 }
 
 .balance-chart-content .page-title {
+  color: var(--text-color);
+  text-shadow: none;
   font-size: 3rem;
   margin-bottom: 0.5rem;
 }
 
 .balance-chart-content .page-description {
+  color: var(--light-text);
   font-size: 1rem;
 }
 
 .charts-container {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   margin-top: 2rem;
 }
 
 .chart-wrapper {
-  background-color: var(--background-color);
-  border: 1px solid var(--border-color);
+  background-color: var(--dark-bg);
+  border: 1px solid var(--dark-border);
   border-radius: 8px;
   padding: 2rem;
   overflow: auto;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+  margin-bottom: 2rem;
 }
 
 .chart-wrapper svg {
@@ -42,67 +47,128 @@
 /* Style for the grid lines */
 .grid line {
   stroke-dasharray: 3, 3;
+  stroke: var(--dark-border);
+  stroke-opacity: 0.3;
 }
 
 /* Style for the area under the line */
 .area {
   transition: fill-opacity 0.2s;
+  fill: var(--neon-blue);
+  fill-opacity: 0.1;
+  filter: drop-shadow(0 0 8px var(--neon-blue));
 }
 
 /* Style for the line */
 .line {
   transition: stroke-width 0.2s;
+  stroke: var(--neon-blue);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px var(--neon-blue));
+}
+
+/* Style for the dots */
+circle {
+  fill: var(--neon-blue);
+  stroke: var(--dark-bg);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px var(--neon-blue));
+}
+
+circle:hover {
+  fill: var(--neon-purple);
+  filter: drop-shadow(0 0 8px var(--neon-purple));
 }
 
 /* Style for the tooltip */
 .chart-tooltip {
   position: absolute;
-  background-color: var(--background-color);
-  border: 1px solid var(--border-color);
+  background-color: var(--dark-bg-light);
+  border: 1px solid var(--neon-blue);
   border-radius: 4px;
   padding: 8px;
   pointer-events: none;
   font-size: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
   z-index: 1000;
+  color: var(--dark-text);
 }
 
 /* Style for axis labels */
 .chart-wrapper :global(.tick text) {
   font-size: 11px;
-  fill: var(--text-color);
+  fill: var(--dark-text-light);
 }
 
 .chart-wrapper :global(.domain) {
-  stroke: var(--border-color);
+  stroke: var(--dark-border);
 }
 
+/* Style for the title */
+.chart-wrapper text {
+  fill: var(--dark-text);
+  filter: drop-shadow(0 0 4px var(--neon-blue));
+}
+
+/* Style for the chart type buttons in dark mode */
+.chart-type-btn {
+  background: var(--dark-bg-light);
+  border: 1px solid var(--dark-border);
+  color: var(--dark-text);
+}
+
+.chart-type-btn:hover {
+  background: var(--dark-bg-hover);
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+}
+
+.chart-type-btn.active {
+  background: var(--dark-bg-hover);
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
+}
+
+/* Update loading and error states for dark mode */
 .loading,
 .error {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-color);
-  font-size: 1.2rem;
+  color: var(--dark-text);
 }
 
 .error {
-  color: var(--error-color);
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
 }
 
 .btn-retry {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: var(--primary-color);
-  color: var(--text-color);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  background: var(--dark-bg-light);
+  color: var(--dark-text);
+  border: 1px solid var(--neon-blue);
 }
 
 .btn-retry:hover {
-  background: var(--primary-color-dark);
+  background: var(--dark-bg-hover);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
+}
+
+/* Chart type selector styles */
+.chart-type-selector,
+.chart-type-btn {
+  display: none;
+}
+
+/* Bar chart styles */
+.bar {
+  transition: all 0.3s ease;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+.value-label {
+  pointer-events: none;
 }
 
 /* Responsive adjustments */
@@ -111,13 +177,9 @@
     padding: 1rem;
   }
 
-  .charts-container {
-    gap: 2rem;
-    margin-top: 1rem;
-  }
-
   .chart-wrapper {
     padding: 1rem;
+    margin-bottom: 1rem;
   }
 
   .chart-wrapper svg {
@@ -132,4 +194,24 @@
   .balance-chart-content .page-description {
     font-size: 1rem;
   }
+
+  .chart-title {
+    font-size: 0.9rem;
+    margin: -0.5rem 0 0.5rem 0;
+    padding-left: 0.5rem;
+  }
+
+  .charts-container {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+.chart-title {
+  color: var(--dark-text);
+  text-align: left;
+  margin: -1rem 0 1rem 0;
+  font-size: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  padding-left: 1rem;
 } 

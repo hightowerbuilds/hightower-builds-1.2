@@ -6,6 +6,8 @@ import type { Transaction } from '../../lib/db'
 import { db } from '../../lib/db'
 import './balance-chart.css'
 
+type ChartType = 'line' | 'stacked'
+
 export const Route = createFileRoute('/balance-chart/')({
   validateSearch: (search: Record<string, unknown>) => {
     return {
@@ -20,7 +22,7 @@ function BalanceChartPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const svgRefs = useRef<(SVGSVGElement | null)[]>([null, null, null])
+  const svgRefs = useRef<(SVGSVGElement | null)[]>([null, null])
 
   useEffect(() => {
     loadTransactions()
@@ -42,26 +44,23 @@ function BalanceChartPage() {
     }
   }
 
-  // Group transactions by month
-  const transactionsByMonth = transactions.reduce((acc, transaction) => {
-    const date = new Date(transaction.transactionDate)
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-    
-    if (!acc[monthKey]) {
-      acc[monthKey] = []
-    }
-    acc[monthKey].push(transaction)
-    return acc
-  }, {} as Record<string, Transaction[]>)
+  // Calculate overall date range and prepare transactions
+  const dateRange = transactions.length > 0 ? {
+    start: new Date(Math.min(...transactions.map(t => new Date(t.transactionDate).getTime()))),
+    end: new Date(Math.max(...transactions.map(t => new Date(t.transactionDate).getTime())))
+  } : { start: new Date(), end: new Date() }
 
-  // Sort months chronologically
-  const sortedMonths = Object.keys(transactionsByMonth).sort()
+  // Sort all transactions by date
+  const sortedTransactions = [...transactions].sort((a, b) => 
+    new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
+  )
 
   useEffect(() => {
-    if (!transactions.length || !svgRefs.current.some(ref => ref)) {
+    if (!transactions.length || !svgRefs.current[0] || !svgRefs.current[1]) {
       console.log('No transactions or SVG refs:', { 
         transactionsLength: transactions.length, 
-        hasSvgRefs: svgRefs.current.some(ref => ref) 
+        hasLineChartRef: !!svgRefs.current[0],
+        hasBarChartRef: !!svgRefs.current[1]
       })
       return
     }
@@ -70,21 +69,18 @@ function BalanceChartPage() {
 
     // Clear any existing charts
     svgRefs.current.forEach(ref => {
-      if (ref) d3.select(ref).selectAll('*').remove()
+      if (ref) {
+        d3.select(ref).selectAll('*').remove()
+      }
     })
 
     // Set up the chart dimensions
-    const margin = { top: 40, right: 30, bottom: 30, left: 60 }
-    const width = 800 - margin.left - margin.right
-    const height = 300 - margin.top - margin.bottom
+    const margin = { top: 40, right: 40, bottom: 60, left: 80 }
+    const width = 1600 - margin.left - margin.right
+    const height = 500 - margin.top - margin.bottom
 
-    // Create a chart for each month
-    sortedMonths.forEach((monthKey, index) => {
-      const monthTransactions = transactionsByMonth[monthKey]
-      const svgRef = svgRefs.current[index]
-      if (!svgRef) return
-
-      // Create the SVG container
+    // Create both charts
+    const createLineChart = (svgRef: SVGSVGElement) => {
       const svg = d3.select(svgRef)
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
@@ -92,7 +88,7 @@ function BalanceChartPage() {
         .attr('transform', `translate(${margin.left},${margin.top})`)
 
       // Sort transactions by date
-      const sortedTransactions = [...monthTransactions].sort((a, b) => 
+      const sortedTransactions = [...transactions].sort((a, b) => 
         new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
       )
 
@@ -120,8 +116,8 @@ function BalanceChartPage() {
           .tickSize(-width)
           .tickFormat(() => '')
         )
-        .attr('stroke', 'var(--border-color)')
-        .attr('stroke-opacity', 0.2)
+        .attr('stroke', 'var(--dark-border)')
+        .attr('stroke-opacity', 0.3)
 
       // Add X axis with daily ticks
       svg.append('g')
@@ -130,7 +126,10 @@ function BalanceChartPage() {
           .ticks(d3.timeDay.every(1))
           .tickFormat(d => {
             const date = d as Date
-            return date.getDate().toString()
+            return date.toLocaleDateString('en-US', { 
+              month: 'numeric',
+              day: 'numeric'
+            })
           })
         )
         .selectAll('text')
@@ -138,6 +137,7 @@ function BalanceChartPage() {
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
         .attr('dy', '.15em')
+        .style('font-size', '10px')
 
       // Add Y axis with currency formatting
       svg.append('g')
@@ -151,20 +151,24 @@ function BalanceChartPage() {
           }).format(d as number))
         )
 
-      // Add month label - Fix the month display
-      const [year, month] = monthKey.split('-').map(Number)
-      const monthDate = new Date(Date.UTC(year, month - 1, 1))
+      // Add title with date range
       svg.append('text')
         .attr('x', width / 2)
         .attr('y', -20)
         .attr('text-anchor', 'middle')
         .style('font-size', '16px')
         .style('font-weight', 'bold')
-        .text(monthDate.toLocaleDateString('en-US', { 
-          month: 'long', 
+        .text(`${dateRange.start.toLocaleDateString('en-US', { 
+          month: 'short',
+          day: 'numeric',
           year: 'numeric',
-          timeZone: 'UTC'  // Use UTC to avoid timezone issues
-        }))
+          timeZone: 'UTC'
+        })} - ${dateRange.end.toLocaleDateString('en-US', { 
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          timeZone: 'UTC'
+        })}`)
 
       // Add the line
       const line = d3.line<Transaction>()
@@ -182,16 +186,12 @@ function BalanceChartPage() {
       svg.append('path')
         .datum(sortedTransactions)
         .attr('class', 'area')
-        .attr('fill', 'var(--primary-color)')
-        .attr('fill-opacity', 0.1)
         .attr('d', area)
 
       svg.append('path')
         .datum(sortedTransactions)
         .attr('class', 'line')
         .attr('fill', 'none')
-        .attr('stroke', 'var(--primary-color)')
-        .attr('stroke-width', 2)
         .attr('d', line)
 
       // Add dots
@@ -202,25 +202,13 @@ function BalanceChartPage() {
         .attr('cx', d => x(new Date(d.transactionDate)))
         .attr('cy', d => y(d.runningBalance || 0))
         .attr('r', 4)
-        .attr('fill', 'var(--primary-color)')
-        .attr('stroke', 'var(--background-color)')
-        .attr('stroke-width', 2)
         .on('mouseover', function(event: MouseEvent, d) {
           d3.select(this)
             .attr('r', 6)
-            .attr('fill', 'var(--primary-color-dark)')
 
           const tooltip = d3.select('body').append('div')
             .attr('class', 'chart-tooltip')
             .style('opacity', 0)
-            .style('position', 'absolute')
-            .style('background-color', 'var(--background-color)')
-            .style('border', '1px solid var(--border-color)')
-            .style('border-radius', '4px')
-            .style('padding', '8px')
-            .style('pointer-events', 'none')
-            .style('font-size', '12px')
-            .style('color', 'var(--text-color)')
 
           tooltip.transition()
             .duration(200)
@@ -239,11 +227,174 @@ function BalanceChartPage() {
         .on('mouseout', function() {
           d3.select(this)
             .attr('r', 4)
-            .attr('fill', 'var(--primary-color)')
-
           d3.selectAll('.chart-tooltip').remove()
         })
-    })
+    }
+
+    const createBarChart = (svgRef: SVGSVGElement) => {
+      const svg = d3.select(svgRef)
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`)
+
+      // Create scales
+      const x = d3.scaleTime()
+        .domain([dateRange.start, dateRange.end])
+        .range([0, width])
+
+      const y = d3.scaleLinear()
+        .domain([
+          0,
+          d3.max(transactions, d => Math.abs(d.amount)) || 0
+        ])
+        .range([height, 0])
+        .nice()
+
+      const color = d3.scaleOrdinal<string>()
+        .domain(['deposit', 'expenditure', 'uncertain'])
+        .range(['var(--success-color)', 'var(--error-color)', 'var(--warning-color)'])
+
+      // Add grid lines
+      svg.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft(y)
+          .ticks(10)
+          .tickSize(-width)
+          .tickFormat(() => '')
+        )
+        .attr('stroke', 'var(--dark-border)')
+        .attr('stroke-opacity', 0.3)
+
+      // Add X axis with daily ticks
+      svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x)
+          .ticks(d3.timeDay.every(1))
+          .tickFormat(d => {
+            const date = d as Date
+            return date.toLocaleDateString('en-US', { 
+              month: 'numeric',
+              day: 'numeric'
+            })
+          })
+        )
+        .selectAll('text')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end')
+        .attr('dx', '-.8em')
+        .attr('dy', '.15em')
+        .style('font-size', '10px')
+
+      // Add Y axis with currency formatting
+      svg.append('g')
+        .call(d3.axisLeft(y)
+          .ticks(10)
+          .tickFormat(d => new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(d as number))
+        )
+
+      // Group transactions by date
+      const transactionsByDate = new Map<string, Transaction[]>()
+      sortedTransactions.forEach(transaction => {
+        const date = new Date(transaction.transactionDate).toISOString().split('T')[0]
+        if (!transactionsByDate.has(date)) {
+          transactionsByDate.set(date, [])
+        }
+        transactionsByDate.get(date)?.push(transaction)
+      })
+
+      // Calculate bar width based on number of transactions per day
+      const maxTransactionsPerDay = Math.max(...Array.from(transactionsByDate.values()).map(txs => txs.length))
+      const barWidth = Math.min(
+        width / (dateRange.end.getTime() - dateRange.start.getTime()) * (24 * 60 * 60 * 1000),
+        width / (maxTransactionsPerDay * 2) // Ensure bars don't overlap too much
+      )
+
+      // Add bars for each transaction
+      sortedTransactions.forEach(transaction => {
+        const date = new Date(transaction.transactionDate)
+        const xPos = x(date)
+        const amount = Math.abs(transaction.amount)
+        const barHeight = y(0) - y(amount)
+        
+        // Calculate offset for multiple transactions on same day
+        const sameDayTransactions = transactionsByDate.get(date.toISOString().split('T')[0]) || []
+        const transactionIndex = sameDayTransactions.findIndex(t => t.id === transaction.id)
+        const xOffset = (transactionIndex - (sameDayTransactions.length - 1) / 2) * barWidth
+
+        // Create bar group
+        const barGroup = svg.append('g')
+          .attr('class', 'transaction-bar')
+          .attr('transform', `translate(${xPos + xOffset - barWidth/2},${y(amount)})`)
+
+        // Add the bar
+        barGroup.append('rect')
+          .attr('class', 'bar')
+          .attr('width', barWidth)
+          .attr('height', barHeight)
+          .attr('fill', color(transaction.transactionType))
+          .attr('opacity', 0.7)
+          .on('mouseover', function(event: MouseEvent) {
+            d3.select(this)
+              .attr('opacity', 1)
+
+            const tooltip = d3.select('body').append('div')
+              .attr('class', 'chart-tooltip')
+              .style('opacity', 0)
+
+            tooltip.transition()
+              .duration(200)
+              .style('opacity', 1)
+
+            tooltip.html(`
+              <div>Date: ${date.toLocaleDateString('en-US', { timeZone: 'UTC' })}</div>
+              <div>Description: ${transaction.description}</div>
+              <div>Amount: ${new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(transaction.amount)}</div>
+              <div>Running Balance: ${new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(transaction.runningBalance || 0)}</div>
+            `)
+              .style('left', (event.pageX + 10) + 'px')
+              .style('top', (event.pageY - 28) + 'px')
+          })
+          .on('mouseout', function() {
+            d3.select(this)
+              .attr('opacity', 0.7)
+            d3.selectAll('.chart-tooltip').remove()
+          })
+
+        // Add value label if the bar is tall enough
+        if (barHeight > 20) {
+          barGroup.append('text')
+            .attr('class', 'value-label')
+            .attr('x', barWidth / 2)
+            .attr('y', barHeight / 2)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .style('font-size', '10px')
+            .style('fill', 'var(--dark-text)')
+            .text(new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            }).format(transaction.amount))
+        }
+      })
+    }
+
+    // Create both charts
+    if (svgRefs.current[0]) createLineChart(svgRefs.current[0])
+    if (svgRefs.current[1]) createBarChart(svgRefs.current[1])
 
   }, [transactions])
 
@@ -285,17 +436,22 @@ function BalanceChartPage() {
         <div className="balance-chart-content">
           <header>
             <h1 className="page-title">Balance Charts</h1>
-            <p className="page-description">Monthly breakdown of your account balance</p>
+            <p className="page-description">Transaction history and balance trends</p>
           </header>
 
           <div className="charts-container">
-            {sortedMonths.map((monthKey, index) => (
-              <div key={monthKey} className="chart-wrapper">
-                <svg ref={(el: SVGSVGElement | null) => {
-                  svgRefs.current[index] = el
-                }}></svg>
-              </div>
-            ))}
+            <div className="chart-wrapper">
+              <h2 className="chart-title">Balance Over Time</h2>
+              <svg ref={(el: SVGSVGElement | null) => {
+                svgRefs.current[0] = el
+              }}></svg>
+            </div>
+            <div className="chart-wrapper">
+              <h2 className="chart-title">Transaction History</h2>
+              <svg ref={(el: SVGSVGElement | null) => {
+                svgRefs.current[1] = el
+              }}></svg>
+            </div>
           </div>
         </div>
       </main>
