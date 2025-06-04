@@ -2,12 +2,16 @@
 .home-content {
   text-align: center;
   max-width: 800px;
-  margin: 0 auto;
   padding: 2rem 0;
+  display: flex;
+  justify-content: start;
 }
 
 .home-content .page-title {
   font-size: 2.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  justify-content: start;
+  
 }
 
 .home-content .page-description {

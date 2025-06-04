@@ -15,6 +15,7 @@ import { Route as StoreIndexImport } from './routes/store/index'
 import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
 import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
+import { Route as LifeNotesIndexImport } from './routes/life-notes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
 import { Route as ClassNotesIndexImport } from './routes/class-notes/index'
@@ -44,6 +45,12 @@ const PdfExtractorIndexRoute = PdfExtractorIndexImport.update({
 const MoneyModesIndexRoute = MoneyModesIndexImport.update({
   id: '/money-modes/',
   path: '/money-modes/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LifeNotesIndexRoute = LifeNotesIndexImport.update({
+  id: '/life-notes/',
+  path: '/life-notes/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -116,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeIndexImport
       parentRoute: typeof rootRoute
     }
+    '/life-notes/': {
+      id: '/life-notes/'
+      path: '/life-notes'
+      fullPath: '/life-notes'
+      preLoaderRoute: typeof LifeNotesIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/money-modes/': {
       id: '/money-modes/'
       path: '/money-modes'
@@ -155,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
+  '/life-notes': typeof LifeNotesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
@@ -167,6 +182,7 @@ export interface FileRoutesByTo {
   '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
+  '/life-notes': typeof LifeNotesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
@@ -180,6 +196,7 @@ export interface FileRoutesById {
   '/class-notes/': typeof ClassNotesIndexRoute
   '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
+  '/life-notes/': typeof LifeNotesIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
   '/pdf-extractor/': typeof PdfExtractorIndexRoute
   '/roofing-magazine/': typeof RoofingMagazineIndexRoute
@@ -194,6 +211,7 @@ export interface FileRouteTypes {
     | '/class-notes'
     | '/gemini-chat'
     | '/home'
+    | '/life-notes'
     | '/money-modes'
     | '/pdf-extractor'
     | '/roofing-magazine'
@@ -205,6 +223,7 @@ export interface FileRouteTypes {
     | '/class-notes'
     | '/gemini-chat'
     | '/home'
+    | '/life-notes'
     | '/money-modes'
     | '/pdf-extractor'
     | '/roofing-magazine'
@@ -216,6 +235,7 @@ export interface FileRouteTypes {
     | '/class-notes/'
     | '/gemini-chat/'
     | '/home/'
+    | '/life-notes/'
     | '/money-modes/'
     | '/pdf-extractor/'
     | '/roofing-magazine/'
@@ -229,6 +249,7 @@ export interface RootRouteChildren {
   ClassNotesIndexRoute: typeof ClassNotesIndexRoute
   GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
+  LifeNotesIndexRoute: typeof LifeNotesIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
   PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
   RoofingMagazineIndexRoute: typeof RoofingMagazineIndexRoute
@@ -241,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClassNotesIndexRoute: ClassNotesIndexRoute,
   GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
+  LifeNotesIndexRoute: LifeNotesIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
   PdfExtractorIndexRoute: PdfExtractorIndexRoute,
   RoofingMagazineIndexRoute: RoofingMagazineIndexRoute,
@@ -262,6 +284,7 @@ export const routeTree = rootRoute
         "/class-notes/",
         "/gemini-chat/",
         "/home/",
+        "/life-notes/",
         "/money-modes/",
         "/pdf-extractor/",
         "/roofing-magazine/",
@@ -282,6 +305,9 @@ export const routeTree = rootRoute
     },
     "/home/": {
       "filePath": "home/index.tsx"
+    },
+    "/life-notes/": {
+      "filePath": "life-notes/index.tsx"
     },
     "/money-modes/": {
       "filePath": "money-modes/index.tsx"

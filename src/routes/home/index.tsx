@@ -12,7 +12,7 @@ function Home() {
       <Navbar />
       <main className="main-content">
         <div className="home-content">
-          <h1 className="page-title">Welcome to Hightower Builds</h1>
+          <h1 className="page-title">hightowerbuilds</h1>
        
         </div>
       </main>

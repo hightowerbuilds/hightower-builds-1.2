@@ -13,7 +13,7 @@
 .navbar-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -21,7 +21,7 @@
 .nav-links {
   display: flex;
   gap: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   padding: 0;
@@ -42,6 +42,7 @@
   box-sizing: border-box;
   border: 1px solid transparent;
   display: inline-block;
+  background: transparent;
 }
 
 .nav-link:hover {
