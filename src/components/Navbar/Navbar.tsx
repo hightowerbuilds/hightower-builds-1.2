@@ -41,6 +41,13 @@ export function Navbar() {
           >
             Roofing Magazine
           </Link>
+          <Link
+            to="/class-notes"
+            className="nav-link"
+            activeProps={{ className: 'nav-link active' }}
+          >
+            Class Notes
+          </Link>
         </div>
       </div>
     </nav>
