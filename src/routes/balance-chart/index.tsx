@@ -6,8 +6,6 @@ import type { Transaction } from '../../lib/db'
 import { db } from '../../lib/db'
 import './balance-chart.css'
 
-type ChartType = 'line' | 'stacked'
-
 export const Route = createFileRoute('/balance-chart/')({
   validateSearch: (search: Record<string, unknown>) => {
     return {

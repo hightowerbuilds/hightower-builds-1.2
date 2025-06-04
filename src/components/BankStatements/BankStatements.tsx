@@ -60,13 +60,6 @@ export function BankStatements() {
     }
   }
 
-  const formatDate = (date: Date) => 
-    date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long',
-      day: 'numeric'
-    })
-
   const formatDateRange = (start: Date, end: Date) => {
     const startStr = start.toLocaleDateString('en-US', { 
       year: 'numeric', 
