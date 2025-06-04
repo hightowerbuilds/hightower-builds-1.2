@@ -58,7 +58,7 @@ function StorePage() {
                     onClick={() => setIsCartOpen(!isCartOpen)}
                   >
                     <span className={isCartOpen ? 'cart-open' : ''}>
-                      {isCartOpen ? '\\!/' : '|||'}
+                      {isCartOpen ? '>>>' : '|||'}
                     </span>
                   </button>
                   <div className={`cart-dropdown ${isCartOpen ? 'open' : ''}`}>
