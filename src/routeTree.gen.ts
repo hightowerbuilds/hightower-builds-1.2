@@ -19,7 +19,6 @@ import { Route as LifeNotesIndexImport } from './routes/life-notes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
 import { Route as ClassNotesIndexImport } from './routes/class-notes/index'
-import { Route as BrontosaurusIndexImport } from './routes/brontosaurus/index'
 import { Route as BalanceChartIndexImport } from './routes/balance-chart/index'
 
 // Create/Update Routes
@@ -72,12 +71,6 @@ const ClassNotesIndexRoute = ClassNotesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BrontosaurusIndexRoute = BrontosaurusIndexImport.update({
-  id: '/brontosaurus/',
-  path: '/brontosaurus/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const BalanceChartIndexRoute = BalanceChartIndexImport.update({
   id: '/balance-chart/',
   path: '/balance-chart/',
@@ -93,13 +86,6 @@ declare module '@tanstack/react-router' {
       path: '/balance-chart'
       fullPath: '/balance-chart'
       preLoaderRoute: typeof BalanceChartIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/brontosaurus/': {
-      id: '/brontosaurus/'
-      path: '/brontosaurus'
-      fullPath: '/brontosaurus'
-      preLoaderRoute: typeof BrontosaurusIndexImport
       parentRoute: typeof rootRoute
     }
     '/class-notes/': {
@@ -165,7 +151,6 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/balance-chart': typeof BalanceChartIndexRoute
-  '/brontosaurus': typeof BrontosaurusIndexRoute
   '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
@@ -178,7 +163,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/balance-chart': typeof BalanceChartIndexRoute
-  '/brontosaurus': typeof BrontosaurusIndexRoute
   '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
@@ -192,7 +176,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/balance-chart/': typeof BalanceChartIndexRoute
-  '/brontosaurus/': typeof BrontosaurusIndexRoute
   '/class-notes/': typeof ClassNotesIndexRoute
   '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
@@ -207,7 +190,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/balance-chart'
-    | '/brontosaurus'
     | '/class-notes'
     | '/gemini-chat'
     | '/home'
@@ -219,7 +201,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/balance-chart'
-    | '/brontosaurus'
     | '/class-notes'
     | '/gemini-chat'
     | '/home'
@@ -231,7 +212,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/balance-chart/'
-    | '/brontosaurus/'
     | '/class-notes/'
     | '/gemini-chat/'
     | '/home/'
@@ -245,7 +225,6 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   BalanceChartIndexRoute: typeof BalanceChartIndexRoute
-  BrontosaurusIndexRoute: typeof BrontosaurusIndexRoute
   ClassNotesIndexRoute: typeof ClassNotesIndexRoute
   GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
@@ -258,7 +237,6 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   BalanceChartIndexRoute: BalanceChartIndexRoute,
-  BrontosaurusIndexRoute: BrontosaurusIndexRoute,
   ClassNotesIndexRoute: ClassNotesIndexRoute,
   GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
@@ -280,7 +258,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/balance-chart/",
-        "/brontosaurus/",
         "/class-notes/",
         "/gemini-chat/",
         "/home/",
@@ -293,9 +270,6 @@ export const routeTree = rootRoute
     },
     "/balance-chart/": {
       "filePath": "balance-chart/index.tsx"
-    },
-    "/brontosaurus/": {
-      "filePath": "brontosaurus/index.tsx"
     },
     "/class-notes/": {
       "filePath": "class-notes/index.tsx"

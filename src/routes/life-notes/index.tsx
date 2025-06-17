@@ -20,12 +20,7 @@ function LifeNotesPage() {
           </header>
 
           <div className="notes-grid">
-            <Link to="/brontosaurus" className="note-card">
-              <h2 className="note-title">Brontosaurus Publications</h2>
-              <p className="note-description">
-                Discover our collection of publications and literary works.
-              </p>
-            </Link>
+          
 
             <Link to="/roofing-magazine" className="note-card">
               <h2 className="note-title">Roofing Magazine</h2>

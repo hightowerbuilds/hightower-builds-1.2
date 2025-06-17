@@ -36,11 +36,11 @@ function StorePage() {
   const thumbnailUrl = `${BASE_URL}/images/eagle-photos/${EAGLE_IMAGES[0]}`
 
   return (
-    <div className="page-container">
+    <div className="brontosaurus-page-container">
       <Navbar />
       <main className="main-content">
         <div className="store-header">
-          <h1 className="page-title">General Store</h1>
+          <h1 className="brontosaurus-page-title">brontosaurus publications</h1>
         </div>
         
         <div className="store-sections">
