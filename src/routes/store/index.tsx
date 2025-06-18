@@ -3,37 +3,43 @@ import { Navbar } from '../../components/Navbar/Navbar'
 import { useState } from 'react'
 import './store.css'
 
-const EAGLE_IMAGES = [
-  'distant-eagle.JPG',
-  'eagle-closeup-2.JPG',
-  'eagle-closeup-3.JPG',
-  'eagle-closeup.JPG',
-  'eagle.jpg',
-  'eagleStalk.jpg',
-  'eagle-stick-2.JPG',
-  'eagle-stick.jpg'
-]
 
-const BASE_URL = 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public'
 
 export const Route = createFileRoute('/store/')({
   component: StorePage,
 })
 
 function StorePage() {
-  const [isCarouselOpen, setIsCarouselOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [isLoading, setIsLoading] = useState(true)
-  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [zineSection, setZineSection] = useState(false)
+  const [zineDisplay, setZineDisplay] = useState('none')
+  const [gameSection, setGameSection] = useState(false)
+  const [gameDisplay, setGameDisplay] = useState('none')
+  const [shopSection, setShopSection] = useState(false)
+  const [shopDisplay, setShopDisplay] = useState('none')
 
-  const categories = [
-    { id: 'all', name: 'All Items' },
-    { id: 'shirts', name: 'shirts', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/shirtsNew.png' },
-    { id: 'hoodies', name: 'hoodies', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/hoodies.png' },
-    { id: 'bags', name: 'bags', image: 'https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/bagsNew.png' }
-  ]
+  const handleZineButton = () => {
+    setZineDisplay('block')
+    setGameDisplay('none')
+    setShopDisplay('none')
+  }
 
-  const thumbnailUrl = `${BASE_URL}/images/eagle-photos/${EAGLE_IMAGES[0]}`
+  const handleGameButton = () => {
+    setGameDisplay('block')
+    setZineDisplay('none')
+    setShopDisplay('none')
+  }
+
+  const handleShopButton = () => {
+    setShopDisplay('block')
+    setZineDisplay('none')
+    setGameDisplay('none')
+  }
+
+  const handleCloseButton = () => {
+    setZineDisplay('none')
+    setGameDisplay('none')
+    setShopDisplay('none')
+  }
 
   return (
     <div className="brontosaurus-page-container">
@@ -43,92 +49,44 @@ function StorePage() {
           <h1 className="brontosaurus-page-title">brontosaurus publications</h1>
         </div>
         
-        <div className="store-sections">
-          <section className="store-section clothing-section">
-            <div className="section-header">
-              <div className="header-top">
-                <img 
-                  src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/words/clothingSketch.png"
-                  alt="Clothing Collection"
-                  className="section-title-image"
-                />
-                <div className="cart-menu">
-                  <button 
-                    className="cart-button"
-                    onClick={() => setIsCartOpen(!isCartOpen)}
-                  >
-                    <span className={isCartOpen ? 'cart-open' : ''}>
-                      {isCartOpen ? '>>>' : '|||'}
-                    </span>
-                  </button>
-                  <div className={`cart-dropdown ${isCartOpen ? 'open' : ''}`}>
-                    {/* Placeholder for cart items */}
-                  </div>
-                </div>
-              </div>
-              <nav className="category-nav">
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    className={`category-button ${selectedCategory === category.id ? 'active' : ''}`}
-                    onClick={() => setSelectedCategory(category.id)}
-                  >
-                    {category.image ? (
-                      <img 
-                        src={category.image}
-                        alt={category.name}
-                        className="category-image"
-                      />
-                    ) : (
-                      category.name
-                    )}
-                  </button>
-                ))}
-              </nav>
-            </div>
-            <div className="clothing-grid">
-              {/* Placeholder for clothing items */}
-              <div className="clothing-item">
-                <div className="item-image placeholder">Coming Soon</div>
-                <h3 className="item-title">Sample Item</h3>
-                <p className="item-price">$XX.XX</p>
-              </div>
-              {/* Add more items as needed */}
-            </div>
-          </section>
+       <div className="brontosaurus-page-nav">
+        <p  onClick={handleZineButton} className='page-nav-item'>
+          zines
+        </p>
 
-          <section className="store-section photography-section">
-            <h2 className="section-title">Photography Gallery</h2>
-            <p className="section-description">View our collection of eagle photography.</p>
-            <div className="gallery-preview">
-              <div className="preview-grid">
-                <div className="preview-item" onClick={() => setIsCarouselOpen(true)}>
-                  <img 
-                    src={thumbnailUrl}
-                    alt="Eagle Photography Preview"
-                    className="preview-image"
-                    onLoad={() => setIsLoading(false)}
-                    onError={() => setIsLoading(false)}
-                  />
-                  {isLoading && <div className="preview-image placeholder">Loading...</div>}
-                  <div className="preview-caption">eagle-photos</div>
-                </div>
-              </div>
-              <button 
-                className="gallery-button"
-                onClick={() => setIsCarouselOpen(true)}
-              >
-                View Full Gallery
-              </button>
-            </div>
-          </section>
+        <p onClick={handleGameButton} className='page-nav-item'>
+          games
+        </p>
+
+        <p onClick={handleShopButton} className='page-nav-item'>
+          shop
+        </p>
+        {
+          zineDisplay === 'block' || gameDisplay === 'block' || shopDisplay === 'block' ? (
+            <p onClick={handleCloseButton} className='page-nav-item'>
+              X
+            </p>
+          ) : <p className='page-nav-item'> {'<'}</p>
+        }
+     
+       </div>
+
+
+        <div style={{display: zineDisplay}}  className='brontosaurus-store-section'>
+          zine section
         </div>
 
-        {isCarouselOpen && (
-          <div className="carousel-wrapper">
-            {/* Placeholder for carousel component */}
-          </div>
-        )}
+        <div style={{display:gameDisplay}} className='brontosaurus-game-section'>
+          game section
+        </div>
+
+        <div style={{display: shopDisplay}} className='brontosaurus-shop-section'>
+          shop section
+        </div>
+
+      
+
+        
       </main>
     </div>
   )

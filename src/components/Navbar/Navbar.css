@@ -1,5 +1,6 @@
 .navbar {
-  background-color: #ffffff;
+  background-color: #242424;
+  color: aliceblue;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
   position: fixed;
@@ -30,7 +31,7 @@
 }
 
 .nav-link {
-  color: #333;
+  color: salmon;
   text-decoration: none;
   font-size: 1.1rem;
   padding: 0.5rem 1rem;
@@ -38,22 +39,22 @@
   transition: all 0.2s ease-in-out;
   white-space: nowrap;
   min-width: fit-content;
-  font-weight: normal;
-  box-sizing: border-box;
-  border: 1px solid transparent;
+  font-family: courier;
   display: inline-block;
   background: transparent;
 }
 
 .nav-link:hover {
-  background-color: #f5f5f5;
+  background-color: rgb(157, 77, 68);
   color: #000;
 }
 
 .nav-link.active {
-  background-color: #f0f0f0;
-  color: #000;
-  border-color: #e2e8f0;
+  background-color: rgb(35, 35, 88);
+  color: lightblue;
+  text-transform: uppercase;
+  font-family: courier;
+  font-size: larger;
 }
 
 /* Add margin to main content to account for fixed navbar */
