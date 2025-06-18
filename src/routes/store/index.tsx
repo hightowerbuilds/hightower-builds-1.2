@@ -10,11 +10,9 @@ export const Route = createFileRoute('/store/')({
 })
 
 function StorePage() {
-  const [zineSection, setZineSection] = useState(false)
+ 
   const [zineDisplay, setZineDisplay] = useState('none')
-  const [gameSection, setGameSection] = useState(false)
   const [gameDisplay, setGameDisplay] = useState('none')
-  const [shopSection, setShopSection] = useState(false)
   const [shopDisplay, setShopDisplay] = useState('none')
 
   const handleZineButton = () => {
