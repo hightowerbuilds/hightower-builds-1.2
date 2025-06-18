@@ -38,11 +38,10 @@
 }
 
 .brontosaurus-page-title {
-  font-size: 22px;
-  font-weight: normal;
-  color: seagreen;
-  margin-bottom: 1rem;
-  padding-top: 1rem;
+  margin-top: 3rem;
+  height: fit-content;
+  width: fit-content;
+  border: 2px dotted seagreen;
 }
 
 .brontosaurus-page-nav {
@@ -58,7 +57,6 @@
 }
 
 .page-nav-item:hover {
-
   color: lightgreen;
   text-decoration: underline;
   transition: all 0.3s ease;

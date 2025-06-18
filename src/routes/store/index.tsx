@@ -44,7 +44,7 @@ function StorePage() {
       <Navbar />
       <main className="main-content">
         <div className="store-header">
-          <h1 className="brontosaurus-page-title">brontosaurus publications</h1>
+          <img className="brontosaurus-page-title" src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/bronto-header.jpg" alt="brontosaurus logo" />
         </div>
         
        <div className="brontosaurus-page-nav">
