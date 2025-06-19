@@ -1,7 +1,5 @@
 .navbar {
   background-color: #242424;
-  color: aliceblue;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
   position: fixed;
   top: 0;
@@ -15,8 +13,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .nav-links {
@@ -36,7 +32,6 @@
   font-size: 20px;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  transition: all 0.2s ease-in-out;
   white-space: nowrap;
   min-width: fit-content;
   font-family: courier;
@@ -47,7 +42,7 @@
 .nav-link:hover {
   background-color: rgb(157, 77, 68);
   color: #000;
-  transition: 10ms ease-in-out;
+  transition: 20ms ease-in-out;
 }
 
 .nav-link.active {
@@ -59,25 +54,4 @@
 
 }
 
-.page-container {
-  padding-top: 4rem;
-}
 
-.zine-image {
-  width: 50%;
-  height: 50%;
-  object-fit: cover;
-  margin: 10px;
-}
-
-
-@media (max-width: 768px) {
-  .nav-links {
-    gap: 1rem;
-  }
-  
-  .nav-link {
-    font-size: 1rem;
-    padding: 0.5rem 0.75rem;
-  }
-} 

@@ -1,41 +1,19 @@
-/* Store Page Layout */
 
-
-
-.store-sections {
-  display: flex;
-  width: 100%;
-}
-
-/* Section Styles */
-.store-section {
-  background: #f8fafc;
-  padding: 2rem;
-  border-radius: 1px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 100%;
-}
-
-.section-header {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-
+/* Brontosaurus Page Layout */
 .brontosaurus-page-container {
   background-color: #242424;
   color: seagreen;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  flex: 1;
-  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+}
+
+
+/* Brontosaurus Page Images */
+.image-container-heading {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 5%;
 }
 
 .brontosaurus-page-title {
@@ -48,15 +26,11 @@
 .city-image {
   margin: 10px;
   width: 42%;
- 
+  border-radius: 1%;
 }
 
-.image-container-heading {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 5%;
-}
 
+/* Zine Navbar */
 .brontosaurus-page-nav {
   display: inline-flex;
   width: 30%;
@@ -74,4 +48,13 @@
   text-decoration: underline;
   transition: all 0.3s ease;
   cursor: pointer;
+}
+
+
+/* Zine Images */
+.zine-image {
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+  margin: 10px;
 }
