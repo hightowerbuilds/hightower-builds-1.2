@@ -33,7 +33,7 @@
 .nav-link {
   color: salmon;
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 20px;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: all 0.2s ease-in-out;
@@ -47,22 +47,30 @@
 .nav-link:hover {
   background-color: rgb(157, 77, 68);
   color: #000;
+  transition: 10ms ease-in-out;
 }
 
 .nav-link.active {
-  background-color: rgb(35, 35, 88);
-  color: lightblue;
+  transition: 10ms ease-in-out;
+  background-color: rgb(3, 45, 3);
+  color: lightgreen;
   text-transform: uppercase;
   font-family: courier;
-  font-size: larger;
+
 }
 
-/* Add margin to main content to account for fixed navbar */
 .page-container {
   padding-top: 4rem;
 }
 
-/* Responsive styles */
+.zine-image {
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+  margin: 10px;
+}
+
+
 @media (max-width: 768px) {
   .nav-links {
     gap: 1rem;

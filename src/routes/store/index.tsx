@@ -43,10 +43,12 @@ function StorePage() {
     <div className="brontosaurus-page-container">
       <Navbar />
       <main className="main-content">
-        <div className="store-header">
-          <img className="brontosaurus-page-title" src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/bronto-header.jpg" alt="brontosaurus logo" />
-          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/cityBronto.jpg" alt="" />
+       
+        <div className='image-container-heading'>
+        <img className="brontosaurus-page-title" src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/bronto-header.png" alt="brontosaurus logo" />
+        <img className="city-image" src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/cityBronto.jpg" alt="" />
         </div>
+       
         
        <div className="brontosaurus-page-nav">
         <p  onClick={handleZineButton} className='page-nav-item'>
@@ -65,18 +67,28 @@ function StorePage() {
             <p onClick={handleCloseButton} className='page-nav-item'>
               X
             </p>
-          ) : <p className='page-nav-item'> {'<'}</p>
+          ) : <p className='page-nav-item'> {'<---'}</p>
         }
      
        </div>
 
 
         <div style={{display: zineDisplay}}  className='brontosaurus-store-section'>
-          zine section
-
-          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/BrontoZineOneCover.jpg" alt="" />
-
-          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/ZineTwoCover.jpg" alt="" />
+          
+          <div style={{display: 'inline-flex'}}>
+              <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/BrontoZineOneCover.jpg" alt="" />
+              <p>
+                people and thoughts and ya know the city and stuff
+              </p>
+          </div>
+        
+        <div style={{display: 'inline-flex'}}>
+        <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/ZineTwoCover.jpg" alt="" />
+        <p>
+          more special stuff that went down back then. 
+        </p>
+        </div>
+      
         </div>
 
         <div style={{display:gameDisplay}} className='brontosaurus-game-section'>
