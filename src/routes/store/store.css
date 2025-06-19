@@ -11,9 +11,11 @@
 
 /* Brontosaurus Page Images */
 .image-container-heading {
+  position: absolute;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
-  margin-top: 5%;
+  margin-top: 10%;
 }
 
 .brontosaurus-page-title {
@@ -35,12 +37,19 @@
   display: inline-flex;
   width: 30%;
   justify-content: space-around;
+  position: absolute;
+  z-index: 1;
+  margin-top: 40%;
+  left: 10%;
+  width: 30%;
+  height: 10%;
 }
 
 .page-nav-item {
   font-family: 'Courier New', Courier, monospace;
   font-size: 26px;
   color: seagreen;
+  margin: 1%;
 }
 
 .page-nav-item:hover {
@@ -57,4 +66,16 @@
   height: 50%;
   object-fit: cover;
   margin: 10px;
+}
+
+
+.brontosaurus-store-section {
+  position: absolute;
+  margin-top: 50%;
+}
+
+.game-image {
+  position: absolute;
+  margin-top: 50%;
+  height: 10vh;
 }
