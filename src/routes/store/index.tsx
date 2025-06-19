@@ -45,6 +45,7 @@ function StorePage() {
       <main className="main-content">
         <div className="store-header">
           <img className="brontosaurus-page-title" src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/bronto-header.jpg" alt="brontosaurus logo" />
+          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/cityBronto.jpg" alt="" />
         </div>
         
        <div className="brontosaurus-page-nav">
@@ -72,6 +73,10 @@ function StorePage() {
 
         <div style={{display: zineDisplay}}  className='brontosaurus-store-section'>
           zine section
+
+          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/BrontoZineOneCover.jpg" alt="" />
+
+          <img src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/ZineTwoCover.jpg" alt="" />
         </div>
 
         <div style={{display:gameDisplay}} className='brontosaurus-game-section'>
