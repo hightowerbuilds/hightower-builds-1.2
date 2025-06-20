@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { useState } from 'react'
 import './store.css'
@@ -88,24 +88,24 @@ function StorePage() {
 
        <div style={{display: zineDisplay}}  className='brontosaurus-store-section'>
          
-         <div style={{display: 'inline-flex', justifyContent: 'space-between'}}>
-             <p>
-                 people and thoughts and ya know the city and stuff
-             </p>
-             <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/BrontoZineOneCover.jpg" alt="" />
+         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem', marginBottom: '2rem'}}>
+           <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/BrontoZineOneCover.jpg" alt="" />
+           <Link to="/zine-one" className="zine-link">
+             Read Bronto Zine One
+           </Link>
          </div>
        
-       <div style={{display: 'inline-flex', justifyContent: 'space-between'}}>
-         <p>
-           more special stuff that went down back then. 
-         </p>
-         <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/ZineTwoCover.jpg" alt="" />
+       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem'}}>
+         <img className='zine-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/zine-two/ZineTwoCover.jpg" alt="" />
+         <Link to="/zine-two" className="zine-link">
+           Read Bronto Zine Two
+         </Link>
        </div>
      
        </div>
 
        <div style={{display:gameDisplay}} className='brontosaurus-game-section'>
-         game section
+         
          <a href="https://orca-invasion-2025-ccku.vercel.app/">  <img className='game-image' src="https://gbnizxzurmbzeelacztr.supabase.co/storage/v1/object/public/images/brontosaurus-publications/orca-invasion.png" alt="" /></a>
        
        </div>

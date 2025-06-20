@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #242424;
+  background-color:transparent;
   padding: 1rem 0;
   position: fixed;
   top: 0;
@@ -15,7 +15,6 @@
   justify-content: space-evenly;
   margin: 0%;
   padding-bottom: 1%;
-  border-bottom: 1px solid lightgreen;
 }
 
 .nav-links {
@@ -31,7 +30,7 @@
   text-decoration: none;
   font-size: 20px;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 1%;
   white-space: nowrap;
   min-width: fit-content;
   font-family: courier;

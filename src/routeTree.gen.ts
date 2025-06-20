@@ -11,6 +11,8 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ZineTwoIndexImport } from './routes/zine-two/index'
+import { Route as ZineOneIndexImport } from './routes/zine-one/index'
 import { Route as StoreIndexImport } from './routes/store/index'
 import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
@@ -22,6 +24,18 @@ import { Route as ClassNotesIndexImport } from './routes/class-notes/index'
 import { Route as BalanceChartIndexImport } from './routes/balance-chart/index'
 
 // Create/Update Routes
+
+const ZineTwoIndexRoute = ZineTwoIndexImport.update({
+  id: '/zine-two/',
+  path: '/zine-two/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ZineOneIndexRoute = ZineOneIndexImport.update({
+  id: '/zine-one/',
+  path: '/zine-one/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StoreIndexRoute = StoreIndexImport.update({
   id: '/store/',
@@ -144,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreIndexImport
       parentRoute: typeof rootRoute
     }
+    '/zine-one/': {
+      id: '/zine-one/'
+      path: '/zine-one'
+      fullPath: '/zine-one'
+      preLoaderRoute: typeof ZineOneIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/zine-two/': {
+      id: '/zine-two/'
+      path: '/zine-two'
+      fullPath: '/zine-two'
+      preLoaderRoute: typeof ZineTwoIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -159,6 +187,8 @@ export interface FileRoutesByFullPath {
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
+  '/zine-one': typeof ZineOneIndexRoute
+  '/zine-two': typeof ZineTwoIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -171,6 +201,8 @@ export interface FileRoutesByTo {
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
+  '/zine-one': typeof ZineOneIndexRoute
+  '/zine-two': typeof ZineTwoIndexRoute
 }
 
 export interface FileRoutesById {
@@ -184,6 +216,8 @@ export interface FileRoutesById {
   '/pdf-extractor/': typeof PdfExtractorIndexRoute
   '/roofing-magazine/': typeof RoofingMagazineIndexRoute
   '/store/': typeof StoreIndexRoute
+  '/zine-one/': typeof ZineOneIndexRoute
+  '/zine-two/': typeof ZineTwoIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -198,6 +232,8 @@ export interface FileRouteTypes {
     | '/pdf-extractor'
     | '/roofing-magazine'
     | '/store'
+    | '/zine-one'
+    | '/zine-two'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/balance-chart'
@@ -209,6 +245,8 @@ export interface FileRouteTypes {
     | '/pdf-extractor'
     | '/roofing-magazine'
     | '/store'
+    | '/zine-one'
+    | '/zine-two'
   id:
     | '__root__'
     | '/balance-chart/'
@@ -220,6 +258,8 @@ export interface FileRouteTypes {
     | '/pdf-extractor/'
     | '/roofing-magazine/'
     | '/store/'
+    | '/zine-one/'
+    | '/zine-two/'
   fileRoutesById: FileRoutesById
 }
 
@@ -233,6 +273,8 @@ export interface RootRouteChildren {
   PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
   RoofingMagazineIndexRoute: typeof RoofingMagazineIndexRoute
   StoreIndexRoute: typeof StoreIndexRoute
+  ZineOneIndexRoute: typeof ZineOneIndexRoute
+  ZineTwoIndexRoute: typeof ZineTwoIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -245,6 +287,8 @@ const rootRouteChildren: RootRouteChildren = {
   PdfExtractorIndexRoute: PdfExtractorIndexRoute,
   RoofingMagazineIndexRoute: RoofingMagazineIndexRoute,
   StoreIndexRoute: StoreIndexRoute,
+  ZineOneIndexRoute: ZineOneIndexRoute,
+  ZineTwoIndexRoute: ZineTwoIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -265,7 +309,9 @@ export const routeTree = rootRoute
         "/money-modes/",
         "/pdf-extractor/",
         "/roofing-magazine/",
-        "/store/"
+        "/store/",
+        "/zine-one/",
+        "/zine-two/"
       ]
     },
     "/balance-chart/": {
@@ -294,6 +340,12 @@ export const routeTree = rootRoute
     },
     "/store/": {
       "filePath": "store/index.tsx"
+    },
+    "/zine-one/": {
+      "filePath": "zine-one/index.tsx"
+    },
+    "/zine-two/": {
+      "filePath": "zine-two/index.tsx"
     }
   }
 }

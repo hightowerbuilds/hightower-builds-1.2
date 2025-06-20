@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
+import { Canvas } from '@react-three/fiber'
+import { Stars } from '@react-three/drei'
 import './life-notes.css'
 
 export const Route = createFileRoute('/life-notes/')({
@@ -10,6 +12,17 @@ function LifeNotesPage() {
   return (
     <div className="page-container">
       <Navbar />
+      <Canvas style={{position: 'fixed', zIndex:0, top: 0, left: 0, width: '100%', height: '100vh'}}>
+        <Stars 
+          radius={100} 
+          depth={50} 
+          count={5000} 
+          factor={4} 
+          saturation={0} 
+          fade 
+          speed={1}
+        />
+      </Canvas>
       <main className="main-content">
         <div className="life-notes-content">
           <header>

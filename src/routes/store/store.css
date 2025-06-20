@@ -1,4 +1,3 @@
-
 /* Brontosaurus Page Layout */
 .brontosaurus-page-container {
   background-color: #242424;
@@ -6,8 +5,15 @@
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
+/* Prevent page jumping */
+body {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
 
 /* Brontosaurus Page Images */
 .image-container-heading {
@@ -72,10 +78,59 @@
 .brontosaurus-store-section {
   position: absolute;
   margin-top: 50%;
+  width: 100%;
+  left: 0;
+  right: 0;
 }
 
 .game-image {
   position: absolute;
   margin-top: 50%;
   height: 10vh;
+}
+
+/* Zine Link */
+.zine-link {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  color: seagreen;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid seagreen;
+  border-radius: 4px;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  z-index: 10;
+  position: relative;
+}
+
+.zine-link:hover {
+  color: lightgreen;
+  border-color: lightgreen;
+  background-color: rgba(144, 238, 144, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Store Page Styles */
+.store-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  color: white;
+  overflow-y: hidden; /* Disable scrolling */
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Force scrollbar to always be present to prevent layout shift */
+.store-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100vh;
+  overflow-y: hidden; /* Disable scrolling */
+  pointer-events: none;
+  z-index: -1;
 }
