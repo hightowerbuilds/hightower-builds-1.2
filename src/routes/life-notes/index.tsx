@@ -4,7 +4,7 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
 import { useRef, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Mesh } from 'three'
+import { Mesh, ShaderMaterial } from 'three'
 import './life-notes.css'
 
 export const Route = createFileRoute('/life-notes/')({
@@ -83,7 +83,56 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
   const textRef = useRef<Mesh>(null)
   const ringRef = useRef<Mesh>(null)
 
-  const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+  // June 2025 Calendar - Sunday = 0, Monday = 1, etc.
+  // June 1, 2025 is a Sunday
+  const june2025Calendar = [
+    { day: '1', dow: 'sun' }, { day: '2', dow: 'mon' }, { day: '3', dow: 'tue' },
+    { day: '4', dow: 'wed' }, { day: '5', dow: 'thu' }, { day: '6', dow: 'fri' },
+    { day: '7', dow: 'sat' }, { day: '8', dow: 'sun' }, { day: '9', dow: 'mon' },
+    { day: '10', dow: 'tue' }, { day: '11', dow: 'wed' }, { day: '12', dow: 'thu' },
+    { day: '13', dow: 'fri' }, { day: '14', dow: 'sat' }, { day: '15', dow: 'sun' },
+    { day: '16', dow: 'mon' }, { day: '17', dow: 'tue' }, { day: '18', dow: 'wed' },
+    { day: '19', dow: 'thu' }, { day: '20', dow: 'fri' }, { day: '21', dow: 'sat' },
+    { day: '22', dow: 'sun' }, { day: '23', dow: 'mon' }, { day: '24', dow: 'tue' },
+    { day: '25', dow: 'wed' }, { day: '26', dow: 'thu' }, { day: '27', dow: 'fri' },
+    { day: '28', dow: 'sat' }, { day: '29', dow: 'sun' }, { day: '30', dow: 'mon' }
+  ]
+
+  // Gradient shader material
+  const gradientMaterial = new ShaderMaterial({
+    uniforms: {
+      lightBlue: { value: [0.3, 0.5, 0.8] }, // Darker light blue
+      darkBlue: { value: [0.0, 0.0, 0.5] }   // Dark blue
+    },
+    vertexShader: `
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      
+      void main() {
+        vNormal = normalize(normalMatrix * normal);
+        vPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 lightBlue;
+      uniform vec3 darkBlue;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      
+      void main() {
+        // Create gradient based on Y position (top to bottom)
+        float t = (vPosition.y + 1.0) * 0.5; // Normalize to 0-1
+        vec3 color = mix(darkBlue, lightBlue, t);
+        
+        // Add some variation based on normal for more realistic look
+        float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+        color = mix(color, lightBlue, fresnel * 0.2); // Reduced fresnel intensity
+        
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+  })
 
   useFrame((state, delta) => {
     if (planetRef.current) {
@@ -99,23 +148,23 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
 
   return (
     <>
-      {/* Blue Planet */}
+      {/* Blue Planet with Gradient */}
       <mesh ref={planetRef} position={[0, 0, 0]}>
         <sphereGeometry args={[2.5, 32, 32]} />
-        <meshStandardMaterial color="#87CEEB" />
+        <primitive object={gradientMaterial} attach="material" />
       </mesh>
       
-      {/* Days of the Week - Rotating around planet */}
+      {/* Days of June 2025 - Rotating around planet */}
       <group ref={textRef} position={[0, 0, 0]}>
-        {daysOfWeek.map((day, index) => {
-          const angle = (index / daysOfWeek.length) * Math.PI * 2
+        {june2025Calendar.map((dateObj, index) => {
+          const angle = (index / june2025Calendar.length) * Math.PI * 2
           const x = Math.cos(angle) * 4.5
           const z = Math.sin(angle) * 4.5
           
           return (
             <DayText
-              key={day}
-              day={day}
+              key={dateObj.day}
+              day={`${dateObj.day} ${dateObj.dow}`}
               position={[x, 0, z]}
               notes={notes}
               onDayClick={onDayClick}
@@ -124,10 +173,16 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
         })}
       </group>
       
-      {/* Thin Orange Ring - Further out than text */}
+      {/* Very Thin Neon Blue Torus - Further out than text */}
       <mesh ref={ringRef} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[6, 6.05, 32]} />
-        <meshStandardMaterial color="#00ffff" side={2} transparent opacity={0.8} />
+        <torusGeometry args={[6, 0.01, 16, 32]} />
+        <meshStandardMaterial color="#00ffff" side={2} transparent opacity={0.3} />
+      </mesh>
+      
+      {/* Inner Thin Light Blue Torus */}
+      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[5.8, 0.01, 16, 32]} />
+        <meshStandardMaterial color="#87CEEB" side={2} transparent opacity={0.3} />
       </mesh>
       
       {/* Lighting */}
@@ -153,10 +208,23 @@ function LifeNotesPage() {
   const [isTextPaused, setIsTextPaused] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
   const [newNote, setNewNote] = useState('')
-  const [selectedDay, setSelectedDay] = useState('MONDAY')
+  const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(false)
 
-  const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+  // June 2025 Calendar - Sunday = 0, Monday = 1, etc.
+  // June 1, 2025 is a Sunday
+  const june2025Calendar = [
+    { day: '1', dow: 'sun' }, { day: '2', dow: 'mon' }, { day: '3', dow: 'tue' },
+    { day: '4', dow: 'wed' }, { day: '5', dow: 'thu' }, { day: '6', dow: 'fri' },
+    { day: '7', dow: 'sat' }, { day: '8', dow: 'sun' }, { day: '9', dow: 'mon' },
+    { day: '10', dow: 'tue' }, { day: '11', dow: 'wed' }, { day: '12', dow: 'thu' },
+    { day: '13', dow: 'fri' }, { day: '14', dow: 'sat' }, { day: '15', dow: 'sun' },
+    { day: '16', dow: 'mon' }, { day: '17', dow: 'tue' }, { day: '18', dow: 'wed' },
+    { day: '19', dow: 'thu' }, { day: '20', dow: 'fri' }, { day: '21', dow: 'sat' },
+    { day: '22', dow: 'sun' }, { day: '23', dow: 'mon' }, { day: '24', dow: 'tue' },
+    { day: '25', dow: 'wed' }, { day: '26', dow: 'thu' }, { day: '27', dow: 'fri' },
+    { day: '28', dow: 'sat' }, { day: '29', dow: 'sun' }, { day: '30', dow: 'mon' }
+  ]
 
   const toggleTextRotation = () => {
     console.log('Button clicked! Current text direction:', textRotationDirection)
@@ -216,6 +284,7 @@ function LifeNotesPage() {
       <main className="main-content">
         <div className="life-notes-content">
           <h1 className="notes-title-3d">NOTES THAT FLOAT</h1>
+          <h1 className="date-title-3d">JUNE 2025</h1>
           
           {/* Text Rotation Toggle Button */}
           <button 
@@ -244,8 +313,8 @@ function LifeNotesPage() {
                       onChange={(e) => setSelectedDay(e.target.value)}
                       className="day-select"
                     >
-                      {daysOfWeek.map(day => (
-                        <option key={day} value={day}>{day}</option>
+                      {june2025Calendar.map(dateObj => (
+                        <option key={dateObj.day} value={`${dateObj.day} ${dateObj.dow}`}>{`${dateObj.day} ${dateObj.dow}`}</option>
                       ))}
                     </select>
                   </div>
@@ -273,7 +342,7 @@ function LifeNotesPage() {
           
           {/* Planet Scene Canvas */}
           <div className="planet-scene-container">
-            <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
+            <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
               <PlanetScene 
                 textRotationDirection={textRotationDirection} 
                 notes={notes} 
