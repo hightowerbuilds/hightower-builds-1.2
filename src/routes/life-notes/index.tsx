@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Mesh, ShaderMaterial } from 'three'
 import './life-notes.css'
@@ -134,7 +134,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
     `
   })
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (planetRef.current) {
       planetRef.current.rotation.y += delta * 0.3
     }
