@@ -14,13 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as ZineTwoIndexImport } from './routes/zine-two/index'
 import { Route as ZineOneIndexImport } from './routes/zine-one/index'
 import { Route as StoreIndexImport } from './routes/store/index'
-import { Route as RoofingMagazineIndexImport } from './routes/roofing-magazine/index'
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
 import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
 import { Route as LifeNotesIndexImport } from './routes/life-notes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
-import { Route as ClassNotesIndexImport } from './routes/class-notes/index'
 import { Route as BalanceChartIndexImport } from './routes/balance-chart/index'
 
 // Create/Update Routes
@@ -40,12 +38,6 @@ const ZineOneIndexRoute = ZineOneIndexImport.update({
 const StoreIndexRoute = StoreIndexImport.update({
   id: '/store/',
   path: '/store/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const RoofingMagazineIndexRoute = RoofingMagazineIndexImport.update({
-  id: '/roofing-magazine/',
-  path: '/roofing-magazine/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -79,12 +71,6 @@ const GeminiChatIndexRoute = GeminiChatIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ClassNotesIndexRoute = ClassNotesIndexImport.update({
-  id: '/class-notes/',
-  path: '/class-notes/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const BalanceChartIndexRoute = BalanceChartIndexImport.update({
   id: '/balance-chart/',
   path: '/balance-chart/',
@@ -100,13 +86,6 @@ declare module '@tanstack/react-router' {
       path: '/balance-chart'
       fullPath: '/balance-chart'
       preLoaderRoute: typeof BalanceChartIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/class-notes/': {
-      id: '/class-notes/'
-      path: '/class-notes'
-      fullPath: '/class-notes'
-      preLoaderRoute: typeof ClassNotesIndexImport
       parentRoute: typeof rootRoute
     }
     '/gemini-chat/': {
@@ -144,13 +123,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PdfExtractorIndexImport
       parentRoute: typeof rootRoute
     }
-    '/roofing-magazine/': {
-      id: '/roofing-magazine/'
-      path: '/roofing-magazine'
-      fullPath: '/roofing-magazine'
-      preLoaderRoute: typeof RoofingMagazineIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/store/': {
       id: '/store/'
       path: '/store'
@@ -179,13 +151,11 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/balance-chart': typeof BalanceChartIndexRoute
-  '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/life-notes': typeof LifeNotesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
-  '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
   '/zine-one': typeof ZineOneIndexRoute
   '/zine-two': typeof ZineTwoIndexRoute
@@ -193,13 +163,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/balance-chart': typeof BalanceChartIndexRoute
-  '/class-notes': typeof ClassNotesIndexRoute
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/life-notes': typeof LifeNotesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
-  '/roofing-magazine': typeof RoofingMagazineIndexRoute
   '/store': typeof StoreIndexRoute
   '/zine-one': typeof ZineOneIndexRoute
   '/zine-two': typeof ZineTwoIndexRoute
@@ -208,13 +176,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/balance-chart/': typeof BalanceChartIndexRoute
-  '/class-notes/': typeof ClassNotesIndexRoute
   '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
   '/life-notes/': typeof LifeNotesIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
   '/pdf-extractor/': typeof PdfExtractorIndexRoute
-  '/roofing-magazine/': typeof RoofingMagazineIndexRoute
   '/store/': typeof StoreIndexRoute
   '/zine-one/': typeof ZineOneIndexRoute
   '/zine-two/': typeof ZineTwoIndexRoute
@@ -224,39 +190,33 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/balance-chart'
-    | '/class-notes'
     | '/gemini-chat'
     | '/home'
     | '/life-notes'
     | '/money-modes'
     | '/pdf-extractor'
-    | '/roofing-magazine'
     | '/store'
     | '/zine-one'
     | '/zine-two'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/balance-chart'
-    | '/class-notes'
     | '/gemini-chat'
     | '/home'
     | '/life-notes'
     | '/money-modes'
     | '/pdf-extractor'
-    | '/roofing-magazine'
     | '/store'
     | '/zine-one'
     | '/zine-two'
   id:
     | '__root__'
     | '/balance-chart/'
-    | '/class-notes/'
     | '/gemini-chat/'
     | '/home/'
     | '/life-notes/'
     | '/money-modes/'
     | '/pdf-extractor/'
-    | '/roofing-magazine/'
     | '/store/'
     | '/zine-one/'
     | '/zine-two/'
@@ -265,13 +225,11 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   BalanceChartIndexRoute: typeof BalanceChartIndexRoute
-  ClassNotesIndexRoute: typeof ClassNotesIndexRoute
   GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   LifeNotesIndexRoute: typeof LifeNotesIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
   PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
-  RoofingMagazineIndexRoute: typeof RoofingMagazineIndexRoute
   StoreIndexRoute: typeof StoreIndexRoute
   ZineOneIndexRoute: typeof ZineOneIndexRoute
   ZineTwoIndexRoute: typeof ZineTwoIndexRoute
@@ -279,13 +237,11 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   BalanceChartIndexRoute: BalanceChartIndexRoute,
-  ClassNotesIndexRoute: ClassNotesIndexRoute,
   GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   LifeNotesIndexRoute: LifeNotesIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
   PdfExtractorIndexRoute: PdfExtractorIndexRoute,
-  RoofingMagazineIndexRoute: RoofingMagazineIndexRoute,
   StoreIndexRoute: StoreIndexRoute,
   ZineOneIndexRoute: ZineOneIndexRoute,
   ZineTwoIndexRoute: ZineTwoIndexRoute,
@@ -302,13 +258,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/balance-chart/",
-        "/class-notes/",
         "/gemini-chat/",
         "/home/",
         "/life-notes/",
         "/money-modes/",
         "/pdf-extractor/",
-        "/roofing-magazine/",
         "/store/",
         "/zine-one/",
         "/zine-two/"
@@ -316,9 +270,6 @@ export const routeTree = rootRoute
     },
     "/balance-chart/": {
       "filePath": "balance-chart/index.tsx"
-    },
-    "/class-notes/": {
-      "filePath": "class-notes/index.tsx"
     },
     "/gemini-chat/": {
       "filePath": "gemini-chat/index.tsx"
@@ -334,9 +285,6 @@ export const routeTree = rootRoute
     },
     "/pdf-extractor/": {
       "filePath": "pdf-extractor/index.tsx"
-    },
-    "/roofing-magazine/": {
-      "filePath": "roofing-magazine/index.tsx"
     },
     "/store/": {
       "filePath": "store/index.tsx"
