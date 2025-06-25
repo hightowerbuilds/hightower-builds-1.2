@@ -49,6 +49,7 @@ function DayText({ day, position, notes, onDayClick }: {
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
+        font="/fonts/Courier.ttf"
         onClick={() => onDayClick(day)}
       >
         {day}
@@ -59,14 +60,15 @@ function DayText({ day, position, notes, onDayClick }: {
         <Text
           key={note.id}
           ref={(el: any) => notesRefs.current[index] = el}
-          position={[0, -0.4 - (index * 0.15), 0]}
+          position={[0, -0.4 - (index * 0.35), 0]}
           fontSize={0.08}
           color="#87CEEB"
           anchorX="center"
           anchorY="middle"
           maxWidth={2}
+          font="/fonts/Courier.ttf"
         >
-          {note.content}
+          {index + 1}. {note.content}
         </Text>
       ))}
     </group>
@@ -136,10 +138,10 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
 
   useFrame((_state, delta) => {
     if (planetRef.current) {
-      planetRef.current.rotation.y += delta * 0.3
+      planetRef.current.rotation.y += delta * 0.1
     }
     if (textRef.current && !isTextPaused) {
-      textRef.current.rotation.y += delta * 0.2 * textRotationDirection
+      textRef.current.rotation.y += delta * 0.1 * textRotationDirection
     }
     if (ringRef.current) {
       ringRef.current.rotation.z += delta * 0.15
@@ -203,7 +205,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
   )
 }
 
-function LifeNotesPage() {
+export function LifeNotesPage() {
   const [textRotationDirection, setTextRotationDirection] = useState(1)
   const [isTextPaused, setIsTextPaused] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
@@ -255,9 +257,14 @@ function LifeNotesPage() {
         content: newNote.trim()
       }
       setNotes(prev => [...prev, newNoteObj])
-      setNewNote('')
-      setShowInput(false)
+      setNewNote('') // Clear the input but keep form open
+      // Don't close the form - allow multiple entries
     }
+  }
+
+  const handleDone = () => {
+    setShowInput(false)
+    setNewNote('')
   }
 
   const handleCancel = () => {
@@ -319,6 +326,22 @@ function LifeNotesPage() {
                     </select>
                   </div>
                   
+                  {/* Show existing notes for this day */}
+                  <div className="existing-notes">
+                    <h4>Existing notes for {selectedDay}:</h4>
+                    {notes.filter(note => note.day === selectedDay).length > 0 ? (
+                      <ul className="notes-list">
+                        {notes.filter(note => note.day === selectedDay).map((note, index) => (
+                          <li key={note.id} className="note-item">
+                            {index + 1}. {note.content}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="no-notes">No notes yet for this day</p>
+                    )}
+                  </div>
+                  
                   <input
                     type="text"
                     value={newNote}
@@ -328,13 +351,19 @@ function LifeNotesPage() {
                     autoFocus
                   />
                   
-                  <button type="submit" className="save-btn">
-                    Save
-                  </button>
-                  
-                  <button type="button" onClick={handleCancel} className="cancel-btn">
-                    Cancel
-                  </button>
+                  <div className="button-group">
+                    <button type="submit" className="save-btn">
+                      Add Note
+                    </button>
+                    
+                    <button type="button" onClick={handleDone} className="done-btn">
+                      Done
+                    </button>
+                    
+                    <button type="button" onClick={handleCancel} className="cancel-btn">
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>

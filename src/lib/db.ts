@@ -1,18 +1,27 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './database.types'
 
-// Initialize the Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Initialize the Supabase client lazily
+let supabaseClient: ReturnType<typeof createClient<Database>> | null = null
 
-if (!supabaseUrl || !supabaseKey) {
-  const missingVars = []
-  if (!supabaseUrl) missingVars.push('VITE_SUPABASE_URL')
-  if (!supabaseKey) missingVars.push('VITE_SUPABASE_ANON_KEY')
-  throw new Error(`Missing required Supabase environment variables: ${missingVars.join(', ')}. Please add these to your deployment environment variables.`)
+const getSupabaseClient = () => {
+  if (!supabaseClient) {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+      const missingVars = []
+      if (!supabaseUrl) missingVars.push('VITE_SUPABASE_URL')
+      if (!supabaseKey) missingVars.push('VITE_SUPABASE_ANON_KEY')
+      throw new Error(`Missing required Supabase environment variables: ${missingVars.join(', ')}. Please add these to your deployment environment variables.`)
+    }
+
+    supabaseClient = createClient<Database>(supabaseUrl, supabaseKey)
+  }
+  return supabaseClient
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseKey)
+export const supabase = getSupabaseClient()
 
 export interface Transaction {
   id: number

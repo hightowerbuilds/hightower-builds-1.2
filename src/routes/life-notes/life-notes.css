@@ -182,8 +182,9 @@
 
 .input-container {
   display: flex;
-  gap: 8px;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .day-select-container {
@@ -198,14 +199,13 @@
   color: #ffffff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
-  outline: none;
-  cursor: pointer;
-  min-width: 100px;
+  width: 100%;
 }
 
 .day-select:focus {
+  outline: none;
   border-color: #00ffff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .day-select option {
@@ -213,68 +213,146 @@
   color: #ffffff;
 }
 
+/* Existing Notes Display */
+.existing-notes {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #87CEEB;
+  border-radius: 4px;
+  padding: 12px;
+  margin: 8px 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.existing-notes h4 {
+  color: #87CEEB;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  margin: 0 0 8px 0;
+  text-align: left;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.note-item {
+  color: #ffffff;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+}
+
+.note-item:last-child {
+  border-bottom: none;
+}
+
+.no-notes {
+  color: #87CEEB;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+}
+
 .note-input {
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid #00ffff;
   border-radius: 4px;
-  padding: 6px;
+  padding: 8px 12px;
   color: #ffffff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
-  outline: none;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .note-input:focus {
+  outline: none;
   border-color: #00ffff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .note-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .save-btn {
-  background: #00b36b;
-  border: none;
+  background: rgba(0, 255, 255, 0.2);
+  border: 1px solid #00ffff;
   border-radius: 4px;
-  padding: 6px 12px;
-  color: #000000;
+  padding: 8px 16px;
+  color: #00ffff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
   cursor: pointer;
-  flex-shrink: 0;
-  font-weight: bold;
   transition: all 0.3s ease;
+  flex: 1;
+  min-width: 80px;
 }
 
 .save-btn:hover {
-  background: #00d47a;
-  transform: scale(1.05);
+  background: rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .save-btn:active {
   transform: scale(0.95);
 }
 
-.cancel-btn {
-  background: #ff4444;
-  border: none;
+.done-btn {
+  background: rgba(135, 206, 235, 0.2);
+  border: 1px solid #87CEEB;
   border-radius: 4px;
-  padding: 6px 12px;
+  padding: 8px 16px;
+  color: #87CEEB;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 80px;
+}
+
+.done-btn:hover {
+  background: rgba(135, 206, 235, 0.3);
+  box-shadow: 0 0 10px rgba(135, 206, 235, 0.5);
+}
+
+.done-btn:active {
+  transform: scale(0.95);
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  padding: 8px 16px;
   color: #ffffff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
   cursor: pointer;
-  flex-shrink: 0;
-  font-weight: bold;
   transition: all 0.3s ease;
+  flex: 1;
+  min-width: 80px;
 }
 
 .cancel-btn:hover {
-  background: #ff6666;
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .cancel-btn:active {
