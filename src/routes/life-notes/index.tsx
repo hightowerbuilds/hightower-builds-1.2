@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Mesh, ShaderMaterial } from 'three'
 import './life-notes.css'
@@ -75,30 +75,65 @@ function DayText({ day, position, notes, onDayClick }: {
   )
 }
 
-function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }: { 
+function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, selectedDay, calendar }: { 
   textRotationDirection: number; 
   notes: Note[];
   onDayClick: (day: string) => void;
   isTextPaused: boolean;
+  selectedDay: string;
+  calendar: { day: string; dow: string }[];
 }) {
   const planetRef = useRef<Mesh>(null)
   const textRef = useRef<Mesh>(null)
   const ringRef = useRef<Mesh>(null)
 
-  // June 2025 Calendar - Sunday = 0, Monday = 1, etc.
-  // June 1, 2025 is a Sunday
-  const june2025Calendar = [
-    { day: '1', dow: 'sun' }, { day: '2', dow: 'mon' }, { day: '3', dow: 'tue' },
-    { day: '4', dow: 'wed' }, { day: '5', dow: 'thu' }, { day: '6', dow: 'fri' },
-    { day: '7', dow: 'sat' }, { day: '8', dow: 'sun' }, { day: '9', dow: 'mon' },
-    { day: '10', dow: 'tue' }, { day: '11', dow: 'wed' }, { day: '12', dow: 'thu' },
-    { day: '13', dow: 'fri' }, { day: '14', dow: 'sat' }, { day: '15', dow: 'sun' },
-    { day: '16', dow: 'mon' }, { day: '17', dow: 'tue' }, { day: '18', dow: 'wed' },
-    { day: '19', dow: 'thu' }, { day: '20', dow: 'fri' }, { day: '21', dow: 'sat' },
-    { day: '22', dow: 'sun' }, { day: '23', dow: 'mon' }, { day: '24', dow: 'tue' },
-    { day: '25', dow: 'wed' }, { day: '26', dow: 'thu' }, { day: '27', dow: 'fri' },
-    { day: '28', dow: 'sat' }, { day: '29', dow: 'sun' }, { day: '30', dow: 'mon' }
-  ]
+  // Calculate target rotation based on selected day
+  const getTargetRotation = () => {
+    const dayNumber = parseInt(selectedDay.split(' ')[0])
+    if (isNaN(dayNumber)) return 0
+    
+    // Find the index of the selected day in the calendar
+    const dayIndex = calendar.findIndex(dateObj => dateObj.day === dayNumber.toString())
+    if (dayIndex === -1) return 0
+    
+    // Calculate the angle for the selected day
+    // We want the selected day to appear at the front (z = 4.5, x = 0)
+    // Use positive rotation to go in the correct sequential direction
+    const totalDays = calendar.length
+    const targetAngle = (dayIndex / totalDays) * Math.PI * 2 - Math.PI / 2 // Positive rotation with offset
+    
+    return targetAngle
+  }
+
+  const targetRotation = getTargetRotation()
+
+  useFrame((_state, delta) => {
+    if (planetRef.current) {
+      planetRef.current.rotation.y += delta * 0.02
+    }
+    if (textRef.current) {
+      if (!isTextPaused) {
+        // Continuous rotation when not paused - much slower
+        textRef.current.rotation.y += delta * 0.05 * textRotationDirection
+      } else {
+        // Smoothly rotate to target position when paused
+        const currentRotation = textRef.current.rotation.y
+        const rotationDiff = targetRotation - currentRotation
+        
+        // Normalize the difference to take the shortest path
+        let normalizedDiff = rotationDiff
+        while (normalizedDiff > Math.PI) normalizedDiff -= Math.PI * 2
+        while (normalizedDiff < -Math.PI) normalizedDiff += Math.PI * 2
+        
+        // Smooth interpolation - slower movement to target
+        const rotationSpeed = 0.5 // Slowed from 2.0 to 0.5
+        textRef.current.rotation.y += normalizedDiff * delta * rotationSpeed
+      }
+    }
+    if (ringRef.current) {
+      ringRef.current.rotation.z += delta * 0.03
+    }
+  })
 
   // Gradient shader material
   const gradientMaterial = new ShaderMaterial({
@@ -136,18 +171,6 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
     `
   })
 
-  useFrame((_state, delta) => {
-    if (planetRef.current) {
-      planetRef.current.rotation.y += delta * 0.1
-    }
-    if (textRef.current && !isTextPaused) {
-      textRef.current.rotation.y += delta * 0.1 * textRotationDirection
-    }
-    if (ringRef.current) {
-      ringRef.current.rotation.z += delta * 0.15
-    }
-  })
-
   return (
     <>
       {/* Blue Planet with Gradient */}
@@ -156,10 +179,10 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused }:
         <primitive object={gradientMaterial} attach="material" />
       </mesh>
       
-      {/* Days of June 2025 - Rotating around planet */}
+      {/* Days of the month - Rotating around planet */}
       <group ref={textRef} position={[0, 0, 0]}>
-        {june2025Calendar.map((dateObj, index) => {
-          const angle = (index / june2025Calendar.length) * Math.PI * 2
+        {calendar.map((dateObj, index) => {
+          const angle = (index / calendar.length) * Math.PI * 2
           const x = Math.cos(angle) * 4.5
           const z = Math.sin(angle) * 4.5
           
@@ -212,21 +235,34 @@ export function LifeNotesPage() {
   const [newNote, setNewNote] = useState('')
   const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(false)
+  const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
+  const [selectedYear, setSelectedYear] = useState(2025)
 
-  // June 2025 Calendar - Sunday = 0, Monday = 1, etc.
-  // June 1, 2025 is a Sunday
-  const june2025Calendar = [
-    { day: '1', dow: 'sun' }, { day: '2', dow: 'mon' }, { day: '3', dow: 'tue' },
-    { day: '4', dow: 'wed' }, { day: '5', dow: 'thu' }, { day: '6', dow: 'fri' },
-    { day: '7', dow: 'sat' }, { day: '8', dow: 'sun' }, { day: '9', dow: 'mon' },
-    { day: '10', dow: 'tue' }, { day: '11', dow: 'wed' }, { day: '12', dow: 'thu' },
-    { day: '13', dow: 'fri' }, { day: '14', dow: 'sat' }, { day: '15', dow: 'sun' },
-    { day: '16', dow: 'mon' }, { day: '17', dow: 'tue' }, { day: '18', dow: 'wed' },
-    { day: '19', dow: 'thu' }, { day: '20', dow: 'fri' }, { day: '21', dow: 'sat' },
-    { day: '22', dow: 'sun' }, { day: '23', dow: 'mon' }, { day: '24', dow: 'tue' },
-    { day: '25', dow: 'wed' }, { day: '26', dow: 'thu' }, { day: '27', dow: 'fri' },
-    { day: '28', dow: 'sat' }, { day: '29', dow: 'sun' }, { day: '30', dow: 'mon' }
+  // Month names
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ]
+
+  // Generate days for the selected month/year
+  const daysInMonth = useMemo(() => {
+    return new Date(selectedYear, selectedMonth + 1, 0).getDate()
+  }, [selectedMonth, selectedYear])
+
+  // Get the day of week for each day
+  const getDayOfWeek = (year: number, month: number, day: number) => {
+    return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][
+      new Date(year, month, day).getDay()
+    ]
+  }
+
+  const calendar = useMemo(() => (
+    Array.from({ length: daysInMonth }, (_, i) => {
+      const day = (i + 1).toString()
+      const dow = getDayOfWeek(selectedYear, selectedMonth, i + 1)
+      return { day, dow }
+    })
+  ), [daysInMonth, selectedMonth, selectedYear])
 
   const toggleTextRotation = () => {
     console.log('Button clicked! Current text direction:', textRotationDirection)
@@ -243,9 +279,16 @@ export function LifeNotesPage() {
   }
 
   const handleDayClick = (day: string) => {
+    console.log('Day clicked:', day)
     setSelectedDay(day)
-    setShowInput(true)
+    setIsTextPaused(true) // Automatically pause rotation
     setNewNote('')
+    
+    // Small delay to let the planet start rotating to the date first
+    setTimeout(() => {
+      setShowInput(true)
+      console.log('Modal should now be visible and planet should rotate to date')
+    }, 300) // 300ms delay for dramatic effect
   }
 
   const handleAddNote = (e: React.FormEvent) => {
@@ -291,23 +334,7 @@ export function LifeNotesPage() {
       <main className="main-content">
         <div className="life-notes-content">
           <h1 className="notes-title-3d">NOTES THAT FLOAT</h1>
-          <h1 className="date-title-3d">JUNE 2025</h1>
-          
-          {/* Text Rotation Toggle Button */}
-          <button 
-            onClick={toggleTextRotation}
-            className="rotation-toggle-btn"
-          >
-            {textRotationDirection === 1 ? '>' : '<'}
-          </button>
-
-          {/* Text Stop Button */}
-          <button 
-            onClick={toggleTextPause}
-            className="rotation-stop-btn"
-          >
-            {isTextPaused ? 'go' : 'stop'}
-          </button>
+          <h1 className="date-title-3d">{monthNames[selectedMonth].toUpperCase()} {selectedYear}</h1>
 
           {/* Add Info Section - Only show when a day is clicked */}
           {showInput && (
@@ -320,8 +347,8 @@ export function LifeNotesPage() {
                       onChange={(e) => setSelectedDay(e.target.value)}
                       className="day-select"
                     >
-                      {june2025Calendar.map(dateObj => (
-                        <option key={dateObj.day} value={`${dateObj.day} ${dateObj.dow}`}>{`${dateObj.day} ${dateObj.dow}`}</option>
+                      {calendar.map(dateObj => (
+                        <option key={dateObj.day} value={`${dateObj.day} ${dateObj.dow.toUpperCase()}`}>{`${dateObj.day} ${dateObj.dow.toUpperCase()}`}</option>
                       ))}
                     </select>
                   </div>
@@ -377,8 +404,98 @@ export function LifeNotesPage() {
                 notes={notes} 
                 onDayClick={handleDayClick}
                 isTextPaused={isTextPaused}
+                selectedDay={selectedDay}
+                calendar={calendar}
               />
             </Canvas>
+          </div>
+
+          {/* Control buttons on the far left bottom */}
+          <div className="bottom-controls">
+            <div className="controls-header">Planet Controls</div>
+            <div className="controls-buttons">
+              <button 
+                onClick={toggleTextRotation}
+                className="rotation-toggle-btn"
+              >
+                {textRotationDirection === 1 ? '>' : '<'}
+              </button>
+
+              <button 
+                onClick={toggleTextPause}
+                className="rotation-stop-btn"
+              >
+                {isTextPaused ? 'go' : 'stop'}
+              </button>
+            </div>
+          </div>
+
+          {/* Toolbar for days and month navigation - moved to bottom */}
+          <div className="notes-toolbar">
+            <div className="toolbar-header">
+              <button
+                className="toolbar-month-btn"
+                onClick={() => setSelectedMonth(m => (m === 0 ? 11 : m - 1))}
+                aria-label="Previous Month"
+              >
+                &#8592;
+              </button>
+              <span className="toolbar-month-label">{monthNames[selectedMonth]} {selectedYear}</span>
+              <button
+                className="toolbar-month-btn"
+                onClick={() => setSelectedMonth(m => (m === 11 ? 0 : m + 1))}
+                aria-label="Next Month"
+              >
+                &#8594;
+              </button>
+            </div>
+            
+            <div className="toolbar-calendar">
+              <div className="toolbar-weekdays">
+                <span className="weekday-header">SUN</span>
+                <span className="weekday-header">MON</span>
+                <span className="weekday-header">TUE</span>
+                <span className="weekday-header">WED</span>
+                <span className="weekday-header">THU</span>
+                <span className="weekday-header">FRI</span>
+                <span className="weekday-header">SAT</span>
+              </div>
+              
+              <div className="toolbar-days-grid">
+                {(() => {
+                  // Get the first day of the month to determine padding
+                  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay()
+                  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
+                  
+                  // Create array with empty slots for padding
+                  const daysArray = []
+                  
+                  // Add empty slots for days before the first day of the month
+                  for (let i = 0; i < firstDayOfMonth; i++) {
+                    daysArray.push({ day: '', dow: '', isEmpty: true })
+                  }
+                  
+                  // Add all days of the month
+                  for (let i = 1; i <= daysInMonth; i++) {
+                    const dow = getDayOfWeek(selectedYear, selectedMonth, i)
+                    daysArray.push({ day: i.toString(), dow, isEmpty: false })
+                  }
+                  
+                  return daysArray.map((dateObj, index) => (
+                    <div key={index} className={`toolbar-day-cell${dateObj.isEmpty ? ' empty' : ''}`}>
+                      {!dateObj.isEmpty && (
+                        <button
+                          className={`toolbar-day-btn${selectedDay.startsWith(dateObj.day) ? ' selected' : ''}`}
+                          onClick={() => handleDayClick(`${dateObj.day} ${dateObj.dow.toUpperCase()}`)}
+                        >
+                          {dateObj.day}
+                        </button>
+                      )}
+                    </div>
+                  ))
+                })()}
+              </div>
+            </div>
           </div>
         </div>
       </main>
