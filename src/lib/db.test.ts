@@ -1,19 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { db, testConnection } from './db'
 
-// Mock the lazy initialization
-const mockSupabaseClient = {
-  from: vi.fn(() => ({
-    select: vi.fn(() => ({
-      order: vi.fn(() => ({
-        gte: vi.fn(() => ({
-          lte: vi.fn(() => ({
-            limit: vi.fn(() => Promise.resolve({ data: [], error: null }))
-          }))
-        }))
+// Create a simpler mock structure
+const createMockSupabaseQuerySimple = (returnData: any, returnError: any = null) => ({
+  select: vi.fn(() => ({
+    limit: vi.fn(() => Promise.resolve({ data: returnData, error: returnError }))
+  }))
+})
+
+const createMockSupabaseQueryOrder = (returnData: any, returnError: any = null) => ({
+  select: vi.fn(() => ({
+    order: vi.fn(() => Promise.resolve({ data: returnData, error: returnError }))
+  }))
+})
+
+const createMockSupabaseQueryDateRange = (returnData: any, returnError: any = null) => ({
+  select: vi.fn(() => ({
+    gte: vi.fn(() => ({
+      lte: vi.fn(() => ({
+        order: vi.fn(() => Promise.resolve({ data: returnData, error: returnError }))
       }))
     }))
   }))
+})
+
+// Mock the Supabase client
+const mockSupabaseClient = {
+  from: vi.fn()
 }
 
 vi.mock('@supabase/supabase-js', () => ({
@@ -27,22 +40,18 @@ describe('Database Functions', () => {
 
   describe('testConnection', () => {
     it('returns true when connection is successful', async () => {
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          limit: vi.fn(() => Promise.resolve({ data: [{}], error: null }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQuerySimple([{}], null)
+      )
 
       const result = await testConnection()
       expect(result).toBe(true)
     })
 
     it('returns false when connection fails', async () => {
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          limit: vi.fn(() => Promise.resolve({ data: null, error: new Error('Connection failed') }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQuerySimple(null, new Error('Connection failed'))
+      )
 
       const result = await testConnection()
       expect(result).toBe(false)
@@ -72,11 +81,9 @@ describe('Database Functions', () => {
         }
       ]
 
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          order: vi.fn(() => Promise.resolve({ data: mockTransactions, error: null }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQueryOrder(mockTransactions, null)
+      )
 
       const statements = await db.getBankStatements()
       
@@ -86,11 +93,9 @@ describe('Database Functions', () => {
     })
 
     it('handles empty transaction data', async () => {
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          order: vi.fn(() => Promise.resolve({ data: [], error: null }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQueryOrder([], null)
+      )
 
       const statements = await db.getBankStatements()
       
@@ -100,11 +105,9 @@ describe('Database Functions', () => {
     })
 
     it('throws error when database query fails', async () => {
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          order: vi.fn(() => Promise.resolve({ data: null, error: new Error('Database error') }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQueryOrder(null, new Error('Database error'))
+      )
 
       await expect(db.getBankStatements()).rejects.toThrow('Database error')
     })
@@ -124,15 +127,9 @@ describe('Database Functions', () => {
         }
       ]
 
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          gte: vi.fn(() => ({
-            lte: vi.fn(() => ({
-              order: vi.fn(() => Promise.resolve({ data: mockTransactions, error: null }))
-            }))
-          }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQueryDateRange(mockTransactions, null)
+      )
 
       const startDate = new Date('2025-06-01')
       const endDate = new Date('2025-06-30')
@@ -161,11 +158,9 @@ describe('Database Functions', () => {
         }
       ]
 
-      mockSupabaseClient.from.mockReturnValue({
-        select: vi.fn(() => ({
-          order: vi.fn(() => Promise.resolve({ data: mockTransactions, error: null }))
-        }))
-      })
+      mockSupabaseClient.from.mockReturnValue(
+        createMockSupabaseQueryOrder(mockTransactions, null)
+      )
 
       const transactions = await db.getTransactionsByStatementId('2025-06')
       
