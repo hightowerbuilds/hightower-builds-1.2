@@ -61,8 +61,8 @@ export async function testConnection() {
   }
 }
 
-// Run the connection test
-testConnection()
+// Remove the automatic call - let tests call it explicitly
+// testConnection()
 
 export interface DB {
   getBankStatements(): Promise<BankStatement[]>

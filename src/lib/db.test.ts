@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { db, testConnection } from './db'
+import { createClient } from '@supabase/supabase-js'
 
 // Create a simpler mock structure
 const createMockSupabaseQuerySimple = (returnData: any, returnError: any = null) => ({
@@ -25,17 +26,23 @@ const createMockSupabaseQueryDateRange = (returnData: any, returnError: any = nu
 })
 
 // Mock the Supabase client
-const mockSupabaseClient = {
-  from: vi.fn()
-}
-
 vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => mockSupabaseClient)
+  createClient: vi.fn()
 }))
 
 describe('Database Functions', () => {
+  let mockSupabaseClient: any
+
   beforeEach(() => {
     vi.clearAllMocks()
+    
+    // Create a fresh mock client for each test
+    mockSupabaseClient = {
+      from: vi.fn()
+    }
+    
+    // Set up the mock to return our client
+    vi.mocked(createClient).mockReturnValue(mockSupabaseClient)
   })
 
   describe('testConnection', () => {
