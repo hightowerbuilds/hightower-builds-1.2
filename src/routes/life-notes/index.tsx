@@ -17,6 +17,34 @@ interface Note {
   content: string
 }
 
+// Month color mapping - each month has its own gradient colors
+const monthColors = [
+  // January - Deep Purple to Light Purple
+  { light: [0.8, 0.4, 0.8], dark: [0.4, 0.0, 0.4] },
+  // February - Pink to Deep Pink
+  { light: [1.0, 0.6, 0.8], dark: [0.6, 0.2, 0.4] },
+  // March - Green to Dark Green
+  { light: [0.4, 0.8, 0.4], dark: [0.0, 0.4, 0.0] },
+  // April - Light Blue to Blue
+  { light: [0.6, 0.8, 1.0], dark: [0.2, 0.4, 0.8] },
+  // May - Yellow to Orange
+  { light: [1.0, 0.8, 0.4], dark: [0.8, 0.4, 0.0] },
+  // June - Orange to Red
+  { light: [1.0, 0.6, 0.2], dark: [0.8, 0.2, 0.0] },
+  // July - Red to Dark Red
+  { light: [1.0, 0.4, 0.4], dark: [0.6, 0.0, 0.0] },
+  // August - Orange to Brown
+  { light: [1.0, 0.5, 0.2], dark: [0.6, 0.3, 0.0] },
+  // September - Gold to Brown
+  { light: [1.0, 0.8, 0.2], dark: [0.6, 0.4, 0.0] },
+  // October - Orange to Dark Orange
+  { light: [1.0, 0.6, 0.0], dark: [0.8, 0.3, 0.0] },
+  // November - Brown to Dark Brown
+  { light: [0.8, 0.6, 0.4], dark: [0.4, 0.2, 0.0] },
+  // December - Blue to Dark Blue
+  { light: [0.4, 0.6, 1.0], dark: [0.0, 0.2, 0.6] }
+]
+
 function DayText({ day, position, notes, onDayClick }: { 
   day: string; 
   position: [number, number, number]; 
@@ -75,13 +103,14 @@ function DayText({ day, position, notes, onDayClick }: {
   )
 }
 
-function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, selectedDay, calendar }: { 
+function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, selectedDay, calendar, selectedMonth }: { 
   textRotationDirection: number; 
   notes: Note[];
   onDayClick: (day: string) => void;
   isTextPaused: boolean;
   selectedDay: string;
   calendar: { day: string; dow: string }[];
+  selectedMonth: number;
 }) {
   const planetRef = useRef<Mesh>(null)
   const textRef = useRef<Mesh>(null)
@@ -135,11 +164,11 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
     }
   })
 
-  // Gradient shader material
+  // Gradient shader material with dynamic month colors
   const gradientMaterial = new ShaderMaterial({
     uniforms: {
-      lightBlue: { value: [0.3, 0.5, 0.8] }, // Darker light blue
-      darkBlue: { value: [0.0, 0.0, 0.5] }   // Dark blue
+      lightColor: { value: monthColors[selectedMonth].light },
+      darkColor: { value: monthColors[selectedMonth].dark }
     },
     vertexShader: `
       varying vec3 vNormal;
@@ -152,24 +181,39 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
       }
     `,
     fragmentShader: `
-      uniform vec3 lightBlue;
-      uniform vec3 darkBlue;
+      uniform vec3 lightColor;
+      uniform vec3 darkColor;
       varying vec3 vNormal;
       varying vec3 vPosition;
       
       void main() {
         // Create gradient based on Y position (top to bottom)
         float t = (vPosition.y + 1.0) * 0.5; // Normalize to 0-1
-        vec3 color = mix(darkBlue, lightBlue, t);
+        vec3 color = mix(darkColor, lightColor, t);
         
         // Add some variation based on normal for more realistic look
         float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
-        color = mix(color, lightBlue, fresnel * 0.2); // Reduced fresnel intensity
+        color = mix(color, lightColor, fresnel * 0.2); // Reduced fresnel intensity
         
         gl_FragColor = vec4(color, 1.0);
       }
     `
   })
+
+  // Convert RGB array to hex color for torus rings
+  const rgbToHex = (r: number, g: number, b: number) => {
+    const toHex = (n: number) => {
+      const hex = Math.round(n * 255).toString(16)
+      return hex.length === 1 ? '0' + hex : hex
+    }
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  }
+
+  const monthColorHex = rgbToHex(
+    monthColors[selectedMonth].light[0],
+    monthColors[selectedMonth].light[1], 
+    monthColors[selectedMonth].light[2]
+  )
 
   return (
     <>
@@ -201,13 +245,13 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
       {/* Very Thin Neon Blue Torus - Further out than text */}
       <mesh ref={ringRef} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[6, 0.01, 16, 32]} />
-        <meshStandardMaterial color="#00ffff" side={2} transparent opacity={0.3} />
+        <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
       </mesh>
       
       {/* Inner Thin Light Blue Torus */}
       <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[5.8, 0.01, 16, 32]} />
-        <meshStandardMaterial color="#87CEEB" side={2} transparent opacity={0.3} />
+        <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
       </mesh>
       
       {/* Lighting */}
@@ -406,6 +450,7 @@ export function LifeNotesPage() {
                 isTextPaused={isTextPaused}
                 selectedDay={selectedDay}
                 calendar={calendar}
+                selectedMonth={selectedMonth}
               />
             </Canvas>
           </div>

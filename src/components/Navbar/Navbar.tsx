@@ -32,7 +32,7 @@ export function Navbar() {
             className="nav-link"
             activeProps={{ className: 'nav-link active' }}
           >
-            Life Notes
+            Notes that Float
           </Link>
         </div>
       </div>
