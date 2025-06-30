@@ -20,6 +20,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #242424;
+  /* Prevent horizontal scrolling on mobile */
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Layout */
@@ -29,12 +32,13 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: 4rem; /* Account for fixed navbar */
+  overflow-x: hidden;
 }
 
 .main-content {
-
   padding: 2rem;
   width: 100%;
+  box-sizing: border-box;
 }
 
 /* Typography */
@@ -43,6 +47,8 @@ body {
   font-weight: normal;
   color: var(--primary-bg);
   margin-bottom: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .page-description {
@@ -50,6 +56,8 @@ body {
   margin-bottom: 2rem;
   font-size: 1.125rem;
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Common Components */
@@ -62,6 +70,9 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  /* Ensure buttons are touch-friendly on mobile */
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .gallery-button:hover {
@@ -86,11 +97,15 @@ body {
   font-weight: bold;
   color: var(--primary-bg);
   margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .section-description {
   color: var(--text-color);
   margin-bottom: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Loading Animation */
@@ -128,5 +143,74 @@ body {
   
   .page-title {
     font-size: 1.75rem;
+  }
+
+  .page-description {
+    font-size: 1rem;
+  }
+
+  .gallery-button {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .store-section {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-description {
+    font-size: 0.9rem;
+  }
+
+  .gallery-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .store-section {
+    padding: 0.75rem;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Ensure all interactive elements are touch-friendly */
+button, 
+a, 
+input, 
+select, 
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent text from being too small to read on mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 } 

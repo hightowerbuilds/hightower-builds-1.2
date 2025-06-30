@@ -43,6 +43,10 @@
   
   /* Animation */
   animation: float 3s ease-in-out infinite;
+  
+  /* Ensure text wraps properly on mobile */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* 3D Date Title - Right Side */
@@ -77,6 +81,10 @@
   
   /* Animation */
   animation: float 3s ease-in-out infinite;
+  
+  /* Ensure text wraps properly on mobile */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Text Rotation Toggle Button - Neon Blue Style */
@@ -118,11 +126,10 @@
 /* Add Info Section */
 .add-info-section {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 500px;
-  width: 90%;
+  bottom: 2rem;
+  left: calc(50% + 250px); /* Position to the right of the toolbar (toolbar is centered, so 50% + offset) */
+  right: 2rem; /* Extend to the end of the page */
+  min-width: 400px;
   padding: 1rem;
   background: rgba(0, 0, 0, 0.9);
   border: 1px solid #00ffff;
@@ -130,7 +137,18 @@
   z-index: 1000;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 255, 255, 0.3);
-  animation: modalFadeIn 0.2s ease-out;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes modalFadeIn {
@@ -150,6 +168,8 @@
   color: #ffffff;
   margin-bottom: 1.5rem;
   text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .add-info-form {
@@ -176,6 +196,8 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
   width: 100%;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
 }
 
 .day-select:focus {
@@ -198,42 +220,38 @@
   margin: 8px 0;
   max-height: 200px;
   overflow-y: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .existing-notes h4 {
   color: #87CEEB;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.9rem;
   margin: 0 0 8px 0;
-  text-align: left;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
 }
 
 .notes-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  text-align: left;
 }
 
 .note-item {
   color: #ffffff;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.8rem;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .note-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .no-notes {
-  color: #87CEEB;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.8rem;
+  color: #666;
   font-style: italic;
-  margin: 0;
-  text-align: center;
+  font-size: 0.9rem;
 }
 
 .note-input {
@@ -246,6 +264,10 @@
   font-size: 0.9em;
   width: 100%;
   box-sizing: border-box;
+  resize: vertical;
+  min-height: 80px;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
 }
 
 .note-input:focus {
@@ -255,34 +277,37 @@
 }
 
 .note-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: #666;
 }
 
-/* Button Group */
 .button-group {
   display: flex;
   gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .save-btn {
   background: rgba(0, 255, 255, 0.2);
   border: 1px solid #00ffff;
-  border-radius: 4px;
-  padding: 8px 16px;
   color: #00ffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 80px;
+  transition: all 0.2s;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .save-btn:hover {
   background: rgba(0, 255, 255, 0.3);
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
 }
 
 .save-btn:active {
@@ -290,22 +315,26 @@
 }
 
 .done-btn {
-  background: rgba(135, 206, 235, 0.2);
-  border: 1px solid #87CEEB;
-  border-radius: 4px;
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid #00ff00;
+  color: #00ff00;
   padding: 8px 16px;
-  color: #87CEEB;
+  border-radius: 4px;
+  cursor: pointer;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 80px;
+  transition: all 0.2s;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .done-btn:hover {
-  background: rgba(135, 206, 235, 0.3);
-  box-shadow: 0 0 10px rgba(135, 206, 235, 0.5);
+  background: rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
 }
 
 .done-btn:active {
@@ -313,22 +342,26 @@
 }
 
 .cancel-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid #ffffff;
-  border-radius: 4px;
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid #ff0000;
+  color: #ff0000;
   padding: 8px 16px;
-  color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 80px;
+  transition: all 0.2s;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  background: rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
 }
 
 .cancel-btn:active {
@@ -354,27 +387,54 @@
     font-size: 2rem;
     top: 1rem;
     left: 1rem;
+    position: relative;
+    text-align: center;
+    width: 100%;
   }
   
-  .rotation-toggle-btn {
-    /* Remove old mobile styles */
+  .date-title-3d {
+    font-size: 2rem;
+    top: 1rem;
+    right: 1rem;
+    position: relative;
+    text-align: center;
+    width: 100%;
   }
   
   .planet-scene-container {
     width: 95%;
-    margin-top: -150px;
+    height: 60vh;
+    margin-top: -100px;
   }
 
   .add-info-section {
     width: 95%;
-    padding: 0.5rem;
+    padding: 0.75rem;
+    max-width: 400px;
+  }
+  
+  .add-info-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .save-btn,
+  .done-btn,
+  .cancel-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
   }
 }
 
 .bottom-controls {
   position: fixed;
   bottom: 2rem;
-  left: 2rem;
+  left: calc(50% - 500px); /* Position much further left to avoid overlap */
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid #00ffff;
   border-radius: 0.5rem;
@@ -382,9 +442,10 @@
   backdrop-filter: none;
   z-index: 1000;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 120px;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  min-width: 200px;
 }
 
 .controls-header {
@@ -394,8 +455,8 @@
   text-align: center;
   font-weight: bold;
   letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .controls-buttons {
@@ -420,6 +481,12 @@
   min-width: 2.5rem;
   text-align: center;
   text-transform: lowercase;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rotation-toggle-btn:hover,
@@ -452,6 +519,27 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.toolbar-month-label {
+  color: var(--neon-blue);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.notes-toolbar.minimized .toolbar-header {
+  margin-bottom: 0;
 }
 
 .toolbar-content {
@@ -471,6 +559,12 @@
   padding: 0.4rem 1rem;
   cursor: pointer;
   transition: all 0.2s;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toolbar-month-btn:hover {
@@ -478,13 +572,29 @@
   box-shadow: 0 0 8px var(--neon-blue);
 }
 
-.toolbar-month-label {
-  color: #fff;
+.toolbar-minimize-btn {
+  background: transparent;
+  border: none;
+  color: var(--neon-blue);
   font-family: 'Courier New', Courier, monospace;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  min-width: 120px;
-  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0.4rem 0.8rem;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-minimize-btn:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 8px var(--neon-blue);
 }
 
 .toolbar-calendar {
@@ -541,6 +651,12 @@
   outline: none;
   min-width: 2rem;
   text-align: center;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toolbar-day-btn.selected,
@@ -597,26 +713,111 @@
   }
 
   .notes-toolbar {
-    padding: 0.5rem 0.5rem;
-    gap: 0.5rem;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+    min-width: auto;
+    padding: 0.75rem;
   }
 
   .toolbar-header {
+    flex-direction: column;
     gap: 0.5rem;
+    align-items: center;
   }
 
   .toolbar-month-label {
     font-size: 1rem;
-    min-width: 100px;
+    min-width: auto;
   }
 
   .toolbar-day-btn {
     font-size: 0.8rem;
-    padding: 0.2rem 0.4rem;
-    min-width: 1.8rem;
+    padding: 0.25rem 0.5rem;
+    min-width: 1.5rem;
   }
 
   .weekday-header {
     font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .life-notes-content {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  
+  .notes-title-3d {
+    font-size: 1.75rem;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  
+  .date-title-3d {
+    font-size: 1.75rem;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .planet-scene-container {
+    width: 98%;
+    height: 50vh;
+    margin-top: -50px;
+  }
+
+  .add-info-section {
+    width: 98%;
+    padding: 0.5rem;
+    max-width: 350px;
+  }
+  
+  .add-info-title {
+    font-size: 1.125rem;
+  }
+  
+  .bottom-controls {
+    bottom: 0.75rem;
+    left: 0.75rem;
+    padding: 0.375rem;
+    min-width: 80px;
+  }
+
+  .controls-header {
+    font-size: 0.6rem;
+  }
+
+  .rotation-toggle-btn,
+  .rotation-stop-btn {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    min-width: 1.75rem;
+  }
+
+  .notes-toolbar {
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  .toolbar-month-label {
+    font-size: 0.9rem;
+  }
+
+  .toolbar-day-btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    min-width: 1.25rem;
+  }
+
+  .weekday-header {
+    font-size: 0.6rem;
+  }
+  
+  .toolbar-month-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.75rem;
   }
 } 

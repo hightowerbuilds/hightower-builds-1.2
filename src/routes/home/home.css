@@ -52,6 +52,11 @@
   
   /* Animation */
   animation: float 3s ease-in-out infinite;
+  
+  /* Ensure text wraps properly on mobile */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* 3D Quote Text */
@@ -66,6 +71,11 @@
   margin: 0 0 2rem 0;
   z-index: 10;
   position: relative;
+  
+  /* Ensure text wraps properly on mobile */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 @keyframes float {
@@ -79,18 +89,72 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .home-content {
+    margin-top: 3rem;
+    padding: 1rem 0;
+  }
+  
   .welcome-title-3d {
     font-size: 2rem;
     margin: 1rem 0 0.5rem 0;
+    padding: 0 1rem;
+    line-height: 1.2;
   }
   
   .quote-text-3d {
     font-size: 1.1rem;
     margin: 0 0 1rem 0;
     max-width: 90%;
+    padding: 0 1rem;
+    line-height: 1.5;
   }
   
+  .home-content .page-title {
+    font-size: 2rem;
+  }
+  
+  .home-content .page-description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
   .home-content {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
+    padding: 0.75rem 0;
+  }
+  
+  .welcome-title-3d {
+    font-size: 1.75rem;
+    margin: 0.75rem 0 0.5rem 0;
+    padding: 0 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  
+  .quote-text-3d {
+    font-size: 1rem;
+    margin: 0 0 0.75rem 0;
+    max-width: 95%;
+    padding: 0 0.75rem;
+    line-height: 1.4;
+  }
+  
+  .home-content .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .home-content .page-description {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .welcome-title-3d {
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  
+  .quote-text-3d {
+    font-size: 0.9rem;
   }
 } 

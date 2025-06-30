@@ -17,11 +17,15 @@
   font-size: 3rem;
   margin-bottom: 0.5rem;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .gemini-chat-content .page-description {
   font-size: 1.2rem;
   opacity: 0.9;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .chat-container {
@@ -55,6 +59,8 @@
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   color: var(--text-color);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .messages {
@@ -91,6 +97,8 @@
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .message-timestamp {
@@ -130,6 +138,8 @@
   border-radius: 6px;
   text-align: center;
   font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .input-form {
@@ -156,6 +166,8 @@
   background: var(--background-color-light);
   color: var(--text-color);
   transition: all 0.2s ease;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
 }
 
 .input-container textarea:focus {
@@ -174,6 +186,12 @@
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .send-button:hover:not(:disabled) {
@@ -195,10 +213,15 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clear-button:hover {
-  background: var(--background-color-light);
+  background: var(--background-color-hover);
   color: var(--text-color);
 }
 
@@ -207,6 +230,8 @@
   margin-top: 2rem;
   color: var(--text-color-secondary);
   font-size: 0.9rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Responsive design */
@@ -214,20 +239,156 @@
   .gemini-chat-content {
     padding: 1rem;
   }
-  
+
   .gemini-chat-content .page-title {
     font-size: 2rem;
   }
-  
+
   .message {
     max-width: 90%;
   }
-  
+
   .input-container {
     flex-direction: column;
+    gap: 0.75rem;
   }
-  
+
   .send-button {
     width: 100%;
+    padding: 0.875rem 1rem;
+  }
+  
+  .empty-state {
+    padding: 1rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 3rem;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.25rem;
+  }
+  
+  .messages {
+    padding: 0.75rem;
+  }
+  
+  .input-form {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gemini-chat-content {
+    padding: 0.75rem;
+  }
+
+  .gemini-chat-content .page-title {
+    font-size: 1.75rem;
+  }
+
+  .gemini-chat-content .page-description {
+    font-size: 1rem;
+  }
+
+  .message {
+    max-width: 95%;
+    padding: 0.75rem;
+  }
+
+  .message-content {
+    font-size: 0.9rem;
+  }
+
+  .message-timestamp {
+    font-size: 0.7rem;
+  }
+
+  .input-container textarea {
+    padding: 0.625rem;
+    font-size: 0.9rem;
+  }
+
+  .send-button {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  .clear-button {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .empty-state {
+    padding: 0.75rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 2.5rem;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.125rem;
+  }
+  
+  .messages {
+    padding: 0.5rem;
+    gap: 0.75rem;
+  }
+  
+  .input-form {
+    padding: 0.5rem;
+  }
+  
+  .error-message {
+    margin: 0.75rem;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .gemini-chat-content {
+    padding: 0.5rem;
+  }
+
+  .gemini-chat-content .page-title {
+    font-size: 1.5rem;
+  }
+
+  .gemini-chat-content .page-description {
+    font-size: 0.9rem;
+  }
+
+  .message {
+    padding: 0.5rem;
+  }
+
+  .message-content {
+    font-size: 0.85rem;
+  }
+
+  .input-container textarea {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .send-button {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .clear-button {
+    padding: 0.625rem;
+    font-size: 0.8rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 2rem;
+  }
+  
+  .empty-state h3 {
+    font-size: 1rem;
   }
 } 

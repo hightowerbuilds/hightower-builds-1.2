@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
 import { useRef, useState, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { Mesh, ShaderMaterial } from 'three'
 import './life-notes.css'
 
@@ -233,7 +232,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
           return (
             <DayText
               key={dateObj.day}
-              day={`${dateObj.day} ${dateObj.dow}`}
+              day={`${dateObj.day} ${dateObj.dow.toUpperCase()}`}
               position={[x, 0, z]}
               notes={notes}
               onDayClick={onDayClick}
@@ -280,6 +279,7 @@ export function LifeNotesPage() {
   const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
+  const [isCalendarMinimized, setIsCalendarMinimized] = useState(true)
   const selectedYear = 2025 // Fixed year, no setter needed
 
   // Month names
@@ -357,6 +357,10 @@ export function LifeNotesPage() {
   const handleCancel = () => {
     setShowInput(false)
     setNewNote('')
+  }
+
+  const toggleCalendarMinimize = () => {
+    setIsCalendarMinimized(prev => !prev)
   }
 
   console.log('Current text rotation direction:', textRotationDirection)
@@ -457,7 +461,7 @@ export function LifeNotesPage() {
 
           {/* Control buttons on the far left bottom */}
           <div className="bottom-controls">
-            <div className="controls-header">Planet Controls</div>
+            <div className="controls-header">Planet</div>
             <div className="controls-buttons">
               <button 
                 onClick={toggleTextRotation}
@@ -476,71 +480,82 @@ export function LifeNotesPage() {
           </div>
 
           {/* Toolbar for days and month navigation - moved to bottom */}
-          <div className="notes-toolbar">
+          <div className={`notes-toolbar${isCalendarMinimized ? ' minimized' : ''}`}>
             <div className="toolbar-header">
-              <button
-                className="toolbar-month-btn"
-                onClick={() => setSelectedMonth(m => (m === 0 ? 11 : m - 1))}
-                aria-label="Previous Month"
-              >
-                &#8592;
-              </button>
               <span className="toolbar-month-label">{monthNames[selectedMonth]} {selectedYear}</span>
-              <button
-                className="toolbar-month-btn"
-                onClick={() => setSelectedMonth(m => (m === 11 ? 0 : m + 1))}
-                aria-label="Next Month"
-              >
-                &#8594;
-              </button>
+              <div className="toolbar-buttons">
+                <button
+                  className="toolbar-month-btn"
+                  onClick={() => setSelectedMonth(m => (m === 0 ? 11 : m - 1))}
+                  aria-label="Previous Month"
+                >
+                  &#8592;
+                </button>
+                <button
+                  className="toolbar-month-btn"
+                  onClick={() => setSelectedMonth(m => (m === 11 ? 0 : m + 1))}
+                  aria-label="Next Month"
+                >
+                  &#8594;
+                </button>
+                <button
+                  className="toolbar-minimize-btn"
+                  onClick={toggleCalendarMinimize}
+                  aria-label={isCalendarMinimized ? "Expand Calendar" : "Minimize Calendar"}
+                >
+                  {isCalendarMinimized ? 'open' : 'close'}
+                </button>
+              </div>
             </div>
             
-            <div className="toolbar-calendar">
-              <div className="toolbar-weekdays">
-                <span className="weekday-header">SUN</span>
-                <span className="weekday-header">MON</span>
-                <span className="weekday-header">TUE</span>
-                <span className="weekday-header">WED</span>
-                <span className="weekday-header">THU</span>
-                <span className="weekday-header">FRI</span>
-                <span className="weekday-header">SAT</span>
+            {!isCalendarMinimized && (
+              <div className="toolbar-calendar">
+                <div className="toolbar-weekdays">
+                  <span className="weekday-header">SUN</span>
+                  <span className="weekday-header">MON</span>
+                  <span className="weekday-header">TUE</span>
+                  <span className="weekday-header">WED</span>
+                  <span className="weekday-header">THU</span>
+                  <span className="weekday-header">FRI</span>
+                  <span className="weekday-header">SAT</span>
+                </div>
+                
+                <div className="toolbar-days-grid">
+                  {(() => {
+                    // Get the first day of the month to determine padding
+                    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay()
+                    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
+                    
+                    // Create array with empty slots for padding
+                    const daysArray = []
+                    
+                    // Add empty slots for days before the first day of the month
+                    for (let i = 0; i < firstDayOfMonth; i++) {
+                      daysArray.push({ day: '', dow: '', isEmpty: true })
+                    }
+                    
+                    // Add all days of the month
+                    for (let i = 1; i <= daysInMonth; i++) {
+                      const dow = getDayOfWeek(selectedYear, selectedMonth, i)
+                      daysArray.push({ day: i.toString(), dow, isEmpty: false })
+                    }
+                    
+                    return daysArray.map((dateObj, index) => (
+                      <div key={index} className={`toolbar-day-cell${dateObj.isEmpty ? ' empty' : ''}`}>
+                        {!dateObj.isEmpty && (
+                          <button
+                            className={`toolbar-day-btn${selectedDay.startsWith(dateObj.day) ? ' selected' : ''}`}
+                            onClick={() => handleDayClick(`${dateObj.day} ${dateObj.dow.toUpperCase()}`)}
+                          >
+                            {dateObj.day}
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  })()}
+                </div>
               </div>
-              
-              <div className="toolbar-days-grid">
-                {(() => {
-                  // Get the first day of the month to determine padding
-                  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay()
-                  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
-                  
-                  // Create array with empty slots for padding
-                  const daysArray = []
-                  
-                  // Add empty slots for days before the first day of the month
-                  for (let i = 0; i < firstDayOfMonth; i++) {
-                    daysArray.push({ day: '', dow: '', isEmpty: true })
-                  }
-                  
-                  // Add all days of the month
-                  for (let i = 1; i <= daysInMonth; i++) {
-                    const dow = getDayOfWeek(selectedYear, selectedMonth, i)
-                    daysArray.push({ day: i.toString(), dow, isEmpty: false })
-                  }
-                  
-                  return daysArray.map((dateObj, index) => (
-                    <div key={index} className={`toolbar-day-cell${dateObj.isEmpty ? ' empty' : ''}`}>
-                      {!dateObj.isEmpty && (
-                        <button
-                          className={`toolbar-day-btn${selectedDay.startsWith(dateObj.day) ? ' selected' : ''}`}
-                          onClick={() => handleDayClick(`${dateObj.day} ${dateObj.dow.toUpperCase()}`)}
-                        >
-                          {dateObj.day}
-                        </button>
-                      )}
-                    </div>
-                  ))
-                })()}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </main>

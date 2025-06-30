@@ -18,11 +18,15 @@
 .money-modes-content .page-title {
   font-size: 3rem;
   margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .money-modes-content .page-description {
   font-size: 1.2rem;
   opacity: 0.9;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .money-modes-actions {
@@ -45,6 +49,9 @@
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   text-align: center;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .extract-statement-btn:hover {
@@ -65,6 +72,8 @@
   opacity: 0.8;
   font-weight: normal;
   color: var(--text-color);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .money-modes-grid {
@@ -85,6 +94,8 @@
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--border-color);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Responsive design */
@@ -114,6 +125,46 @@
   .extract-statement-btn .description {
     font-size: 0.8rem;
   }
+  
+  .money-modes-actions {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .money-modes-content {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .money-modes-content .page-title {
+    font-size: 1.75rem;
+  }
+
+  .money-modes-content .page-description {
+    font-size: 0.9rem;
+  }
+
+  .statements-section {
+    padding: 0.75rem;
+  }
+
+  .statements-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .extract-statement-btn {
+    padding: 0.875rem 0.75rem;
+  }
+
+  .extract-statement-btn .icon {
+    font-size: 1.25rem;
+  }
+
+  .extract-statement-btn .description {
+    font-size: 0.75rem;
+  }
 }
 
 .money-modes-links {
@@ -131,6 +182,12 @@
   border-radius: 1px;
   transition: background-color 0.2s;
   width: fit-content;
+  /* Ensure touch-friendly sizing */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .money-mode-link:hover {
@@ -139,4 +196,11 @@
 
 .money-mode-link:active {
   background: var(--primary-bg);
+}
+
+@media (max-width: 768px) {
+  .money-mode-link {
+    width: 100%;
+    justify-content: center;
+  }
 } 
