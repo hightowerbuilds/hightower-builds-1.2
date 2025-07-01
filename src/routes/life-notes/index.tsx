@@ -278,9 +278,7 @@ export function LifeNotesPage() {
   const [newNote, setNewNote] = useState('')
   const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(true)
-  const [isInputMinimized, setIsInputMinimized] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
-  const [isCalendarMinimized, setIsCalendarMinimized] = useState(false)
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(false)
   const selectedYear = 2025 // Fixed year, no setter needed
 
@@ -357,19 +355,6 @@ export function LifeNotesPage() {
     setIsToolbarMinimized(true)
   }
 
-  const handleCancel = () => {
-    setShowInput(false)
-    setNewNote('')
-  }
-
-  const toggleCalendarMinimize = () => {
-    setIsCalendarMinimized(prev => !prev)
-  }
-
-  const toggleInputMinimize = () => {
-    setIsInputMinimized(prev => !prev)
-  }
-
   const toggleToolbarMinimize = () => {
     setIsToolbarMinimized(prev => {
       const newState = !prev
@@ -433,7 +418,7 @@ export function LifeNotesPage() {
 
             {/* Add Info Section - Only show when a day is clicked */}
             {showInput && (
-              <div className={`add-info-section${isInputMinimized ? ' minimized' : ''}`}>
+              <div className="add-info-section">
                 <div className="add-info-header">
                   <h3 className="add-info-title">Add Note</h3>
                 </div>
@@ -491,7 +476,7 @@ export function LifeNotesPage() {
             )}
 
             {/* Toolbar for days and month navigation */}
-            <div className={`notes-toolbar${isCalendarMinimized ? ' minimized' : ''}`}>
+            <div className="notes-toolbar">
               <div className="toolbar-header">
                 <span className="toolbar-month-label">{monthNames[selectedMonth]} {selectedYear}</span>
                 <div className="toolbar-buttons">
@@ -512,7 +497,7 @@ export function LifeNotesPage() {
                 </div>
               </div>
               
-              {!isCalendarMinimized && (
+              {(
                 <div className="toolbar-calendar">
                   <div className="toolbar-weekdays">
                     <span className="weekday-header">SUN</span>
