@@ -20,6 +20,7 @@
   margin-bottom: 0.5rem;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  color: white;
 }
 
 .money-modes-content .page-description {
@@ -78,24 +79,57 @@
 
 .money-modes-grid {
   display: grid;
-  gap: 2rem;
+  gap: 32px;
 }
 
 .statements-section {
-  background: var(--background-color);
+  background: transparent;
   border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 24px;
+  box-shadow: none;
+  border: 1px solid white;
 }
 
 .statements-section h2 {
-  color: var(--text-color);
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border-color);
+  color: white;
+  font-size: 24px;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid white;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.modalities-section {
+  background: transparent;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: none;
+  border: 1px solid white;
+}
+
+.modalities-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modalities-section h2 {
+  color: white;
+  font-size: 24px;
+  margin: 0;
+  padding-bottom: 8px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: normal;
+}
+
+.modalities-content {
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 /* Responsive design */
@@ -114,7 +148,7 @@
   }
 
   .statements-section {
-    padding: 1rem;
+    padding: 16px;
   }
 
   .extract-statement-btn {
@@ -146,12 +180,12 @@
   }
 
   .statements-section {
-    padding: 0.75rem;
+    padding: 12px;
   }
 
   .statements-section h2 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    font-size: 20px;
+    margin-bottom: 16px;
   }
 
   .extract-statement-btn {

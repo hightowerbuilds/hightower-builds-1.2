@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { BankStatements } from '../../components/BankStatements/BankStatements'
+import { Canvas } from '@react-three/fiber'
+import { Stars } from '@react-three/drei'
+import { useState } from 'react'
 import './money-modes.css'
 
 export const Route = createFileRoute('/money-modes/')({
@@ -8,14 +11,30 @@ export const Route = createFileRoute('/money-modes/')({
 })
 
 function MoneyModesPage() {
+  const [isModalitiesOpen, setIsModalitiesOpen] = useState(false)
+
+  const toggleModalities = () => {
+    setIsModalitiesOpen(!isModalitiesOpen)
+  }
+
   return (
     <div className="page-container">
       <Navbar />
+      <Canvas style={{position: 'fixed', zIndex:0, top: 0, left: 0, width: '100%', height: '100vh'}}>
+        <Stars 
+          radius={100} 
+          depth={50} 
+          count={5000} 
+          factor={4} 
+          saturation={0} 
+          fade 
+          speed={1}
+        />
+      </Canvas>
       <main className="main-content">
         <div className="money-modes-content">
           <header>
             <h1 className="page-title">Money Modes</h1>
-            <p className="page-description">Track and analyze your financial transactions</p>
           </header>
 
           <div className="money-modes-actions">
@@ -31,8 +50,25 @@ function MoneyModesPage() {
 
           <div className="money-modes-grid">
             <section className="statements-section">
-              <h2>Your Statements</h2>
               <BankStatements />
+            </section>
+
+            <section className="modalities-section">
+              <div className="modalities-header">
+                <h2>Modalities</h2>
+                <button 
+                  onClick={toggleModalities} 
+                  className="toggle-button"
+                >
+                  {isModalitiesOpen ? 'Close' : 'Open'}
+                </button>
+              </div>
+              
+              {isModalitiesOpen && (
+                <div className="modalities-content">
+                  <p>Modalities content will go here...</p>
+                </div>
+              )}
             </section>
           </div>
         </div>

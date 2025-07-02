@@ -12,6 +12,7 @@ export function BankStatements() {
   const [selectedStatement, setSelectedStatement] = useState<BankStatement | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     loadStatements()
@@ -80,86 +81,97 @@ export function BankStatements() {
       currency: 'USD' 
     }).format(amount)
 
-  if (loading && statements.length === 0) {
-    return (
-      <div className="bank-statements-loading">
-        <span className="loading"></span>
-        Loading bank statements...
-      </div>
-    )
-  }
-
-  if (error && statements.length === 0) {
-    return (
-      <div className="bank-statements-error">
-        {error}
-        <button onClick={loadStatements} className="btn-retry">
-          Retry
-        </button>
-      </div>
-    )
+  const toggleOpen = () => {
+    console.log('Toggle clicked, current isOpen:', isOpen)
+    setIsOpen(!isOpen)
   }
 
   return (
     <div className="bank-statements">
-      <h2>Bank Statements</h2>
-      
-      <div className="statements-grid">
-        {statements.map(statement => (
-          <div 
-            key={statement.id}
-            className="statement-card"
-          >
-            <div 
-              className="statement-header"
-              onClick={() => handleStatementClick(statement)}
-            >
-              <h3>{formatDateRange(statement.dateRange.start, statement.dateRange.end)}</h3>
-              <span className="transaction-count">
-                {statement.transactionCount} transactions
-              </span>
-            </div>
-            
-            <div className="statement-summary">
-              <div className="summary-item">
-                <span>Starting Balance</span>
-                <span className="balance">
-                  {formatAmount(statement.startingBalance)}
-                </span>
-              </div>
-              <div className="summary-item">
-                <span>Ending Balance</span>
-                <span className="balance">
-                  {formatAmount(statement.endingBalance)}
-                </span>
-              </div>
-              <div className="summary-item">
-                <span>Expenditures</span>
-                <span className="expenditure">
-                  {formatAmount(statement.totalExpenditures)}
-                </span>
-              </div>
-              <div className="summary-item">
-                <span>Deposits</span>
-                <span className="deposit">
-                  {formatAmount(statement.totalDeposits)}
-                </span>
-              </div>
-            </div>
-
-            <div className="statement-actions">
-              <Link
-                to="/balance-chart"
-                search={{ statementId: statement.id }}
-                className="view-chart-btn"
-              >
-                <span className="icon">📊</span>
-                View Balance Charts
-              </Link>
-            </div>
-          </div>
-        ))}
+      <div className="bank-statements-header">
+      Bank Statements
+        <button 
+          onClick={toggleOpen} 
+          className="toggle-button"
+        >
+          {isOpen ? 'Close' : 'Open'}
+        </button>
       </div>
+      
+      {isOpen && (
+        <>
+          {loading && statements.length === 0 ? (
+            <div className="bank-statements-loading">
+              <span className="loading"></span>
+              Loading bank statements...
+            </div>
+          ) : error && statements.length === 0 ? (
+            <div className="bank-statements-error">
+              {error}
+              <button onClick={loadStatements} className="btn-retry">
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="statements-grid">
+              {statements.map(statement => (
+                <div 
+                  key={statement.id}
+                  className="statement-card"
+                >
+                  <div 
+                    className="statement-header"
+                    onClick={() => handleStatementClick(statement)}
+                  >
+                    <h3>{formatDateRange(statement.dateRange.start, statement.dateRange.end)}</h3>
+                    <span className="transaction-count">
+                      {statement.transactionCount} transactions
+                    </span>
+                  </div>
+                  
+                  <div className="statement-summary">
+                    <div className="summary-item">
+                      <span>Starting Balance</span>
+                      <span className="balance">
+                        {formatAmount(statement.startingBalance)}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span>Ending Balance</span>
+                      <span className="balance">
+                        {formatAmount(statement.endingBalance)}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span>Expenditures</span>
+                      <span className="expenditure">
+                        {formatAmount(statement.totalExpenditures)}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span>Deposits</span>
+                      <span className="deposit">
+                        {formatAmount(statement.totalDeposits)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="statement-actions">
+                    <Link
+                      to="/balance-chart"
+                      search={{ statementId: statement.id }}
+                      className="view-chart-btn"
+                    >
+                      <span className="icon">📊</span>
+                      View Balance Charts
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
 
       {selectedStatement && (
         <TransactionModal
