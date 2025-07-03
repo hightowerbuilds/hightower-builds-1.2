@@ -1,7 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
-import { Canvas } from '@react-three/fiber'
-import { Stars } from '@react-three/drei'
 import './modalities.css'
 
 export const Route = createFileRoute('/modalities/')({

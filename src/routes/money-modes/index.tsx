@@ -3,7 +3,6 @@ import { Navbar } from '../../components/Navbar/Navbar'
 import { BankStatements } from '../../components/BankStatements/BankStatements'
 import { Canvas } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
-import { useState } from 'react'
 import './money-modes.css'
 
 export const Route = createFileRoute('/money-modes/')({
