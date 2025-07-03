@@ -16,6 +16,7 @@ import { Route as ZineOneIndexImport } from './routes/zine-one/index'
 import { Route as StoreIndexImport } from './routes/store/index'
 import { Route as PdfExtractorIndexImport } from './routes/pdf-extractor/index'
 import { Route as MoneyModesIndexImport } from './routes/money-modes/index'
+import { Route as ModalitiesIndexImport } from './routes/modalities/index'
 import { Route as LifeNotesIndexImport } from './routes/life-notes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as GeminiChatIndexImport } from './routes/gemini-chat/index'
@@ -50,6 +51,12 @@ const PdfExtractorIndexRoute = PdfExtractorIndexImport.update({
 const MoneyModesIndexRoute = MoneyModesIndexImport.update({
   id: '/money-modes/',
   path: '/money-modes/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ModalitiesIndexRoute = ModalitiesIndexImport.update({
+  id: '/modalities/',
+  path: '/modalities/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -109,6 +116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LifeNotesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/modalities/': {
+      id: '/modalities/'
+      path: '/modalities'
+      fullPath: '/modalities'
+      preLoaderRoute: typeof ModalitiesIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/money-modes/': {
       id: '/money-modes/'
       path: '/money-modes'
@@ -154,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/life-notes': typeof LifeNotesIndexRoute
+  '/modalities': typeof ModalitiesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/store': typeof StoreIndexRoute
@@ -166,6 +181,7 @@ export interface FileRoutesByTo {
   '/gemini-chat': typeof GeminiChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/life-notes': typeof LifeNotesIndexRoute
+  '/modalities': typeof ModalitiesIndexRoute
   '/money-modes': typeof MoneyModesIndexRoute
   '/pdf-extractor': typeof PdfExtractorIndexRoute
   '/store': typeof StoreIndexRoute
@@ -179,6 +195,7 @@ export interface FileRoutesById {
   '/gemini-chat/': typeof GeminiChatIndexRoute
   '/home/': typeof HomeIndexRoute
   '/life-notes/': typeof LifeNotesIndexRoute
+  '/modalities/': typeof ModalitiesIndexRoute
   '/money-modes/': typeof MoneyModesIndexRoute
   '/pdf-extractor/': typeof PdfExtractorIndexRoute
   '/store/': typeof StoreIndexRoute
@@ -193,6 +210,7 @@ export interface FileRouteTypes {
     | '/gemini-chat'
     | '/home'
     | '/life-notes'
+    | '/modalities'
     | '/money-modes'
     | '/pdf-extractor'
     | '/store'
@@ -204,6 +222,7 @@ export interface FileRouteTypes {
     | '/gemini-chat'
     | '/home'
     | '/life-notes'
+    | '/modalities'
     | '/money-modes'
     | '/pdf-extractor'
     | '/store'
@@ -215,6 +234,7 @@ export interface FileRouteTypes {
     | '/gemini-chat/'
     | '/home/'
     | '/life-notes/'
+    | '/modalities/'
     | '/money-modes/'
     | '/pdf-extractor/'
     | '/store/'
@@ -228,6 +248,7 @@ export interface RootRouteChildren {
   GeminiChatIndexRoute: typeof GeminiChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   LifeNotesIndexRoute: typeof LifeNotesIndexRoute
+  ModalitiesIndexRoute: typeof ModalitiesIndexRoute
   MoneyModesIndexRoute: typeof MoneyModesIndexRoute
   PdfExtractorIndexRoute: typeof PdfExtractorIndexRoute
   StoreIndexRoute: typeof StoreIndexRoute
@@ -240,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   GeminiChatIndexRoute: GeminiChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   LifeNotesIndexRoute: LifeNotesIndexRoute,
+  ModalitiesIndexRoute: ModalitiesIndexRoute,
   MoneyModesIndexRoute: MoneyModesIndexRoute,
   PdfExtractorIndexRoute: PdfExtractorIndexRoute,
   StoreIndexRoute: StoreIndexRoute,
@@ -261,6 +283,7 @@ export const routeTree = rootRoute
         "/gemini-chat/",
         "/home/",
         "/life-notes/",
+        "/modalities/",
         "/money-modes/",
         "/pdf-extractor/",
         "/store/",
@@ -279,6 +302,9 @@ export const routeTree = rootRoute
     },
     "/life-notes/": {
       "filePath": "life-notes/index.tsx"
+    },
+    "/modalities/": {
+      "filePath": "modalities/index.tsx"
     },
     "/money-modes/": {
       "filePath": "money-modes/index.tsx"

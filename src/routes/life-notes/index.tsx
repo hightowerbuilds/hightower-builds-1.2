@@ -279,7 +279,7 @@ export function LifeNotesPage() {
   const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
-  const [isToolbarMinimized, setIsToolbarMinimized] = useState(false)
+  const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const selectedYear = 2025 // Fixed year, no setter needed
 
   // Month names

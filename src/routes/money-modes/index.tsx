@@ -11,11 +11,6 @@ export const Route = createFileRoute('/money-modes/')({
 })
 
 function MoneyModesPage() {
-  const [isModalitiesOpen, setIsModalitiesOpen] = useState(false)
-
-  const toggleModalities = () => {
-    setIsModalitiesOpen(!isModalitiesOpen)
-  }
 
   return (
     <div className="page-container">
@@ -37,38 +32,33 @@ function MoneyModesPage() {
             <h1 className="page-title">Money Modes</h1>
           </header>
 
-          <div className="money-modes-actions">
-            <Link 
-              to="/pdf-extractor" 
-              className="extract-statement-btn"
-            >
-              <span className="icon">📄</span>
-              Process New Statement
-              <span className="description">Upload and analyze your bank statement</span>
-            </Link>
-          </div>
-
           <div className="money-modes-grid">
             <section className="statements-section">
               <BankStatements />
             </section>
 
+            <section className="process-statement-section">
+              <div className="process-statement-header">
+                <h2>Process New Statement</h2>
+                <Link 
+                  to="/pdf-extractor" 
+                  className="toggle-button"
+                >
+                  Open
+                </Link>
+              </div>
+            </section>
+
             <section className="modalities-section">
               <div className="modalities-header">
                 <h2>Modalities</h2>
-                <button 
-                  onClick={toggleModalities} 
+                <Link 
+                  to="/modalities" 
                   className="toggle-button"
                 >
-                  {isModalitiesOpen ? 'Close' : 'Open'}
-                </button>
+                  Open
+                </Link>
               </div>
-              
-              {isModalitiesOpen && (
-                <div className="modalities-content">
-                  <p>Modalities content will go here...</p>
-                </div>
-              )}
             </section>
           </div>
         </div>
