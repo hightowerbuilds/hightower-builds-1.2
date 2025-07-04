@@ -137,24 +137,6 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
   const textRef = useRef<Mesh>(null)
   const ringRef = useRef<Mesh>(null)
 
-  // Calculate target rotation based on selected day
-  const getTargetRotation = () => {
-    const dayNumber = parseInt(selectedDay.split(' ')[0])
-    if (isNaN(dayNumber)) return 0
-    
-    // Find the index of the selected day in the calendar
-    const dayIndex = calendar.findIndex(dateObj => dateObj.day === dayNumber.toString())
-    if (dayIndex === -1) return 0
-    
-    // Calculate the angle for the selected day
-    // We want the selected day to appear at the front (z = 4.5, x = 0)
-    // The dates are positioned starting from angle 0 (front), so we need to rotate to that position
-    const totalDays = calendar.length
-    const targetAngle = -(dayIndex / totalDays) * Math.PI * 2 + Math.PI // Add PI to offset by 7 days (half circle)
-    
-    return targetAngle
-  }
-
   useFrame((_state, delta) => {
     if (!isTextPaused) {
       // Only move when not paused
