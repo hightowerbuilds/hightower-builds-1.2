@@ -280,6 +280,7 @@ export function LifeNotesPage() {
   const [showInput, setShowInput] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
+  const [isHeadingHidden, setIsHeadingHidden] = useState(false)
   const selectedYear = 2025 // Fixed year, no setter needed
 
   // Month names
@@ -384,8 +385,17 @@ export function LifeNotesPage() {
       </Canvas>
       <main className="main-content">
         <div className="life-notes-content">
-          <h1 className="notes-title-3d">NOTES THAT FLOAT</h1>
-          <h1 className="date-title-3d">{monthNames[selectedMonth].toUpperCase()} {selectedYear}</h1>
+          <button 
+            className={`heading-toggle-btn${isHeadingHidden ? ' hidden-state' : ''}`}
+            onClick={() => setIsHeadingHidden(!isHeadingHidden)}
+            aria-label={isHeadingHidden ? "Show heading" : "Hide heading"}
+          />
+          {!isHeadingHidden && (
+            <>
+              <h1 className="notes-title-3d">NOTES THAT FLOAT</h1>
+              <h1 className="date-title-3d">{monthNames[selectedMonth].toUpperCase()} {selectedYear}</h1>
+            </>
+          )}
 
           {/* Toolbar Container */}
           <div className={`toolbar-container${isToolbarMinimized ? ' minimized' : ''}`}>
@@ -452,13 +462,13 @@ export function LifeNotesPage() {
                       )}
                     </div>
                     
-                    <input
-                      type="text"
+                    <textarea
                       value={newNote}
                       onChange={(e) => setNewNote(e.target.value)}
                       placeholder="Enter information"
                       className="note-input"
                       autoFocus
+                      rows={3}
                     />
                     
                     <div className="button-group">

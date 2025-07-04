@@ -11,6 +11,38 @@
   position: relative;
 }
 
+/* Heading Toggle Button */
+.heading-toggle-btn {
+  position: absolute;
+  top: calc(2rem + 15px);
+  left: calc(0.2rem - 5px);
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  z-index: 25;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  min-width: 15px;
+  min-height: 15px;
+}
+
+.heading-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
+.heading-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.heading-toggle-btn.hidden-state {
+  background: rgba(255, 255, 255, 0.8);
+}
+
 /* 3D Notes Title */
 .notes-title-3d {
   font-family: 'Courier New', Courier, monospace;
@@ -211,7 +243,8 @@
   border-radius: 0.5rem;
   padding: 1rem;
   backdrop-filter: none;
-  min-width: 400px;
+  width: 600px;
+  max-width: 600px;
   z-index: 1000;
 }
 
@@ -353,19 +386,24 @@
 }
 
 .note-input {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid #00ffff;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #87CEEB;
   border-radius: 4px;
   padding: 8px 12px;
-  color: #ffffff;
+  color: #000000;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
-  resize: vertical;
+  resize: none;
   min-height: 80px;
-  /* Ensure touch-friendly sizing */
-  min-height: 44px;
+  max-height: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .note-input:focus {
@@ -375,7 +413,7 @@
 }
 
 .note-input::placeholder {
-  color: #666;
+  color: #000000;
 }
 
 .button-group {
