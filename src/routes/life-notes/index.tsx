@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
+import { LifeNotesToolbar } from '../../components/LifeNotesToolbar/LifeNotesToolbar'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
 import { useRef, useState, useMemo } from 'react'
-import { Mesh, ShaderMaterial } from 'three'
+import { Mesh, ShaderMaterial, PlaneGeometry } from 'three'
+import * as THREE from 'three'
 import './life-notes.css'
 
 export const Route = createFileRoute('/life-notes/')({
@@ -44,16 +46,20 @@ const monthColors = [
   { light: [0.4, 0.6, 1.0], dark: [0.0, 0.2, 0.6] }
 ]
 
-function DayText({ day, position, notes, onDayClick }: { 
+function DayText({ day, position, notes, onDayClick, selectedDay }: { 
   day: string; 
   position: [number, number, number]; 
   notes: Note[];
   onDayClick: (day: string) => void;
+  selectedDay: string;
 }) {
   const textRef = useRef<Mesh>(null)
   const notesRefs = useRef<(Mesh | null)[]>([])
+  const backgroundRefs = useRef<(Mesh | null)[]>([])
+  const noteHeights = useRef<number[]>([])
   const { camera } = useThree()
   const dayNotes = notes.filter(note => note.day === day)
+  const isSelected = day === selectedDay
 
   useFrame(() => {
     if (textRef.current) {
@@ -61,6 +67,12 @@ function DayText({ day, position, notes, onDayClick }: {
     }
     // Make all notes text face the camera
     notesRefs.current.forEach(ref => {
+      if (ref) {
+        ref.lookAt(camera.position)
+      }
+    })
+    // Make all background planes face the camera
+    backgroundRefs.current.forEach(ref => {
       if (ref) {
         ref.lookAt(camera.position)
       }
@@ -83,21 +95,53 @@ function DayText({ day, position, notes, onDayClick }: {
       </Text>
       
       {/* Display notes for this day */}
-      {dayNotes.map((note, index) => (
-        <Text
-          key={note.id}
-          ref={(el: any) => notesRefs.current[index] = el}
-          position={[0, -0.4 - (index * 0.35), 0]}
-          fontSize={0.08}
-          color="#87CEEB"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={2}
-          font="/fonts/Courier.ttf"
-        >
-          {index + 1}. {note.content}
-        </Text>
-      ))}
+      {dayNotes.map((note, index) => {
+        // Calculate position based on previous note heights
+        let yPosition = -0.4
+        for (let i = 0; i < index; i++) {
+          yPosition -= (noteHeights.current[i] || 0.4) + 0.1 // Add spacing between notes
+        }
+        
+        return (
+          <group key={note.id} position={[0, yPosition, 0]}>
+            <Text
+              ref={(el: any) => notesRefs.current[index] = el}
+              position={[0, 0.05, 0]}
+              fontSize={0.08}
+              color="#87CEEB"
+              anchorX="center"
+              anchorY="middle"
+              maxWidth={2}
+              font="/fonts/Courier.ttf"
+              onSync={(text) => {
+                // Calculate background height based on actual text height
+                if (text && isSelected && backgroundRefs.current[index]) {
+                  const textHeight = text.geometry.boundingBox?.max.y - text.geometry.boundingBox?.min.y || 0.4
+                  noteHeights.current[index] = textHeight
+                  const backgroundMesh = backgroundRefs.current[index]
+                  if (backgroundMesh) {
+                    backgroundMesh.geometry.dispose()
+                    backgroundMesh.geometry = new THREE.PlaneGeometry(2.5, Math.max(0.4, textHeight + 0.1))
+                  }
+                }
+              }}
+            >
+              {index + 1}. {note.content}
+            </Text>
+            
+            {/* Black background for note when date is selected */}
+            {isSelected && (
+              <mesh 
+                ref={(el: any) => backgroundRefs.current[index] = el}
+                position={[0, -0.01, 0]}
+              >
+                <planeGeometry args={[2.5, 0.4]} />
+                <meshBasicMaterial color="#000000" transparent opacity={0.8} />
+              </mesh>
+            )}
+          </group>
+        )
+      })}
     </group>
   )
 }
@@ -126,9 +170,9 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
     
     // Calculate the angle for the selected day
     // We want the selected day to appear at the front (z = 4.5, x = 0)
-    // Use positive rotation to go in the correct sequential direction
+    // The dates are positioned starting from angle 0 (front), so we need to rotate to that position
     const totalDays = calendar.length
-    const targetAngle = (dayIndex / totalDays) * Math.PI * 2 - Math.PI / 2 // Positive rotation with offset
+    const targetAngle = -(dayIndex / totalDays) * Math.PI * 2 + Math.PI // Add PI to offset by 7 days (half circle)
     
     return targetAngle
   }
@@ -136,31 +180,20 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
   const targetRotation = getTargetRotation()
 
   useFrame((_state, delta) => {
-    if (planetRef.current) {
-      planetRef.current.rotation.y += delta * 0.02
-    }
-    if (textRef.current) {
-      if (!isTextPaused) {
+    if (!isTextPaused) {
+      // Only move when not paused
+      if (planetRef.current) {
+        planetRef.current.rotation.y += delta * 0.02
+      }
+      if (textRef.current) {
         // Continuous rotation when not paused - much slower
         textRef.current.rotation.y += delta * 0.05 * textRotationDirection
-      } else {
-        // Smoothly rotate to target position when paused
-        const currentRotation = textRef.current.rotation.y
-        const rotationDiff = targetRotation - currentRotation
-        
-        // Normalize the difference to take the shortest path
-        let normalizedDiff = rotationDiff
-        while (normalizedDiff > Math.PI) normalizedDiff -= Math.PI * 2
-        while (normalizedDiff < -Math.PI) normalizedDiff += Math.PI * 2
-        
-        // Smooth interpolation - slower movement to target
-        const rotationSpeed = 0.5 // Slowed from 2.0 to 0.5
-        textRef.current.rotation.y += normalizedDiff * delta * rotationSpeed
+      }
+      if (ringRef.current) {
+        ringRef.current.rotation.z += delta * 0.03
       }
     }
-    if (ringRef.current) {
-      ringRef.current.rotation.z += delta * 0.03
-    }
+    // When paused, do nothing - everything stays exactly where it is
   })
 
   // Gradient shader material with dynamic month colors
@@ -226,8 +259,8 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
       <group ref={textRef} position={[0, 0, 0]}>
         {calendar.map((dateObj, index) => {
           const angle = (index / calendar.length) * Math.PI * 2
-          const x = Math.cos(angle) * 4.5
-          const z = Math.sin(angle) * 4.5
+          const x = Math.cos(angle) * 5
+          const z = Math.sin(angle) * 5
           
           return (
             <DayText
@@ -236,6 +269,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
               position={[x, 0, z]}
               notes={notes}
               onDayClick={onDayClick}
+              selectedDay={selectedDay}
             />
           )
         })}
@@ -328,12 +362,14 @@ export function LifeNotesPage() {
     setSelectedDay(day)
     setIsTextPaused(true) // Automatically pause rotation
     setNewNote('')
+    setShowInput(true)
     
-    // Small delay to let the planet start rotating to the date first
-    setTimeout(() => {
-      setShowInput(true)
-      console.log('Modal should now be visible and planet should rotate to date')
-    }, 300) // 300ms delay for dramatic effect
+    // Open the toolbar if it's minimized
+    if (isToolbarMinimized) {
+      setIsToolbarMinimized(false)
+    }
+    
+    console.log('Toolbar opened and planet stopped')
   }
 
   const handleAddNote = (e: React.FormEvent) => {
@@ -397,179 +433,26 @@ export function LifeNotesPage() {
             </>
           )}
 
-          {/* Toolbar Container */}
-          <div className={`toolbar-container${isToolbarMinimized ? ' minimized' : ''}`}>
-            {/* Control buttons for planet rotation */}
-            <div className="bottom-controls">
-              <div className="controls-buttons">
-                <button 
-                  onClick={toggleTextRotation}
-                  className="rotation-toggle-btn"
-                >
-                  {textRotationDirection === 1 ? 'clockwise' : 'counter-clockwise'}
-                </button>
-
-                <button 
-                  onClick={toggleTextPause}
-                  className="rotation-stop-btn"
-                >
-                  {isTextPaused ? 'go' : 'stop'}
-                </button>
-
-                <button
-                  className="toolbar-minimize-btn"
-                  onClick={toggleToolbarMinimize}
-                  aria-label={isToolbarMinimized ? "Expand Toolbars" : "Minimize Toolbars"}
-                >
-                  {isToolbarMinimized ? 'open' : 'close'}
-                </button>
-              </div>
-            </div>
-
-            {/* Add Info Section - Only show when a day is clicked */}
-            {showInput && (
-              <div className="add-info-section">
-                <div className="add-info-header">
-                  <h3 className="add-info-title">Add Note</h3>
-                </div>
-                <form onSubmit={handleAddNote} className="add-info-form">
-                  <div className="input-container">
-                    <div className="day-select-container">
-                      <select
-                        value={selectedDay}
-                        onChange={(e) => setSelectedDay(e.target.value)}
-                        className="day-select"
-                      >
-                        {calendar.map(dateObj => (
-                          <option key={dateObj.day} value={`${dateObj.day} ${dateObj.dow.toUpperCase()}`}>{`${dateObj.day} ${dateObj.dow.toUpperCase()}`}</option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    {/* Show existing notes for this day */}
-                    <div className="existing-notes">
-                      <h4>Existing notes for {selectedDay}:</h4>
-                      {notes.filter(note => note.day === selectedDay).length > 0 ? (
-                        <ul className="notes-list">
-                          {notes.filter(note => note.day === selectedDay).map((note, index) => (
-                            <li key={note.id} className="note-item">
-                              {index + 1}. {note.content}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="no-notes">No notes yet for this day</p>
-                      )}
-                    </div>
-                    
-                    <textarea
-                      value={newNote}
-                      onChange={(e) => setNewNote(e.target.value)}
-                      placeholder="Enter information"
-                      className="note-input"
-                      autoFocus
-                      rows={3}
-                      style={{
-                        backgroundColor: 'transparent',
-                        border: '1px solid #87CEEB',
-                        color: '#87CEEB',
-                        fontFamily: 'Courier New, Courier, monospace',
-                        fontWeight: 'bold',
-                        fontSize: '18px',
-                      }}  
-                    />
-                    
-                    <div className="button-group">
-                      <button type="submit" className="save-btn">
-                        Add Note
-                      </button>
-                      
-                      <button type="button" onClick={handleDone} className="done-btn">
-                        Done
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {/* Toolbar for days and month navigation */}
-            <div className="notes-toolbar">
-              <div className="toolbar-header">
-                <span className="toolbar-month-label">{monthNames[selectedMonth]} {selectedYear}</span>
-                <div className="toolbar-buttons">
-                  <button
-                    className="toolbar-month-btn"
-                    onClick={() => setSelectedMonth(m => (m === 0 ? 11 : m - 1))}
-                    aria-label="Previous Month"
-                  >
-                    &#8592;
-                  </button>
-                  <button
-                    className="toolbar-month-btn"
-                    onClick={() => setSelectedMonth(m => (m === 11 ? 0 : m + 1))}
-                    aria-label="Next Month"
-                  >
-                    &#8594;
-                  </button>
-                </div>
-              </div>
-              
-              {(
-                <div className="toolbar-calendar">
-                  <div className="toolbar-weekdays">
-                    <span className="weekday-header">SUN</span>
-                    <span className="weekday-header">MON</span>
-                    <span className="weekday-header">TUE</span>
-                    <span className="weekday-header">WED</span>
-                    <span className="weekday-header">THU</span>
-                    <span className="weekday-header">FRI</span>
-                    <span className="weekday-header">SAT</span>
-                  </div>
-                  
-                  <div className="toolbar-days-grid">
-                    {(() => {
-                      // Get the first day of the month to determine padding
-                      const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay()
-                      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
-                      
-                      // Create array with empty slots for padding
-                      const daysArray = []
-                      
-                      // Add empty slots for days before the first day of the month
-                      for (let i = 0; i < firstDayOfMonth; i++) {
-                        daysArray.push({ day: '', dow: '', isEmpty: true })
-                      }
-                      
-                      // Add all days of the month
-                      for (let i = 1; i <= daysInMonth; i++) {
-                        const dow = getDayOfWeek(selectedYear, selectedMonth, i)
-                        daysArray.push({ day: i.toString(), dow, isEmpty: false })
-                      }
-                      
-                      return daysArray.map((dateObj, index) => {
-                        const dayString = `${dateObj.day} ${dateObj.dow.toUpperCase()}`
-                        const hasNotes = notes.some(note => note.day === dayString)
-                        
-                        return (
-                          <div key={index} className={`toolbar-day-cell${dateObj.isEmpty ? ' empty' : ''}`}>
-                            {!dateObj.isEmpty && (
-                              <button
-                                className={`toolbar-day-btn${selectedDay === dayString ? ' selected' : ''}${hasNotes ? ' has-notes' : ''}`}
-                                onClick={() => handleDayClick(dayString)}
-                              >
-                                {dateObj.day}
-                              </button>
-                            )}
-                          </div>
-                        )
-                      })
-                    })()}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* LifeNotesToolbar Component */}
+          <LifeNotesToolbar
+            notes={notes}
+            selectedDay={selectedDay}
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            onDayClick={handleDayClick}
+            onMonthChange={setSelectedMonth}
+            showInput={showInput}
+            newNote={newNote}
+            onNewNoteChange={setNewNote}
+            onAddNote={handleAddNote}
+            onDone={handleDone}
+            isToolbarMinimized={isToolbarMinimized}
+            onToolbarMinimize={toggleToolbarMinimize}
+            textRotationDirection={textRotationDirection}
+            onTextRotationToggle={toggleTextRotation}
+            isTextPaused={isTextPaused}
+            onTextPauseToggle={toggleTextPause}
+          />
           
           {/* Planet Scene Canvas */}
           <div className="planet-scene-container">
