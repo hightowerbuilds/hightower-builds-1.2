@@ -55,7 +55,6 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
 }) {
   const textRef = useRef<Mesh>(null)
   const notesRefs = useRef<(Mesh | null)[]>([])
-  const backgroundRefs = useRef<(Mesh | null)[]>([])
   const noteHeights = useRef<number[]>([])
   const { camera } = useThree()
   const dayNotes = notes.filter(note => note.day === day)
@@ -71,12 +70,6 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
         ref.lookAt(camera.position)
       }
     })
-    // Make all background planes face the camera
-    backgroundRefs.current.forEach(ref => {
-      if (ref) {
-        ref.lookAt(camera.position)
-      }
-    })
   })
 
   return (
@@ -84,7 +77,7 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
       <Text
         ref={textRef}
         position={[0, 0, 0]}
-        fontSize={0.2}
+        fontSize={0.12}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
@@ -107,38 +100,24 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
             <Text
               ref={(el: any) => notesRefs.current[index] = el}
               position={[0, 0.05, 0]}
-              fontSize={0.08}
+              fontSize={0.05}
               color="#87CEEB"
               anchorX="center"
               anchorY="middle"
               maxWidth={2}
               font="/fonts/Courier.ttf"
               onSync={(text) => {
-                // Calculate background height based on actual text height
-                if (text && isSelected && backgroundRefs.current[index]) {
+                // Calculate text height for positioning
+                if (text && isSelected) {
                   const textHeight = text.geometry.boundingBox?.max.y - text.geometry.boundingBox?.min.y || 0.4
                   noteHeights.current[index] = textHeight
-                  const backgroundMesh = backgroundRefs.current[index]
-                  if (backgroundMesh) {
-                    backgroundMesh.geometry.dispose()
-                    backgroundMesh.geometry = new THREE.PlaneGeometry(2.5, Math.max(0.4, textHeight + 0.1))
-                  }
                 }
               }}
             >
               {index + 1}. {note.content}
             </Text>
             
-            {/* Black background for note when date is selected */}
-            {isSelected && (
-              <mesh 
-                ref={(el: any) => backgroundRefs.current[index] = el}
-                position={[0, -0.01, 0]}
-              >
-                <planeGeometry args={[2.5, 0.4]} />
-                <meshBasicMaterial color="#000000" transparent opacity={0.8} />
-              </mesh>
-            )}
+
           </group>
         )
       })}
@@ -251,7 +230,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
     <>
       {/* Blue Planet with Gradient */}
       <mesh ref={planetRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[2.5, 32, 32]} />
+        <sphereGeometry args={[0.8, 32, 32]} />
         <primitive object={gradientMaterial} attach="material" />
       </mesh>
       

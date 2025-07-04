@@ -154,6 +154,8 @@ export function LifeNotesToolbar({
                       fontFamily: 'Courier New, Courier, monospace',
                       fontWeight: 'bold',
                       fontSize: '18px',
+                      height: '145px',
+                      resize: 'vertical',
                     }}  
                   />
                   

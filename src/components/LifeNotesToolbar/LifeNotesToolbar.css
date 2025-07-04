@@ -92,7 +92,7 @@
 
 /* When toolbar is open, buttons float up above it */
 .bottom-controls:not(.floating) {
-  transform: translateY(-470px);
+  transform: translateY(-595px);
   transition: transform 3.2s ease-out, opacity 3.2s ease-out;
 }
 
@@ -198,7 +198,7 @@
   border: 1px solid rgba(135, 206, 235, 0.2);
   border-radius: 4px;
   padding: 1rem;
-  max-height: 200px;
+  height: 200px;
   overflow-y: auto;
 }
 
@@ -220,7 +220,8 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
-  padding: 0.3rem;
+  padding: 0.75rem 0;
+  line-height: 1.8;
   border-left: 2px solid rgba(135, 206, 235, 0.3);
   padding-left: 0.5rem;
 }
@@ -237,16 +238,17 @@
 }
 
 .note-input {
+  height: 30px;
+  flex-shrink: 0;
+  resize: vertical;
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid var(--neon-blue);
   color: var(--neon-blue);
   border-radius: 4px;
-  padding: 0.8rem;
+  padding: 0.75rem;
   font-family: 'Courier New', Courier, monospace;
   font-size: 1rem;
   font-weight: bold;
-  resize: vertical;
-  min-height: 80px;
 }
 
 .note-input:focus {
@@ -433,7 +435,6 @@
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
   padding: 1rem;
-  margin-top: 1rem;
   flex: 0 0 auto;
   width: 400px;
   max-width: 400px;
