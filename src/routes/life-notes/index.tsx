@@ -4,8 +4,7 @@ import { LifeNotesToolbar } from '../../components/LifeNotesToolbar/LifeNotesToo
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
 import { useRef, useState, useMemo } from 'react'
-import { Mesh, ShaderMaterial, PlaneGeometry } from 'three'
-import * as THREE from 'three'
+import { Mesh, ShaderMaterial } from 'three'
 import './life-notes.css'
 
 export const Route = createFileRoute('/life-notes/')({
@@ -155,8 +154,6 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
     
     return targetAngle
   }
-
-  const targetRotation = getTargetRotation()
 
   useFrame((_state, delta) => {
     if (!isTextPaused) {

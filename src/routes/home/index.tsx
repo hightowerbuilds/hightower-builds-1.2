@@ -26,7 +26,7 @@ function Home() {
       <main className="main-content">
         <div className="home-content">
           <h1 className="welcome-title-3d">Welcome to hightowerbuilds</h1>
-          <p className="quote-text-3d">This project's intentions are of wide berth and are currently sprawling outward as such. Its inspirations go deep and are free to roam through all modalities. Please look around and interact.</p>
+          <p className="quote-text-3d">This project's intentions are of wide berth and are currently sprawling as such. Its inspirations go deep and are free to roam through all modalities. Please look around and interact.</p>
         </div>
       </main>
     </div>
