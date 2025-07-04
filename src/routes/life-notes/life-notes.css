@@ -386,11 +386,11 @@
 }
 
 .note-input {
-  background: rgba(0, 0, 0, 0.6);
+  background-color: transparent;
   border: 1px solid #87CEEB;
   border-radius: 4px;
   padding: 8px 12px;
-  color: #000000;
+  color: #87CEEB;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
   width: 100%;
@@ -413,7 +413,7 @@
 }
 
 .note-input::placeholder {
-  color: #000000;
+  color: #87CEEB;
 }
 
 .button-group {

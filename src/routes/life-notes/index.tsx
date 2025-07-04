@@ -469,6 +469,14 @@ export function LifeNotesPage() {
                       className="note-input"
                       autoFocus
                       rows={3}
+                      style={{
+                        backgroundColor: 'transparent',
+                        border: '1px solid #87CEEB',
+                        color: '#87CEEB',
+                        fontFamily: 'Courier New, Courier, monospace',
+                        fontWeight: 'bold',
+                        fontSize: '18px',
+                      }}  
                     />
                     
                     <div className="button-group">
