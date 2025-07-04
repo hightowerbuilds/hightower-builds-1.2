@@ -272,7 +272,7 @@ export function LifeNotesPage() {
   const [showInput, setShowInput] = useState(true)
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedYear] = useState(today.getFullYear());
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
 
