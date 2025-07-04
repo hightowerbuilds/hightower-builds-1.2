@@ -270,16 +270,20 @@ export function LifeNotesPage() {
   const [newNote, setNewNote] = useState('')
   const [selectedDay, setSelectedDay] = useState('1 SUN')
   const [showInput, setShowInput] = useState(true)
-  const [selectedMonth, setSelectedMonth] = useState(5) // 0-indexed: 5 = June
+  const today = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
-  const selectedYear = 2025 // Fixed year, no setter needed
 
   // Month names
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
+
+  // Format today's date for the heading
+  const todayHeading = `${monthNames[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
 
   // Generate days for the selected month/year
   const daysInMonth = useMemo(() => {
@@ -386,8 +390,7 @@ export function LifeNotesPage() {
           />
           {!isHeadingHidden && (
             <>
-              <h1 className="notes-title-3d">NOTES THAT FLOAT</h1>
-              <h1 className="date-title-3d">{monthNames[selectedMonth].toUpperCase()} {selectedYear}</h1>
+              <h1 className="notes-title-3d">{todayHeading}</h1>
             </>
           )}
 
