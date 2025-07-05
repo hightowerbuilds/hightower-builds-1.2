@@ -61,18 +61,8 @@ const LETTERS = {
   ]
 }
 
-// Color palette - smooth transition from green to red
-const COLORS = [
-  '#00ff00', // Bright Green
-  '#40ff00', // Green-Yellow
-  '#80ff00', // Lime Green
-  '#bfff00', // Yellow-Green
-  '#ffff00', // Yellow
-  '#ffbf00', // Orange-Yellow
-  '#ff8000', // Orange
-  '#ff4000', // Red-Orange
-  '#ff0000', // Bright Red
-]
+// Static neon white color
+const NEON_WHITE = '#ffffff'
 
 interface SquareProps {
   isActive: boolean
@@ -118,35 +108,10 @@ function Square({ isActive, color, delay, letterIndex, columnIndex, isColumnHove
 }
 
 export function MoneyModesHeading() {
-  const [currentColorIndex, setCurrentColorIndex] = useState(0)
-  const [isForward, setIsForward] = useState(true)
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null)
 
-  // Change colors every 0.25 seconds with back-and-forth motion
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentColorIndex(prev => {
-        if (isForward) {
-          if (prev === COLORS.length - 1) {
-            setIsForward(false)
-            return prev - 1
-          }
-          return prev + 1
-        } else {
-          if (prev === 0) {
-            setIsForward(true)
-            return prev + 1
-          }
-          return prev - 1
-        }
-      })
-    }, 250)
-
-    return () => clearInterval(interval)
-  }, [isForward])
-
   const text = 'MONEY MODES'
-  const currentColor = COLORS[currentColorIndex]
+  const currentColor = NEON_WHITE
 
   return (
     <div className="money-modes-heading">
