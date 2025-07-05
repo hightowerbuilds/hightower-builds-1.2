@@ -249,6 +249,16 @@ export function LifeNotesToolbar({
           </div>
         )}
       </div>
+
+      {/* New Box Under Calendar */}
+      <div className="new-box-section">
+        <div className="new-box-header">
+          <h3 className="new-box-title">NEW SECTION</h3>
+        </div>
+        <div className="new-box-content">
+          <p>This is the new box that fits directly under the calendar.</p>
+        </div>
+      </div>
         </div>
       </div>
     </>

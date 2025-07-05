@@ -16,10 +16,14 @@
 }
 
 .toolbar-content-wrapper {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.75rem;
   max-width: 100%;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .toolbar-container.minimized {
@@ -102,10 +106,13 @@
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
   padding: 1.5rem;
-  margin-bottom: 1rem;
   box-shadow: none;
-  flex: 1;
-  min-width: 0;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .add-info-section.minimized {
@@ -382,8 +389,8 @@
 .rotation-toggle-btn,
 .rotation-stop-btn {
   background: transparent;
-  border: 2px solid var(--neon-blue);
-  color: var(--neon-blue);
+  border: 2px solid #ffffff;
+  color: #ffffff;
   border-radius: 8px;
   font-size: 0.9rem;
   padding: 0.6rem 1rem;
@@ -401,8 +408,8 @@
   justify-content: center;
   backdrop-filter: blur(5px);
   box-shadow: 
-    0 0 10px rgba(135, 206, 235, 0.3),
-    0 0 20px rgba(135, 206, 235, 0.1);
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.1);
   animation: float 3s ease-in-out infinite;
 }
 
@@ -417,10 +424,10 @@
 
 .rotation-toggle-btn:hover,
 .rotation-stop-btn:hover {
-  background: rgba(135, 206, 235, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   box-shadow: 
-    0 0 15px rgba(135, 206, 235, 0.5),
-    0 0 30px rgba(135, 206, 235, 0.2);
+    0 0 15px rgba(255, 255, 255, 0.5),
+    0 0 30px rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
 
@@ -435,9 +442,55 @@
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
   padding: 1rem;
-  flex: 0 0 auto;
-  width: 400px;
-  max-width: 400px;
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* New Box Under Calendar */
+.new-box-section {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--neon-blue);
+  border-radius: 8px;
+  padding: 1rem;
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.new-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+}
+
+.new-box-title {
+  color: var(--neon-blue);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.new-box-content {
+  color: var(--neon-blue);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.new-box-content p {
+  margin: 0;
+  color: rgba(135, 206, 235, 0.8);
 }
 
 .toolbar-header {
@@ -619,14 +672,43 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .toolbar-content-wrapper {
+    grid-template-columns: 2fr 1fr;
+    gap: 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .toolbar-container {
     padding: 0.5rem;
   }
 
   .toolbar-content-wrapper {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
     gap: 0.5rem;
+    padding: 0;
+  }
+
+  .add-info-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .notes-toolbar {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .new-box-section {
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
   }
 
   .add-info-section {
@@ -681,7 +763,8 @@
   }
 
   .toolbar-content-wrapper {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
     gap: 0.3rem;
   }
 
