@@ -31,10 +31,6 @@ function MoneyModesPage() {
           <MoneyModesHeading />
 
           <div className="money-modes-grid">
-            <section className="statements-section">
-              <BankStatements />
-            </section>
-
             <section className="process-statement-section">
               <div className="process-statement-header">
                 <h2>Process New Statement</h2>
@@ -45,6 +41,10 @@ function MoneyModesPage() {
                   Open
                 </Link>
               </div>
+            </section>
+
+            <section className="statements-section">
+              <BankStatements />
             </section>
 
             <section className="modalities-section">

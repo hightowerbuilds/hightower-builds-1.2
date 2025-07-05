@@ -21,17 +21,19 @@
 }
 
 .pdf-extractor-content header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 3rem;
   color: var(--text-color);
 }
 
 .pdf-extractor-content .page-title {
-  font-size: 3rem;
+  font-size: 1.5rem;
   margin-bottom: 0.5rem;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  color: white;
+  font-family: monospace;
 }
 
 .pdf-extractor-content .page-description {
@@ -43,52 +45,13 @@
 
 /* Upload section */
 .upload-section {
-  background: var(--background-color);
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background-color: transparent;
+  border-radius: 2px;
+  width: 100%;
+
 }
 
-.upload-area {
-  border: 3px dashed var(--border-color);
-  border-radius: 8px;
-  padding: 3rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--background-color-light);
-}
 
-.upload-area:hover {
-  border-color: var(--primary-color);
-  background: var(--background-color-hover);
-}
-
-.upload-area.dragover {
-  border-color: var(--primary-color);
-  background: var(--background-color-active);
-  transform: scale(1.02);
-}
-
-.upload-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.upload-area h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-color);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.upload-area p {
-  color: var(--text-color-secondary);
-  font-size: 1rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
 
 .upload-status {
   margin-top: 1rem;
@@ -259,16 +222,10 @@
   }
 
   .pdf-extractor-content .page-title {
-    font-size: 2rem;
+    font-size: 20px;
   }
 
-  .upload-area {
-    padding: 2rem 1rem;
-  }
 
-  .upload-icon {
-    font-size: 3rem;
-  }
 
   .results-header {
     flex-direction: column;
@@ -312,21 +269,7 @@
     font-size: 1rem;
   }
 
-  .upload-area {
-    padding: 1.5rem 0.75rem;
-  }
 
-  .upload-icon {
-    font-size: 2.5rem;
-  }
-
-  .upload-area h3 {
-    font-size: 1.25rem;
-  }
-
-  .upload-area p {
-    font-size: 0.9rem;
-  }
 
   .results-header h2 {
     font-size: 1.5rem;
@@ -599,4 +542,32 @@
   .analysis-section {
     padding: 0.75rem;
   }
+}
+
+.step-two-section {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.step-two-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  font-family: monospace;
+  text-align: left;
+  font-weight: normal;
+}
+
+.step-three-section {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.step-three-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  font-family: monospace;
+  text-align: left;
+  font-weight: normal;
 } 

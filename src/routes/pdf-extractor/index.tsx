@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
+import { PDFUploadArea } from '../../components/PDFUploadArea/PDFUploadArea'
 import { useState, useRef, useCallback } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
@@ -468,36 +469,30 @@ ${extractedText.substring(0, 30000)}`
       <main className="main-content">
         <div className="pdf-extractor-content">
           <header>
-            <h1 className="page-title">📄 PDF Text Extractor</h1>
-            <p className="page-description">Upload a PDF file to extract all text content</p>
+            <h1 className="page-title">1. Upload Statement</h1>
+    
           </header>
 
           <div className="upload-section">
-            <div 
-              className={`upload-area ${isDragging ? 'dragover' : ''}`}
+            <PDFUploadArea
+              isDragging={isDragging}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-            >
-              <div className="upload-icon">📁</div>
-              <h3>Drop PDF file here or click to browse</h3>
-              <p>Supports PDF files up to 10MB</p>
-              <input 
-                ref={fileInputRef}
-                type="file" 
-                accept=".pdf" 
-                hidden 
-                onChange={handleFileSelect}
-              />
-            </div>
-            
-            {uploadStatus.message && (
-              <div className={`upload-status ${uploadStatus.type}`}>
-                {uploadStatus.type === 'processing' && <span className="loading"></span>}
-                {uploadStatus.message}
-              </div>
-            )}
+              uploadStatus={uploadStatus}
+            />
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              accept=".pdf" 
+              hidden 
+              onChange={handleFileSelect}
+            />
+          </div>
+
+          <div className="step-two-section">
+            <h2 className="step-two-title">2. REVIEW RESULTS</h2>
           </div>
 
           {showResults && (
@@ -609,6 +604,10 @@ ${extractedText.substring(0, 30000)}`
               </div>
             </div>
           )}
+
+          <div className="step-three-section">
+            <h2 className="step-three-title">3. OPEN MODALITIES</h2>
+          </div>
 
           <footer>
             <p>Powered by PDF.js and Google Gemini AI</p>
