@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { BankStatements } from '../../components/BankStatements/BankStatements'
+import { MoneyModesHeading } from '../../components/MoneyModesHeading/MoneyModesHeading'
 import { Canvas } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
 import './money-modes.css'
@@ -27,9 +28,7 @@ function MoneyModesPage() {
       </Canvas>
       <main className="main-content">
         <div className="money-modes-content">
-          <header>
-            <h1 className="page-title">Money Modes</h1>
-          </header>
+          <MoneyModesHeading />
 
           <div className="money-modes-grid">
             <section className="statements-section">
