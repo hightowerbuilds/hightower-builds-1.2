@@ -13,34 +13,25 @@ interface AuthFormProps {
 function Input3D({ 
   label, 
   value, 
-  onChange, 
   type = 'text', 
   placeholder, 
   position, 
   isActive, 
-  onFocus, 
-  onBlur 
+  onFocus
 }: {
   label: string
   value: string
-  onChange: (value: string) => void
   type?: 'text' | 'password'
   placeholder: string
   position: [number, number, number]
   isActive: boolean
   onFocus: () => void
-  onBlur: () => void
 }) {
   const [isFocused, setIsFocused] = useState(false)
 
   const handleClick = () => {
     setIsFocused(true)
     onFocus()
-  }
-
-  const handleBlur = () => {
-    setIsFocused(false)
-    onBlur()
   }
 
   return (
@@ -123,7 +114,6 @@ function AuthForm3D({
   setActiveInput: (input: 'username' | 'password' | null) => void
 }) {
   const groupRef = useRef<THREE.Group>(null)
-  const { camera } = useThree()
 
   useFrame((state) => {
     if (groupRef.current) {
@@ -162,26 +152,22 @@ function AuthForm3D({
       <Input3D
         label={isLogin ? "USERNAME" : "NEW USERNAME"}
         value={username}
-        onChange={setUsername}
         type="text"
         placeholder="Enter your username"
         position={[0, 0.4, 0]}
         isActive={activeInput === 'username'}
         onFocus={() => setActiveInput('username')}
-        onBlur={() => setActiveInput(null)}
       />
 
       {/* Password Input */}
       <Input3D
         label={isLogin ? "PASSWORD" : "NEW PASSWORD"}
         value={password}
-        onChange={setPassword}
         type="password"
         placeholder="Enter your password"
         position={[0, -0.2, 0]}
         isActive={activeInput === 'password'}
         onFocus={() => setActiveInput('password')}
-        onBlur={() => setActiveInput(null)}
       />
 
       {/* Error Message */}
