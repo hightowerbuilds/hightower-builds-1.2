@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
+import { AuthForm } from '../../components/AuthForm/AuthForm'
 import { Canvas } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
 import './home.css'
@@ -27,6 +28,8 @@ function Home() {
         <div className="home-content">
           <h1 className="welcome-title-3d">Welcome to hightowerbuilds</h1>
           <p className="quote-text-3d">This project's intentions are of wide berth and are currently sprawling as such. Its inspirations go deep and are free to roam through all modalities. Please look around and interact.</p>
+          
+          <AuthForm />
         </div>
       </main>
     </div>

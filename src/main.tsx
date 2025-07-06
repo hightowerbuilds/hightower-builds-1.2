@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
+import { AuthProvider } from './lib/useAuth'
 import './styles/variables.css'
 import './styles/main.css'
 import reportWebVitals from './reportWebVitals.ts'
@@ -19,7 +20,9 @@ declare module '@tanstack/react-router' {
 // Render the app
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>,
 )
 

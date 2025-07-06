@@ -173,4 +173,54 @@
   }
 }
 
+/* Authentication section in navbar */
+.nav-auth-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-user-info {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: var(--neon-green);
+  font-weight: bold;
+}
+
+.nav-guest-info {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: var(--light-text);
+  font-style: italic;
+}
+
+.nav-logout-btn {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid rgba(220, 38, 38, 0.6);
+  border-radius: 4px;
+  color: #fca5a5;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 32px;
+}
+
+.nav-logout-btn:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: #fca5a5;
+  color: #fca5a5;
+}
+
+.nav-logout-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 

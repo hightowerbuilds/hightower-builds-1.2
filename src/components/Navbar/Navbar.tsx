@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import { useAuth } from '../../lib/useAuth'
 import './Navbar.css'
 
 export function Navbar() {
+  const { user, logout, loading } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Close mobile menu when clicking outside
@@ -41,6 +43,15 @@ export function Navbar() {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      closeMobileMenu()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
   }
 
   return (
@@ -96,6 +107,30 @@ export function Navbar() {
           >
             Notes that Float
           </Link>
+          
+          {/* User authentication section */}
+          {!loading && (
+            <div className="nav-auth-section">
+              {user ? (
+                <>
+                  <span className="nav-user-info">
+                    Welcome, {user.username}
+                  </span>
+                  <button 
+                    onClick={handleLogout}
+                    className="nav-logout-btn"
+                    disabled={loading}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <span className="nav-guest-info">
+                  Guest User
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </nav>
