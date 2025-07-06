@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../lib/useAuth'
-import { Canvas, useThree, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Text, Box } from '@react-three/drei'
 import * as THREE from 'three'
 import './AuthForm.css'
@@ -89,9 +89,7 @@ function Input3D({
 function AuthForm3D({ 
   isLogin, 
   username, 
-  setUsername, 
   password, 
-  setPassword, 
   handleSubmit, 
   loading, 
   successMessage, 
@@ -102,9 +100,7 @@ function AuthForm3D({
 }: {
   isLogin: boolean
   username: string
-  setUsername: (value: string) => void
   password: string
-  setPassword: (value: string) => void
   handleSubmit: (e: React.FormEvent) => void
   loading: boolean
   successMessage: string
@@ -409,9 +405,7 @@ export function AuthForm({}: AuthFormProps) {
           <AuthForm3D
             isLogin={isLogin}
             username={username}
-            setUsername={setUsername}
             password={password}
-            setPassword={setPassword}
             handleSubmit={handleSubmit}
             loading={loading}
             successMessage={successMessage}
