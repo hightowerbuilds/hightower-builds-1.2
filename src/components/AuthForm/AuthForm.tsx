@@ -96,7 +96,8 @@ function AuthForm3D({
   localError, 
   toggleMode,
   activeInput,
-  setActiveInput
+  setActiveInput,
+  showForm
 }: {
   isLogin: boolean
   username: string
@@ -105,9 +106,10 @@ function AuthForm3D({
   loading: boolean
   successMessage: string
   localError: string
-  toggleMode: () => void
+  toggleMode: (mode?: string) => void
   activeInput: 'username' | 'password' | null
   setActiveInput: (input: 'username' | 'password' | null) => void
+  showForm: boolean
 }) {
   const groupRef = useRef<THREE.Group>(null)
 
@@ -127,6 +129,84 @@ function AuthForm3D({
     handleSubmit(e)
   }
 
+  // If form is not shown yet, display only the initial buttons
+  if (!showForm) {
+    return (
+      <group ref={groupRef} position={[0, -1, 0]}>
+        {/* NEW USER Button */}
+        <Box 
+          args={[1.667, 0.533, 0.067]} 
+          position={[0, 0.33, 0.1]}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleMode('signup')
+          }}
+          onPointerOver={(e) => {
+            document.body.style.cursor = 'pointer'
+            e.object.scale.setScalar(1.05)
+          }}
+          onPointerOut={(e) => {
+            document.body.style.cursor = 'default'
+            e.object.scale.setScalar(1)
+          }}
+        >
+          <meshStandardMaterial 
+            color="#00f3ff" 
+            opacity={0.8} 
+            transparent 
+          />
+        </Box>
+        
+        <Text
+          position={[0, 0.33, 0.17]}
+          fontSize={0.12}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/Courier.ttf"
+        >
+          NEW USER
+        </Text>
+
+        {/* LOGIN Button */}
+        <Box 
+          args={[1.667, 0.533, 0.067]} 
+          position={[0, -0.33, 0.1]}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleMode('login')
+          }}
+          onPointerOver={(e) => {
+            document.body.style.cursor = 'pointer'
+            e.object.scale.setScalar(1.05)
+          }}
+          onPointerOut={(e) => {
+            document.body.style.cursor = 'default'
+            e.object.scale.setScalar(1)
+          }}
+        >
+          <meshStandardMaterial 
+            color="#00ff00" 
+            opacity={0.8} 
+            transparent 
+          />
+        </Box>
+        
+        <Text
+          position={[0, -0.33, 0.17]}
+          fontSize={0.12}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/Courier.ttf"
+        >
+          LOGIN
+        </Text>
+      </group>
+    )
+  }
+
+  // Show the full form with inputs
   return (
     <group ref={groupRef} position={[0, -2, 0]}>
       {/* Success Message */}
@@ -181,20 +261,13 @@ function AuthForm3D({
         </Text>
       )}
 
-      {/* CREATE ACCOUNT Button */}
+      {/* Submit Button - Changes based on mode */}
       <Box 
-        args={[1.8, 0.6, 0.1]} 
-        position={[-0.6, -0.8, 0.1]}
+        args={[1.667, 0.4, 0.067]} 
+        position={[-0.65, -0.9, 0.1]}
         onClick={(e) => {
-          if (!isLogin) {
-            console.log('3D Create Account button clicked!')
-            e.stopPropagation()
-            handleFormSubmit(e as any)
-          } else {
-            console.log('3D Toggle to Signup clicked!')
-            e.stopPropagation()
-            toggleMode()
-          }
+          e.stopPropagation()
+          handleFormSubmit(e as any)
         }}
         onPointerOver={(e) => {
           document.body.style.cursor = 'pointer'
@@ -206,37 +279,30 @@ function AuthForm3D({
         }}
       >
         <meshStandardMaterial 
-          color={loading && !isLogin ? "#666666" : "#00f3ff"} 
+          color={loading ? "#666666" : (isLogin ? "#00ff00" : "#00f3ff")} 
           opacity={0.8} 
           transparent 
         />
       </Box>
       
       <Text
-        position={[-0.6, -0.8, 0.2]}
-        fontSize={0.15}
+        position={[-0.65, -0.9, 0.17]}
+        fontSize={0.1}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
         font="/fonts/Courier.ttf"
       >
-        {loading && !isLogin ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
+        {loading ? (isLogin ? 'SIGNING IN...' : 'CREATING ACCOUNT...') : (isLogin ? 'SIGN IN' : 'CREATE ACCOUNT')}
       </Text>
 
-      {/* SIGN IN Button */}
+      {/* Back Button */}
       <Box 
-        args={[1.0, 0.6, 0.1]} 
-        position={[1.0, -0.8, 0.1]}
+        args={[0.667, 0.267, 0.033]} 
+        position={[0.65, -0.9, 0.1]}
         onClick={(e) => {
-          if (isLogin) {
-            console.log('3D Sign In button clicked!')
-            e.stopPropagation()
-            handleFormSubmit(e as any)
-          } else {
-            console.log('3D Toggle to Signin clicked!')
-            e.stopPropagation()
-            toggleMode()
-          }
+          e.stopPropagation()
+          toggleMode() // This will reset showForm
         }}
         onPointerOver={(e) => {
           document.body.style.cursor = 'pointer'
@@ -248,21 +314,21 @@ function AuthForm3D({
         }}
       >
         <meshStandardMaterial 
-          color={loading && isLogin ? "#666666" : "#00ff00"} 
-          opacity={0.8} 
+          color="#666666" 
+          opacity={0.6} 
           transparent 
         />
       </Box>
       
       <Text
-        position={[1.0, -0.8, 0.2]}
-        fontSize={0.12}
+        position={[0.65, -0.9, 0.133]}
+        fontSize={0.067}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
         font="/fonts/Courier.ttf"
       >
-        {loading && isLogin ? 'SIGNING IN...' : 'OR LOGIN'}
+        BACK
       </Text>
     </group>
   )
@@ -276,6 +342,7 @@ export function AuthForm({}: AuthFormProps) {
   const [successMessage, setSuccessMessage] = useState('')
   const [localError, setLocalError] = useState('')
   const [activeInput, setActiveInput] = useState<'username' | 'password' | null>(null)
+  const [showForm, setShowForm] = useState(false)
 
   // Clear error when switching modes
   useEffect(() => {
@@ -295,7 +362,7 @@ export function AuthForm({}: AuthFormProps) {
   // Handle keyboard input
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (activeInput) {
+      if (activeInput && showForm) {
         if (e.key === 'Enter') {
           handleSubmit(e as any)
         } else if (e.key === 'Tab') {
@@ -327,7 +394,7 @@ export function AuthForm({}: AuthFormProps) {
 
     document.addEventListener('keydown', handleKeyPress)
     return () => document.removeEventListener('keydown', handleKeyPress)
-  }, [activeInput])
+  }, [activeInput, showForm])
 
   const handleSubmit = async (e: React.FormEvent | any) => {
     // Only call preventDefault if it's a real DOM event
@@ -355,6 +422,7 @@ export function AuthForm({}: AuthFormProps) {
           setUsername('')
           setPassword('')
           setSuccessMessage('')
+          setShowForm(false)
         }, 2000)
       } catch (err) {
         console.error('Login error:', err)
@@ -370,6 +438,7 @@ export function AuthForm({}: AuthFormProps) {
           setUsername('')
           setPassword('')
           setSuccessMessage('')
+          setShowForm(false)
         }, 2000)
       } catch (err) {
         console.error('Signup error:', err)
@@ -378,13 +447,21 @@ export function AuthForm({}: AuthFormProps) {
     }
   }
 
-  const toggleMode = () => {
-    setIsLogin(!isLogin)
-    setUsername('')
-    setPassword('')
-    clearError()
-    setSuccessMessage('')
-    setLocalError('')
+  const toggleMode = (mode?: string) => {
+    if (!showForm) {
+      // If we're showing the initial buttons, set the mode and show form
+      setIsLogin(mode === 'login')
+      setShowForm(true)
+    } else {
+      // If we're in the form, go back to initial buttons
+      setShowForm(false)
+      setUsername('')
+      setPassword('')
+      clearError()
+      setSuccessMessage('')
+      setLocalError('')
+      setActiveInput(null)
+    }
   }
 
   return (
@@ -413,6 +490,7 @@ export function AuthForm({}: AuthFormProps) {
             toggleMode={toggleMode}
             activeInput={activeInput}
             setActiveInput={setActiveInput}
+            showForm={showForm}
           />
           
           <OrbitControls 
