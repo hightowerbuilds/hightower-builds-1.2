@@ -54,6 +54,7 @@ function Input3D({
         position={[0, 0, 0.1]}
         onClick={handleClick}
         onPointerOver={(e) => {
+          
           document.body.style.cursor = 'pointer'
           e.object.scale.setScalar(1.02)
         }}
@@ -135,8 +136,8 @@ function AuthForm3D({
       <group ref={groupRef} position={[0, -1, 0]}>
         {/* NEW USER Button */}
         <Box 
-          args={[1.667, 0.533, 0.067]} 
-          position={[0, 0.33, 0.1]}
+          args={[0.83, 0.27, 0.03]} 
+          position={[0, 0.2, 0.1]}
           onClick={(e) => {
             e.stopPropagation()
             toggleMode('signup')
@@ -158,7 +159,7 @@ function AuthForm3D({
         </Box>
         
         <Text
-          position={[0, 0.33, 0.17]}
+          position={[0, 0.2, 0.17]}
           fontSize={0.12}
           color="#ffffff"
           anchorX="center"
@@ -170,8 +171,8 @@ function AuthForm3D({
 
         {/* LOGIN Button */}
         <Box 
-          args={[1.667, 0.533, 0.067]} 
-          position={[0, -0.33, 0.1]}
+          args={[0.83, 0.27, 0.03]} 
+          position={[0, -0.2, 0.1]}
           onClick={(e) => {
             e.stopPropagation()
             toggleMode('login')
@@ -193,7 +194,7 @@ function AuthForm3D({
         </Box>
         
         <Text
-          position={[0, -0.33, 0.17]}
+          position={[0, -0.2, 0.17]}
           fontSize={0.12}
           color="#ffffff"
           anchorX="center"
@@ -263,7 +264,7 @@ function AuthForm3D({
 
       {/* Submit Button - Changes based on mode */}
       <Box 
-        args={[1.667, 0.4, 0.067]} 
+        args={[0.83, 0.2, 0.03]} 
         position={[-0.65, -0.9, 0.1]}
         onClick={(e) => {
           e.stopPropagation()
@@ -298,7 +299,7 @@ function AuthForm3D({
 
       {/* Back Button */}
       <Box 
-        args={[0.667, 0.267, 0.033]} 
+        args={[0.33, 0.13, 0.02]} 
         position={[0.65, -0.9, 0.1]}
         onClick={(e) => {
           e.stopPropagation()
