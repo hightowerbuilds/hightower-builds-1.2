@@ -285,7 +285,6 @@ export function LifeNotesPage() {
   const [selectedYear] = useState(today.getFullYear());
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Month names
@@ -328,7 +327,6 @@ export function LifeNotesPage() {
     if (!user) return
     
     try {
-      setLoading(true)
       setError(null)
       const lifeNotes = await db.getLifeNotesForMonth(selectedMonth, selectedYear, user.id)
       const convertedNotes = lifeNotes.map(convertLifeNoteToNote)
@@ -336,8 +334,6 @@ export function LifeNotesPage() {
     } catch (err) {
       console.error('Error loading notes:', err)
       setError('Failed to load notes')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -376,7 +372,6 @@ export function LifeNotesPage() {
     if (!user || !newNote.trim()) return
     
     try {
-      setLoading(true)
       setError(null)
       
       // Parse the selected day to get the day number
@@ -401,8 +396,6 @@ export function LifeNotesPage() {
     } catch (err) {
       console.error('Error saving note:', err)
       setError('Failed to save note')
-    } finally {
-      setLoading(false)
     }
   }
 
