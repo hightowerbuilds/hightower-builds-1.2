@@ -3,8 +3,10 @@ import { Navbar } from '../../components/Navbar/Navbar'
 import { LifeNotesToolbar } from '../../components/LifeNotesToolbar/LifeNotesToolbar'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stars, OrbitControls, Text } from '@react-three/drei'
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import { Mesh, ShaderMaterial } from 'three'
+import { useAuth } from '../../lib/useAuth'
+import { db, type LifeNote } from '../../lib/db'
 import './life-notes.css'
 
 export const Route = createFileRoute('/life-notes/')({
@@ -16,6 +18,13 @@ interface Note {
   day: string
   content: string
 }
+
+// Convert LifeNote from database to local Note format
+const convertLifeNoteToNote = (lifeNote: LifeNote): Note => ({
+  id: lifeNote.id,
+  day: lifeNote.day_string,
+  content: lifeNote.content
+})
 
 // Month color mapping - each month has its own gradient colors
 const monthColors = [
@@ -264,6 +273,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
 }
 
 export function LifeNotesPage() {
+  const { user } = useAuth()
   const [textRotationDirection, setTextRotationDirection] = useState(1)
   const [isTextPaused, setIsTextPaused] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
@@ -275,6 +285,8 @@ export function LifeNotesPage() {
   const [selectedYear] = useState(today.getFullYear());
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Month names
   const monthNames = [
@@ -305,6 +317,30 @@ export function LifeNotesPage() {
     })
   ), [daysInMonth, selectedMonth, selectedYear])
 
+  // Load notes when component mounts or month/year changes
+  useEffect(() => {
+    if (user) {
+      loadNotesForMonth()
+    }
+  }, [user, selectedMonth, selectedYear])
+
+  const loadNotesForMonth = async () => {
+    if (!user) return
+    
+    try {
+      setLoading(true)
+      setError(null)
+      const lifeNotes = await db.getLifeNotesForMonth(selectedMonth, selectedYear, user.id)
+      const convertedNotes = lifeNotes.map(convertLifeNoteToNote)
+      setNotes(convertedNotes)
+    } catch (err) {
+      console.error('Error loading notes:', err)
+      setError('Failed to load notes')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const toggleTextRotation = () => {
     console.log('Button clicked! Current text direction:', textRotationDirection)
     setTextRotationDirection(prev => {
@@ -334,17 +370,39 @@ export function LifeNotesPage() {
     console.log('Toolbar opened and planet stopped')
   }
 
-  const handleAddNote = (e: React.FormEvent) => {
+  const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (newNote.trim()) {
-      const newNoteObj: Note = {
-        id: Date.now().toString(),
-        day: selectedDay,
-        content: newNote.trim()
+    
+    if (!user || !newNote.trim()) return
+    
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Parse the selected day to get the day number
+      const dayNumber = parseInt(selectedDay.split(' ')[0])
+      const noteDate = new Date(selectedYear, selectedMonth, dayNumber)
+      
+      const noteData = {
+        day_string: selectedDay,
+        content: newNote.trim(),
+        note_date: noteDate.toISOString().split('T')[0], // YYYY-MM-DD format
+        month: selectedMonth,
+        year: selectedYear,
+        user_id: user.id
       }
-      setNotes(prev => [...prev, newNoteObj])
+      
+      const savedNote = await db.addLifeNote(noteData)
+      const convertedNote = convertLifeNoteToNote(savedNote)
+      
+      setNotes(prev => [...prev, convertedNote])
       setNewNote('') // Clear the input but keep form open
       // Don't close the form - allow multiple entries
+    } catch (err) {
+      console.error('Error saving note:', err)
+      setError('Failed to save note')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -383,52 +441,100 @@ export function LifeNotesPage() {
       </Canvas>
       <main className="main-content">
         <div className="life-notes-content">
-          <button 
-            className={`heading-toggle-btn${isHeadingHidden ? ' hidden-state' : ''}`}
-            onClick={() => setIsHeadingHidden(!isHeadingHidden)}
-            aria-label={isHeadingHidden ? "Show heading" : "Hide heading"}
-          />
-          {!isHeadingHidden && (
+          {!user && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%)', 
+              color: 'white', 
+              textAlign: 'center',
+              fontFamily: 'Courier New, monospace'
+            }}>
+              <h2>Please log in to access Notes that Float</h2>
+            </div>
+          )}
+          
+          {user && (
             <>
-              <h1 className="notes-title-3d">{todayHeading}</h1>
+              <button 
+                className={`heading-toggle-btn${isHeadingHidden ? ' hidden-state' : ''}`}
+                onClick={() => setIsHeadingHidden(!isHeadingHidden)}
+                aria-label={isHeadingHidden ? "Show heading" : "Hide heading"}
+              />
+              {!isHeadingHidden && (
+                <>
+                  <h1 className="notes-title-3d">{todayHeading}</h1>
+                </>
+              )}
+              
+              {error && (
+                <div style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  right: '1rem',
+                  background: 'rgba(255, 0, 0, 0.1)',
+                  border: '1px solid #ff4444',
+                  color: '#ff4444',
+                  padding: '1rem',
+                  borderRadius: '4px',
+                  fontFamily: 'Courier New, monospace',
+                  fontSize: '0.9rem',
+                  zIndex: 1000
+                }}>
+                  {error}
+                  <button 
+                    onClick={() => setError(null)}
+                    style={{
+                      marginLeft: '1rem',
+                      background: 'none',
+                      border: 'none',
+                      color: '#ff4444',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {/* LifeNotesToolbar Component */}
+              <LifeNotesToolbar
+                notes={notes}
+                selectedDay={selectedDay}
+                selectedMonth={selectedMonth}
+                selectedYear={selectedYear}
+                onDayClick={handleDayClick}
+                onMonthChange={setSelectedMonth}
+                showInput={showInput}
+                newNote={newNote}
+                onNewNoteChange={setNewNote}
+                onAddNote={handleAddNote}
+                onDone={handleDone}
+                isToolbarMinimized={isToolbarMinimized}
+                onToolbarMinimize={toggleToolbarMinimize}
+                textRotationDirection={textRotationDirection}
+                onTextRotationToggle={toggleTextRotation}
+                isTextPaused={isTextPaused}
+                onTextPauseToggle={toggleTextPause}
+              />
+              
+              {/* Planet Scene Canvas */}
+              <div className="planet-scene-container">
+                <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
+                  <PlanetScene 
+                    textRotationDirection={textRotationDirection} 
+                    notes={notes} 
+                    onDayClick={handleDayClick}
+                    isTextPaused={isTextPaused}
+                    selectedDay={selectedDay}
+                    calendar={calendar}
+                    selectedMonth={selectedMonth}
+                  />
+                </Canvas>
+              </div>
             </>
           )}
-
-          {/* LifeNotesToolbar Component */}
-          <LifeNotesToolbar
-            notes={notes}
-            selectedDay={selectedDay}
-            selectedMonth={selectedMonth}
-            selectedYear={selectedYear}
-            onDayClick={handleDayClick}
-            onMonthChange={setSelectedMonth}
-            showInput={showInput}
-            newNote={newNote}
-            onNewNoteChange={setNewNote}
-            onAddNote={handleAddNote}
-            onDone={handleDone}
-            isToolbarMinimized={isToolbarMinimized}
-            onToolbarMinimize={toggleToolbarMinimize}
-            textRotationDirection={textRotationDirection}
-            onTextRotationToggle={toggleTextRotation}
-            isTextPaused={isTextPaused}
-            onTextPauseToggle={toggleTextPause}
-          />
-          
-          {/* Planet Scene Canvas */}
-          <div className="planet-scene-container">
-            <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
-              <PlanetScene 
-                textRotationDirection={textRotationDirection} 
-                notes={notes} 
-                onDayClick={handleDayClick}
-                isTextPaused={isTextPaused}
-                selectedDay={selectedDay}
-                calendar={calendar}
-                selectedMonth={selectedMonth}
-              />
-            </Canvas>
-          </div>
         </div>
       </main>
     </div>
