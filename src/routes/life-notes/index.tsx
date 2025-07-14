@@ -105,14 +105,20 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
         
         return (
           <group key={note.id} position={[0, yPosition, 0]}>
+            {/* Left border line */}
+            <mesh position={[-1, 0, 0]}>
+              <boxGeometry args={[0.01, 0.3, 0.01]} />
+              <meshStandardMaterial color="#87CEEB" transparent opacity={0.3} />
+            </mesh>
+            
             <Text
               ref={(el: any) => notesRefs.current[index] = el}
-              position={[0, 0.05, 0]}
+              position={[-0.85, 0, 0]}
               fontSize={0.05}
               color="#87CEEB"
-              anchorX="center"
+              anchorX="left"
               anchorY="middle"
-              maxWidth={2}
+              maxWidth={1.7}
               font="/fonts/Courier.ttf"
               onSync={(text) => {
                 // Calculate text height for positioning
@@ -122,7 +128,7 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
                 }
               }}
             >
-              {index + 1}. {note.content}
+              {note.content}
             </Text>
             
 
@@ -286,6 +292,7 @@ export function LifeNotesPage() {
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // Month names
   const monthNames = [
@@ -416,6 +423,42 @@ export function LifeNotesPage() {
     })
   }
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(prev => !prev)
+  }
+
+  const handleEditNote = async (id: string, content: string) => {
+    if (!user) return
+    
+    try {
+      setError(null)
+      await db.updateLifeNote(id, content, user.id)
+      
+      // Update local state
+      setNotes(prev => prev.map(note => 
+        note.id === id ? { ...note, content } : note
+      ))
+    } catch (err) {
+      console.error('Error updating note:', err)
+      setError('Failed to update note')
+    }
+  }
+
+  const handleDeleteNote = async (id: string) => {
+    if (!user) return
+    
+    try {
+      setError(null)
+      await db.deleteLifeNote(id, user.id)
+      
+      // Update local state
+      setNotes(prev => prev.filter(note => note.id !== id))
+    } catch (err) {
+      console.error('Error deleting note:', err)
+      setError('Failed to delete note')
+    }
+  }
+
   console.log('Current text rotation direction:', textRotationDirection)
 
   return (
@@ -510,22 +553,28 @@ export function LifeNotesPage() {
                 onTextRotationToggle={toggleTextRotation}
                 isTextPaused={isTextPaused}
                 onTextPauseToggle={toggleTextPause}
+                isFullscreen={isFullscreen}
+                onFullscreenToggle={toggleFullscreen}
+                onEditNote={handleEditNote}
+                onDeleteNote={handleDeleteNote}
               />
               
-              {/* Planet Scene Canvas */}
-              <div className="planet-scene-container">
-                <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
-                  <PlanetScene 
-                    textRotationDirection={textRotationDirection} 
-                    notes={notes} 
-                    onDayClick={handleDayClick}
-                    isTextPaused={isTextPaused}
-                    selectedDay={selectedDay}
-                    calendar={calendar}
-                    selectedMonth={selectedMonth}
-                  />
-                </Canvas>
-              </div>
+              {/* Planet Scene Canvas - Hidden in fullscreen mode */}
+              {!isFullscreen && (
+                <div className="planet-scene-container">
+                  <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
+                    <PlanetScene 
+                      textRotationDirection={textRotationDirection} 
+                      notes={notes} 
+                      onDayClick={handleDayClick}
+                      isTextPaused={isTextPaused}
+                      selectedDay={selectedDay}
+                      calendar={calendar}
+                      selectedMonth={selectedMonth}
+                    />
+                  </Canvas>
+                </div>
+              )}
             </>
           )}
         </div>

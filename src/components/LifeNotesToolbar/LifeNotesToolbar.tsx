@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import './LifeNotesToolbar.css'
 
 interface Note {
@@ -25,6 +25,10 @@ interface LifeNotesToolbarProps {
   onTextRotationToggle: () => void
   isTextPaused: boolean
   onTextPauseToggle: () => void
+  isFullscreen: boolean
+  onFullscreenToggle: () => void
+  onEditNote: (id: string, content: string) => void
+  onDeleteNote: (id: string) => void
 }
 
 export function LifeNotesToolbar({
@@ -44,8 +48,16 @@ export function LifeNotesToolbar({
   textRotationDirection,
   onTextRotationToggle,
   isTextPaused,
-  onTextPauseToggle
-}: LifeNotesToolbarProps) {
+  onTextPauseToggle,
+  isFullscreen,
+  onFullscreenToggle,
+  onEditNote,
+  onDeleteNote
+  }: LifeNotesToolbarProps) {
+  // Edit state management
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState('')
+
   // Month names
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -71,6 +83,31 @@ export function LifeNotesToolbar({
       return { day, dow }
     })
   ), [daysInMonth, selectedMonth, selectedYear])
+
+  // Edit/Delete helper functions
+  const handleEditStart = (note: Note) => {
+    setEditingNoteId(note.id)
+    setEditContent(note.content)
+  }
+
+  const handleEditSave = (noteId: string) => {
+    if (editContent.trim()) {
+      onEditNote(noteId, editContent.trim())
+    }
+    setEditingNoteId(null)
+    setEditContent('')
+  }
+
+  const handleEditCancel = () => {
+    setEditingNoteId(null)
+    setEditContent('')
+  }
+
+  const handleDelete = (noteId: string) => {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      onDeleteNote(noteId)
+    }
+  }
 
   return (
     <>
@@ -102,13 +139,21 @@ export function LifeNotesToolbar({
       </div>
 
             {/* Toolbar Container */}
-      <div className={`toolbar-container${isToolbarMinimized ? ' minimized' : ''}`}>
+      <div className={`toolbar-container${isToolbarMinimized ? ' minimized' : ''}${isFullscreen ? ' fullscreen' : ''}`}>
         <div className="toolbar-content-wrapper">
           {/* Add Info Section - Only show when a day is clicked */}
           {showInput && (
             <div className="add-info-section">
               <div className="add-info-header">
                 <h3 className="add-info-title">NOTE</h3>
+                <button
+                  type="button"
+                  onClick={onFullscreenToggle}
+                  className="fullscreen-btn"
+                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                >
+                  {isFullscreen ? "⤵" : "⤴"}
+                </button>
               </div>
               <form onSubmit={onAddNote} className="add-info-form">
                 <div className="input-container">
@@ -128,13 +173,60 @@ export function LifeNotesToolbar({
                   <div className="existing-notes">
                     <h4>Existing notes for {selectedDay}:</h4>
                     {notes.filter(note => note.day === selectedDay).length > 0 ? (
-                      <ul className="notes-list">
-                        {notes.filter(note => note.day === selectedDay).map((note, index) => (
-                          <li key={note.id} className="note-item">
-                            {index + 1}. {note.content}
-                          </li>
+                      <div className="notes-content">
+                        {notes.filter(note => note.day === selectedDay).map((note) => (
+                          <div key={note.id} className="note-item-container">
+                            {editingNoteId === note.id ? (
+                              // Edit mode
+                              <div className="note-edit-container">
+                                <textarea
+                                  value={editContent}
+                                  onChange={(e) => setEditContent(e.target.value)}
+                                  className="note-edit-textarea"
+                                  autoFocus
+                                />
+                                <div className="note-edit-buttons">
+                                  <button
+                                    onClick={() => handleEditSave(note.id)}
+                                    className="note-save-btn"
+                                  >
+                                    ✓
+                                  </button>
+                                  <button
+                                    onClick={handleEditCancel}
+                                    className="note-cancel-btn"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              // Display mode
+                              <div className="note-display-container">
+                                <p className="note-paragraph">
+                                  {note.content}
+                                </p>
+                                <div className="note-actions">
+                                  <button
+                                    onClick={() => handleEditStart(note)}
+                                    className="note-edit-btn"
+                                    title="Edit note"
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(note.id)}
+                                    className="note-delete-btn"
+                                    title="Delete note"
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     ) : (
                       <p className="no-notes">No notes yet for this day</p>
                     )}
