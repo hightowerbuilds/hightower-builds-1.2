@@ -640,6 +640,42 @@
   color: rgba(135, 206, 235, 0.8);
 }
 
+.planet-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.planet-control-btn {
+  background: rgba(135, 206, 235, 0.1);
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.planet-control-btn:hover {
+  background: rgba(135, 206, 235, 0.2);
+  box-shadow: 0 0 8px var(--neon-blue);
+}
+
+.planet-control-btn:active {
+  transform: scale(0.95);
+}
+
 .toolbar-header {
   display: flex;
   justify-content: space-between;
@@ -829,50 +865,72 @@
   height: 100vh;
   min-height: 100vh;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
+  background: transparent;
+  backdrop-filter: none;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 .toolbar-container.fullscreen .toolbar-content-wrapper {
-  width: 95%;
-  max-width: 1400px;
-  height: 95vh;
-  padding: 2.5vh 0;
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 }
 
 .toolbar-container.fullscreen .add-info-section {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(135, 206, 235, 0.3);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(135, 206, 235, 0.5);
   border-radius: 8px;
   padding: 2rem;
-  height: 100%;
+  height: calc(100vh - 2rem);
   display: flex;
   flex-direction: column;
-  min-height: 90vh;
+  min-height: calc(100vh - 2rem);
+  margin: 1rem 1rem 1rem 0;
+  box-sizing: border-box;
+  flex: 1;
+  order: 2;
 }
 
 .toolbar-container.fullscreen .existing-notes {
   flex: 1;
-  min-height: 30vh;
-  max-height: 50vh;
-  font-size: 1rem;
+  min-height: 35vh;
+  max-height: 45vh;
+  font-size: 1.2rem;
+  padding: 1.5rem;
 }
 
 .toolbar-container.fullscreen .note-input {
   flex: 1;
-  min-height: 25vh;
-  font-size: 1.1rem;
+  min-height: 30vh;
+  font-size: 1.4rem;
   line-height: 1.6;
+  padding: 1.5rem;
 }
 
 .toolbar-container.fullscreen .notes-toolbar {
-  display: none;
+  display: block;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(135, 206, 235, 0.4);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 400px;
+  min-width: 400px;
+  box-sizing: border-box;
+  height: calc(100vh - 2rem);
+  margin: 1rem 5px 1rem 0;
+  overflow-y: auto;
+  flex-shrink: 0;
+  order: 1;
 }
 
 .toolbar-container.fullscreen .bottom-controls {
@@ -883,12 +941,70 @@
   display: none;
 }
 
+.toolbar-container.fullscreen .add-info-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+.toolbar-container.fullscreen .add-info-title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.toolbar-container.fullscreen .fullscreen-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.toolbar-container.fullscreen .note-paragraph {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.toolbar-container.fullscreen .existing-notes h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.toolbar-container.fullscreen .toolbar-month-label {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.toolbar-container.fullscreen .toolbar-day-btn {
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.toolbar-container.fullscreen .weekday-header {
+  font-size: 0.8rem;
+  padding: 0.4rem;
+}
+
+.toolbar-container.fullscreen .toolbar-month-btn {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  min-width: 50px;
+  min-height: 44px;
+}
+
 .toolbar-container.fullscreen .toolbar-header {
-  display: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(135, 206, 235, 0.2);
 }
 
 .toolbar-container.fullscreen .toolbar-calendar {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 /* Responsive Design */
@@ -1036,6 +1152,40 @@
   .toolbar-month-btn {
     font-size: 0.8rem;
     padding: 0.3rem 0.6rem;
+  }
+
+  .planet-controls-grid {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .planet-control-btn {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.6rem;
+    min-height: 40px;
+  }
+
+  .toolbar-container.fullscreen .toolbar-content-wrapper {
+    grid-template-columns: 250px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar-container.fullscreen .toolbar-content-wrapper {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .toolbar-container.fullscreen .notes-toolbar {
+    height: auto;
+    max-height: 30vh;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .toolbar-container.fullscreen .add-info-section {
+    border-radius: 0 0 8px 8px;
+    border-top: none;
+    border-left: 1px solid rgba(135, 206, 235, 0.5);
   }
 }
 

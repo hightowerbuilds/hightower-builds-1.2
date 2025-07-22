@@ -54,12 +54,14 @@ const monthColors = [
   { light: [0.4, 0.6, 1.0], dark: [0.0, 0.2, 0.6] }
 ]
 
-function DayText({ day, position, notes, onDayClick, selectedDay }: { 
+function DayText({ day, position, notes, onDayClick, selectedDay, areNotesVisible, areDatesVisible }: { 
   day: string; 
   position: [number, number, number]; 
   notes: Note[];
   onDayClick: (day: string) => void;
   selectedDay: string;
+  areNotesVisible: boolean;
+  areDatesVisible: boolean;
 }) {
   const textRef = useRef<Mesh>(null)
   const notesRefs = useRef<(Mesh | null)[]>([])
@@ -82,21 +84,24 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
 
   return (
     <group position={position}>
-      <Text
-        ref={textRef}
-        position={[0, 0, 0]}
-        fontSize={0.12}
-        color="#ffffff"
-        anchorX="center"
-        anchorY="middle"
-        font="/fonts/Courier.ttf"
-        onClick={() => onDayClick(day)}
-      >
-        {day}
-      </Text>
+      {/* Date text - conditionally rendered */}
+      {areDatesVisible && (
+        <Text
+          ref={textRef}
+          position={[0, 0, 0]}
+          fontSize={0.12}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/Courier.ttf"
+          onClick={() => onDayClick(day)}
+        >
+          {day}
+        </Text>
+      )}
       
       {/* Display notes for this day */}
-      {dayNotes.map((note, index) => {
+      {areNotesVisible && dayNotes.map((note, index) => {
         // Calculate position based on previous note heights
         let yPosition = -0.4
         for (let i = 0; i < index; i++) {
@@ -139,7 +144,7 @@ function DayText({ day, position, notes, onDayClick, selectedDay }: {
   )
 }
 
-function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, selectedDay, calendar, selectedMonth }: { 
+function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, selectedDay, calendar, selectedMonth, areDatesVisible, areNotesVisible, areRingsVisible, isPlanetVisible }: { 
   textRotationDirection: number; 
   notes: Note[];
   onDayClick: (day: string) => void;
@@ -147,6 +152,10 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
   selectedDay: string;
   calendar: { day: string; dow: string }[];
   selectedMonth: number;
+  areDatesVisible: boolean;
+  areNotesVisible: boolean;
+  areRingsVisible: boolean;
+  isPlanetVisible: boolean;
 }) {
   const planetRef = useRef<Mesh>(null)
   const textRef = useRef<Mesh>(null)
@@ -225,10 +234,12 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
   return (
     <>
       {/* Blue Planet with Gradient */}
-      <mesh ref={planetRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <primitive object={gradientMaterial} attach="material" />
-      </mesh>
+      {isPlanetVisible && (
+        <mesh ref={planetRef} position={[0, 0, 0]}>
+          <sphereGeometry args={[0.8, 32, 32]} />
+          <primitive object={gradientMaterial} attach="material" />
+        </mesh>
+      )}
       
       {/* Days of the month - Rotating around planet */}
       <group ref={textRef} position={[0, 0, 0]}>
@@ -245,22 +256,28 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
               notes={notes}
               onDayClick={onDayClick}
               selectedDay={selectedDay}
+              areNotesVisible={areNotesVisible}
+              areDatesVisible={areDatesVisible}
             />
           )
         })}
       </group>
       
       {/* Very Thin Neon Blue Torus - Further out than text */}
-      <mesh ref={ringRef} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[6, 0.01, 16, 32]} />
-        <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
-      </mesh>
-      
-      {/* Inner Thin Light Blue Torus */}
-      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[5.8, 0.01, 16, 32]} />
-        <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
-      </mesh>
+      {areRingsVisible && (
+        <>
+          <mesh ref={ringRef} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[6, 0.01, 16, 32]} />
+            <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
+          </mesh>
+          
+          {/* Inner Thin Light Blue Torus */}
+          <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[5.8, 0.01, 16, 32]} />
+            <meshStandardMaterial color={monthColorHex} side={2} transparent opacity={0.3} />
+          </mesh>
+        </>
+      )}
       
       {/* Lighting */}
       <ambientLight intensity={0.4} />
@@ -295,6 +312,10 @@ export function LifeNotesPage() {
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [areDatesVisible, setAreDatesVisible] = useState(true)
+  const [areNotesVisible, setAreNotesVisible] = useState(true)
+  const [areRingsVisible, setAreRingsVisible] = useState(true)
+  const [isPlanetVisible, setIsPlanetVisible] = useState(true)
 
   // Month names
   const monthNames = [
@@ -429,6 +450,22 @@ export function LifeNotesPage() {
     setIsFullscreen(prev => !prev)
   }
 
+  const toggleDatesVisibility = () => {
+    setAreDatesVisible(prev => !prev)
+  }
+
+  const toggleNotesVisibility = () => {
+    setAreNotesVisible(prev => !prev)
+  }
+
+  const toggleRingsVisibility = () => {
+    setAreRingsVisible(prev => !prev)
+  }
+
+  const togglePlanetVisibility = () => {
+    setIsPlanetVisible(prev => !prev)
+  }
+
   const handleEditNote = async (id: string, content: string) => {
     if (!user) return
     
@@ -559,6 +596,14 @@ export function LifeNotesPage() {
                 onFullscreenToggle={toggleFullscreen}
                 onEditNote={handleEditNote}
                 onDeleteNote={handleDeleteNote}
+                areDatesVisible={areDatesVisible}
+                onToggleDatesVisibility={toggleDatesVisibility}
+                areNotesVisible={areNotesVisible}
+                onToggleNotesVisibility={toggleNotesVisibility}
+                areRingsVisible={areRingsVisible}
+                onToggleRingsVisibility={toggleRingsVisibility}
+                isPlanetVisible={isPlanetVisible}
+                onTogglePlanetVisibility={togglePlanetVisibility}
               />
               
               {/* Planet Scene Canvas - Hidden in fullscreen mode */}
@@ -573,6 +618,10 @@ export function LifeNotesPage() {
                       selectedDay={selectedDay}
                       calendar={calendar}
                       selectedMonth={selectedMonth}
+                      areDatesVisible={areDatesVisible}
+                      areNotesVisible={areNotesVisible}
+                      areRingsVisible={areRingsVisible}
+                      isPlanetVisible={isPlanetVisible}
                     />
                   </Canvas>
                 </div>

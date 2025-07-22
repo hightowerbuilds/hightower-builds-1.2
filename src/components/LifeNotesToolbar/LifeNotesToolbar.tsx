@@ -29,6 +29,14 @@ interface LifeNotesToolbarProps {
   onFullscreenToggle: () => void
   onEditNote: (id: string, content: string) => void
   onDeleteNote: (id: string) => void
+  areDatesVisible: boolean
+  onToggleDatesVisibility: () => void
+  areNotesVisible: boolean
+  onToggleNotesVisibility: () => void
+  areRingsVisible: boolean
+  onToggleRingsVisibility: () => void
+  isPlanetVisible: boolean
+  onTogglePlanetVisibility: () => void
 }
 
 export function LifeNotesToolbar({
@@ -52,7 +60,15 @@ export function LifeNotesToolbar({
   isFullscreen,
   onFullscreenToggle,
   onEditNote,
-  onDeleteNote
+  onDeleteNote,
+  areDatesVisible,
+  onToggleDatesVisibility,
+  areNotesVisible,
+  onToggleNotesVisibility,
+  areRingsVisible,
+  onToggleRingsVisibility,
+  isPlanetVisible,
+  onTogglePlanetVisibility
   }: LifeNotesToolbarProps) {
   // Edit state management
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
@@ -345,10 +361,38 @@ export function LifeNotesToolbar({
       {/* New Box Under Calendar */}
       <div className="new-box-section">
         <div className="new-box-header">
-          <h3 className="new-box-title">NEW SECTION</h3>
+          <h3 className="new-box-title">TOGGLE</h3>
         </div>
         <div className="new-box-content">
-          <p>This is the new box that fits directly under the calendar.</p>
+          <div className="planet-controls-grid">
+            <button
+              onClick={onToggleDatesVisibility}
+              className="planet-control-btn"
+            >
+              {areDatesVisible ? 'Hide Dates' : 'View Dates'}
+            </button>
+            
+            <button
+              onClick={onToggleNotesVisibility}
+              className="planet-control-btn"
+            >
+              {areNotesVisible ? 'Hide Notes' : 'View Notes'}
+            </button>
+            
+            <button
+              onClick={onToggleRingsVisibility}
+              className="planet-control-btn"
+            >
+              {areRingsVisible ? 'Hide Rings' : 'View Rings'}
+            </button>
+            
+            <button
+              onClick={onTogglePlanetVisibility}
+              className="planet-control-btn"
+            >
+              {isPlanetVisible ? 'Hide Planet' : 'View Planet'}
+            </button>
+          </div>
         </div>
       </div>
         </div>
