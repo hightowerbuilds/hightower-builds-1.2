@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { AuthForm } from '../../components/AuthForm/AuthForm'
-
 import { useAuth } from '../../lib/useAuth'
 import { Canvas } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'

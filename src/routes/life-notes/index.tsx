@@ -200,9 +200,11 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
         float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
         color = mix(color, lightColor, fresnel * 0.2); // Reduced fresnel intensity
         
-        gl_FragColor = vec4(color, 1.0);
+        gl_FragColor = vec4(color, 0.7);
       }
-    `
+    `,
+    transparent: true,
+    side: 2
   })
 
   // Convert RGB array to hex color for torus rings
@@ -289,7 +291,7 @@ export function LifeNotesPage() {
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear] = useState(today.getFullYear());
-  const [isToolbarMinimized, setIsToolbarMinimized] = useState(true)
+  const [isToolbarMinimized, setIsToolbarMinimized] = useState(false)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)

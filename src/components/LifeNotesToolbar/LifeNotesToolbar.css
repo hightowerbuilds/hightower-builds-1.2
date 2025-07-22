@@ -9,7 +9,7 @@
   border-top: none;
   z-index: 100;
   transition: transform 0.8s ease-out;
-  padding: 1rem;
+  padding: 0.5rem;
   max-height: 80vh;
   overflow-y: auto;
   transform: translateY(100%);
@@ -17,7 +17,7 @@
 
 .toolbar-content-wrapper {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 3fr;
   grid-template-rows: auto auto;
   gap: 0.75rem;
   max-width: 100%;
@@ -43,7 +43,7 @@
 .toolbar-container:not(.minimized) {
   transform: translateY(0);
   max-height: 80vh;
-  padding: 1rem;
+  padding: 0.5rem;
   transition: transform 0.8s ease-out;
 }
 
@@ -107,10 +107,9 @@
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: none;
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1 / span 2;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -393,6 +392,7 @@
 }
 
 .note-input {
+  width: 100%;
   height: 30px;
   flex-shrink: 0;
   resize: vertical;
@@ -404,6 +404,7 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 1rem;
   font-weight: bold;
+  box-sizing: border-box;
 }
 
 .note-input:focus {
@@ -590,10 +591,9 @@
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
   padding: 1rem;
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -603,10 +603,9 @@
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
   padding: 1rem;
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 2;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -895,7 +894,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .toolbar-content-wrapper {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 3fr 1fr;
     gap: 0.5rem;
   }
 }
