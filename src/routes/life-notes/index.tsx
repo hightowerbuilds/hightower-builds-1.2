@@ -54,6 +54,13 @@ const monthColors = [
   { light: [0.4, 0.6, 1.0], dark: [0.0, 0.2, 0.6] }
 ]
 
+// Helper to get day of the week
+const getDayOfWeek = (year: number, month: number, day: number) => {
+  return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][
+    new Date(year, month, day).getDay()
+  ]
+}
+
 function DayText({ day, position, notes, onDayClick, selectedDay, areNotesVisible, areDatesVisible }: { 
   day: string; 
   position: [number, number, number]; 
@@ -110,12 +117,6 @@ function DayText({ day, position, notes, onDayClick, selectedDay, areNotesVisibl
         
         return (
           <group key={note.id} position={[0, yPosition, 0]}>
-            {/* Left border line */}
-            <mesh position={[-1, 0, 0]}>
-              <boxGeometry args={[0.01, 0.3, 0.01]} />
-              <meshStandardMaterial color="#87CEEB" transparent opacity={0.3} />
-            </mesh>
-            
             <Text
               ref={(el: any) => notesRefs.current[index] = el}
               position={[-0.85, 0, 0]}
@@ -286,6 +287,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
       
       {/* Orbit Controls */}
       <OrbitControls 
+        target={[0, -3, 0]}
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
@@ -300,14 +302,26 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
 export function LifeNotesPage() {
   const { user } = useAuth()
   const [textRotationDirection, setTextRotationDirection] = useState(1)
-  const [isTextPaused, setIsTextPaused] = useState(false)
+
+  // Set initial state lazily so it's only calculated once
+  const [initialDateValues] = useState(() => {
+    const today = new Date();
+    const todayString = `${today.getDate()} ${getDayOfWeek(today.getFullYear(), today.getMonth(), today.getDate()).toUpperCase()}`
+    return {
+      today,
+      todayString,
+      month: today.getMonth(),
+      year: today.getFullYear(),
+    };
+  });
+
+  const [isTextPaused, setIsTextPaused] = useState(true)
   const [notes, setNotes] = useState<Note[]>([])
   const [newNote, setNewNote] = useState('')
-  const [selectedDay, setSelectedDay] = useState('1 SUN')
+  const [selectedDay, setSelectedDay] = useState(initialDateValues.todayString)
   const [showInput, setShowInput] = useState(true)
-  const today = new Date();
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
-  const [selectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(initialDateValues.month);
+  const [selectedYear] = useState(initialDateValues.year);
   const [isToolbarMinimized, setIsToolbarMinimized] = useState(false)
   const [isHeadingHidden, setIsHeadingHidden] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -324,19 +338,12 @@ export function LifeNotesPage() {
   ]
 
   // Format today's date for the heading
-  const todayHeading = `${monthNames[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+  const todayHeading = `${monthNames[initialDateValues.month]} ${initialDateValues.today.getDate()}, ${initialDateValues.year}`;
 
   // Generate days for the selected month/year
   const daysInMonth = useMemo(() => {
     return new Date(selectedYear, selectedMonth + 1, 0).getDate()
   }, [selectedMonth, selectedYear])
-
-  // Get the day of week for each day
-  const getDayOfWeek = (year: number, month: number, day: number) => {
-    return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][
-      new Date(year, month, day).getDay()
-    ]
-  }
 
   const calendar = useMemo(() => (
     Array.from({ length: daysInMonth }, (_, i) => {
@@ -609,7 +616,7 @@ export function LifeNotesPage() {
               {/* Planet Scene Canvas - Hidden in fullscreen mode */}
               {!isFullscreen && (
                 <div className="planet-scene-container">
-                  <Canvas camera={{ position: [0, 2, 15], fov: 60 }}>
+                  <Canvas camera={{ position: [0, -5, 15], fov: 60 }}>
                     <PlanetScene 
                       textRotationDirection={textRotationDirection} 
                       notes={notes} 

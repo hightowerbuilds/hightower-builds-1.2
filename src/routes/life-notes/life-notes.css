@@ -124,10 +124,10 @@
 /* Planet Scene Container */
 .planet-scene-container {
   width: 90%;
-  height: 70vh;
+  height: 90vh;
   position: relative;
   z-index: 1;
-  margin-top: -200px;
+  margin-top: 0;
   margin-bottom: 2rem;
 }
 

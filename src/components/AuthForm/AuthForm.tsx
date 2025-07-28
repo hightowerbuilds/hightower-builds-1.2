@@ -360,43 +360,6 @@ export function AuthForm({}: AuthFormProps) {
     }
   }, [error])
 
-  // Handle keyboard input
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (activeInput && showForm) {
-        if (e.key === 'Enter') {
-          handleSubmit(e as any)
-        } else if (e.key === 'Tab') {
-          e.preventDefault()
-          if (activeInput === 'username') {
-            setActiveInput('password')
-          } else if (activeInput === 'password') {
-            setActiveInput('username')
-          }
-        } else if (e.key === 'Escape') {
-          setActiveInput(null)
-        } else if (e.key.length === 1) {
-          // Handle character input
-          if (activeInput === 'username') {
-            setUsername(prev => prev + e.key)
-          } else if (activeInput === 'password') {
-            setPassword(prev => prev + e.key)
-          }
-        } else if (e.key === 'Backspace') {
-          // Handle backspace
-          if (activeInput === 'username') {
-            setUsername(prev => prev.slice(0, -1))
-          } else if (activeInput === 'password') {
-            setPassword(prev => prev.slice(0, -1))
-          }
-        }
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyPress)
-    return () => document.removeEventListener('keydown', handleKeyPress)
-  }, [activeInput, showForm])
-
   const handleSubmit = async (e: React.FormEvent | any) => {
     // Only call preventDefault if it's a real DOM event
     if (e && typeof e.preventDefault === 'function') {
@@ -464,6 +427,43 @@ export function AuthForm({}: AuthFormProps) {
       setActiveInput(null)
     }
   }
+
+  // Handle keyboard input
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (activeInput && showForm) {
+        if (e.key === 'Enter') {
+          handleSubmit(e as any)
+        } else if (e.key === 'Tab') {
+          e.preventDefault()
+          if (activeInput === 'username') {
+            setActiveInput('password')
+          } else if (activeInput === 'password') {
+            setActiveInput('username')
+          }
+        } else if (e.key === 'Escape') {
+          setActiveInput(null)
+        } else if (e.key.length === 1) {
+          // Handle character input
+          if (activeInput === 'username') {
+            setUsername(prev => prev + e.key)
+          } else if (activeInput === 'password') {
+            setPassword(prev => prev + e.key)
+          }
+        } else if (e.key === 'Backspace') {
+          // Handle backspace
+          if (activeInput === 'username') {
+            setUsername(prev => prev.slice(0, -1))
+          } else if (activeInput === 'password') {
+            setPassword(prev => prev.slice(0, -1))
+          }
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyPress)
+    return () => document.removeEventListener('keydown', handleKeyPress)
+  }, [activeInput, showForm, username, password, isLogin, loading])
 
   return (
     <div className="auth-form-container">
