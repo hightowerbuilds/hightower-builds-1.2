@@ -300,7 +300,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
 }
 
 export function LifeNotesPage() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [textRotationDirection, setTextRotationDirection] = useState(1)
 
   // Set initial state lazily so it's only calculated once
@@ -454,7 +454,14 @@ export function LifeNotesPage() {
   }
 
   const toggleFullscreen = () => {
-    setIsFullscreen(prev => !prev)
+    setIsFullscreen(prev => {
+      const newFullscreenState = !prev
+      // When entering fullscreen, hide the heading
+      if (newFullscreenState) {
+        setIsHeadingHidden(true)
+      }
+      return newFullscreenState
+    })
   }
 
   const toggleDatesVisibility = () => {
@@ -510,7 +517,7 @@ export function LifeNotesPage() {
   return (
     <div className="page-container">
       <Navbar />
-      <Canvas style={{position: 'fixed', zIndex:0, top: 0, left: 0, width: '100%', height: '100vh'}}>
+      <Canvas style={{position: 'fixed', zIndex: -1, top: 0, left: 0, width: '100%', height: '100vh'}}>
         <Stars 
           radius={100} 
           depth={50} 
@@ -537,6 +544,7 @@ export function LifeNotesPage() {
             </div>
           )}
           
+          {/* User-specific UI elements */}
           {user && (
             <>
               <button 
@@ -612,29 +620,27 @@ export function LifeNotesPage() {
                 isPlanetVisible={isPlanetVisible}
                 onTogglePlanetVisibility={togglePlanetVisibility}
               />
-              
-              {/* Planet Scene Canvas - Hidden in fullscreen mode */}
-              {!isFullscreen && (
-                <div className="planet-scene-container">
-                  <Canvas camera={{ position: [0, -5, 15], fov: 60 }}>
-                    <PlanetScene 
-                      textRotationDirection={textRotationDirection} 
-                      notes={notes} 
-                      onDayClick={handleDayClick}
-                      isTextPaused={isTextPaused}
-                      selectedDay={selectedDay}
-                      calendar={calendar}
-                      selectedMonth={selectedMonth}
-                      areDatesVisible={areDatesVisible}
-                      areNotesVisible={areNotesVisible}
-                      areRingsVisible={areRingsVisible}
-                      isPlanetVisible={isPlanetVisible}
-                    />
-                  </Canvas>
-                </div>
-              )}
             </>
           )}
+          
+          {/* Planet Scene Canvas - Always rendered */}
+          <div className={`planet-scene-container${isFullscreen ? ' hidden' : ''}`}>
+            <Canvas camera={{ position: [0, -5, 15], fov: 60 }}>
+              <PlanetScene 
+                textRotationDirection={textRotationDirection} 
+                notes={user ? notes : []} 
+                onDayClick={user ? handleDayClick : () => {}}
+                isTextPaused={isTextPaused}
+                selectedDay={selectedDay}
+                calendar={calendar}
+                selectedMonth={selectedMonth}
+                areDatesVisible={areDatesVisible}
+                areNotesVisible={areNotesVisible && user !== null}
+                areRingsVisible={areRingsVisible}
+                isPlanetVisible={isPlanetVisible}
+              />
+            </Canvas>
+          </div>
         </div>
       </main>
     </div>

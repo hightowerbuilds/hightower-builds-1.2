@@ -168,21 +168,15 @@ export function LifeNotesToolbar({
                   className="fullscreen-btn"
                   aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 >
-                  {isFullscreen ? "⤵" : "⤴"}
+                  {isFullscreen ? "dashboard" : "full-screen"}
                 </button>
               </div>
               <form onSubmit={onAddNote} className="add-info-form">
                 <div className="input-container">
-                  <div className="day-select-container">
-                    <select
-                      value={selectedDay}
-                      onChange={(e) => onDayClick(e.target.value)}
-                      className="day-select"
-                    >
-                      {calendar.map(dateObj => (
-                        <option key={dateObj.day} value={`${dateObj.day} ${dateObj.dow.toUpperCase()}`}>{`${dateObj.day} ${dateObj.dow.toUpperCase()}`}</option>
-                      ))}
-                    </select>
+                  <div className="day-display-container">
+                    <div className="day-display">
+                      {selectedDay}
+                    </div>
                   </div>
                   
                   {/* Show existing notes for this day */}
@@ -223,20 +217,20 @@ export function LifeNotesToolbar({
                                   {note.content}
                                 </p>
                                 <div className="note-actions">
-                                  <button
+                                  <span
                                     onClick={() => handleEditStart(note)}
-                                    className="note-edit-btn"
+                                    className="note-edit-text"
                                     title="Edit note"
                                   >
-                                    ✏️
-                                  </button>
-                                  <button
+                                    edit
+                                  </span>
+                                  <span
                                     onClick={() => handleDelete(note.id)}
-                                    className="note-delete-btn"
+                                    className="note-delete-text"
                                     title="Delete note"
                                   >
-                                    🗑️
-                                  </button>
+                                    delete
+                                  </span>
                                 </div>
                               </div>
                             )}
@@ -272,9 +266,11 @@ export function LifeNotesToolbar({
                       Add Note
                     </button>
                     
-                    <button type="button" onClick={onDone} className="done-btn">
-                      Done
-                    </button>
+                    {!isFullscreen && (
+                      <button type="button" onClick={onDone} className="done-btn">
+                        Done
+                      </button>
+                    )}
                   </div>
                 </div>
               </form>

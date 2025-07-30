@@ -46,7 +46,7 @@
 /* 3D Notes Title */
 .notes-title-3d {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
   text-align: left;
@@ -129,6 +129,10 @@
   z-index: 1;
   margin-top: 0;
   margin-bottom: 2rem;
+}
+
+.planet-scene-container.hidden {
+  display: none;
 }
 
 

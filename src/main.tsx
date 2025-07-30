@@ -1,4 +1,4 @@
-import React from 'react'
+
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
@@ -19,11 +19,11 @@ declare module '@tanstack/react-router' {
 
 // Render the app
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode> // Temporarily disabled - causes Three.js Canvas issues
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )
 
 // If you want to start measuring performance in your app, pass a function

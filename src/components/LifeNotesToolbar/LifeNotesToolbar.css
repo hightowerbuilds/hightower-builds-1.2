@@ -19,7 +19,7 @@
   display: grid;
   grid-template-columns: 1fr 3fr;
   grid-template-rows: auto auto;
-  gap: 0.75rem;
+  gap: 5px;
   max-width: 100%;
   overflow-x: hidden;
   width: 100%;
@@ -142,24 +142,30 @@
 }
 
 .fullscreen-btn {
-  background: rgba(135, 206, 235, 0.1);
-  border: 1px solid rgba(135, 206, 235, 0.3);
-  color: #87CEEB;
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid #00ff00;
+  color: #00ff00;
   border-radius: 4px;
-  width: 32px;
+  min-width: fit-content;
   height: 32px;
+  padding: 0 0.75rem;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .fullscreen-btn:hover {
-  background: rgba(135, 206, 235, 0.2);
-  border-color: #87CEEB;
+  background: rgba(0, 255, 0, 0.3);
+  border-color: #00ff00;
+  box-shadow: 0 0 8px #00ff00;
   transform: scale(1.1);
 }
 
@@ -196,12 +202,12 @@
   gap: 1rem;
 }
 
-.day-select-container {
+.day-display-container {
   display: flex;
   justify-content: flex-start;
 }
 
-.day-select {
+.day-display {
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid var(--neon-blue);
   color: var(--neon-blue);
@@ -210,19 +216,9 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 1rem;
   font-weight: bold;
-  cursor: pointer;
   min-width: 200px;
   text-align: center;
-}
-
-.day-select:focus {
-  outline: none;
-  box-shadow: 0 0 8px var(--neon-blue);
-}
-
-.day-select option {
-  background: rgba(0, 0, 0, 0.9);
-  color: var(--neon-blue);
+  box-shadow: 0 0 5px rgba(135, 206, 235, 0.3);
 }
 
 .existing-notes {
@@ -299,26 +295,23 @@
   opacity: 1;
 }
 
-.note-edit-btn,
-.note-delete-btn {
-  background: none;
-  border: none;
+.note-edit-text,
+.note-delete-text {
   cursor: pointer;
-  font-size: 14px;
-  padding: 0.25rem;
-  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #87CEEB;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0.25rem 0.5rem;
 }
 
-.note-edit-btn:hover {
-  background: rgba(135, 206, 235, 0.2);
-}
-
-.note-delete-btn:hover {
-  background: rgba(255, 99, 99, 0.2);
+.note-edit-text:hover,
+.note-delete-text:hover {
+  color: #87CEEB;
+  text-shadow: 0 0 8px #87CEEB;
 }
 
 /* Edit Mode Styles */
@@ -769,14 +762,14 @@
 .toolbar-calendar {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 5px;
 }
 
 .toolbar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.15rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 5px;
 }
 
 .weekday-header {
@@ -895,7 +888,7 @@
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 2rem);
-  margin: 1rem 1rem 1rem 0;
+  margin: 1rem 1rem 1rem 0.1rem;
   box-sizing: border-box;
   flex: 1;
   order: 2;
@@ -927,7 +920,7 @@
   min-width: 400px;
   box-sizing: border-box;
   height: calc(100vh - 2rem);
-  margin: 1rem 5px 1rem 0;
+  margin: 1rem 0.1rem 1rem 1rem;
   overflow-y: auto;
   flex-shrink: 0;
   order: 1;
@@ -961,6 +954,23 @@
   font-size: 1.2rem;
   line-height: 1.7;
   margin-bottom: 1.5rem;
+}
+
+.toolbar-container.fullscreen .note-edit-text,
+.toolbar-container.fullscreen .note-delete-text {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #87CEEB;
+  padding: 0.4rem 0.6rem;
+}
+
+.toolbar-container.fullscreen .note-edit-text:hover,
+.toolbar-container.fullscreen .note-delete-text:hover {
+  color: #87CEEB;
+  text-shadow: 0 0 8px #87CEEB;
 }
 
 .toolbar-container.fullscreen .existing-notes h4 {
@@ -1004,14 +1014,14 @@
 .toolbar-container.fullscreen .toolbar-calendar {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 5px;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
   .toolbar-content-wrapper {
     grid-template-columns: 3fr 1fr;
-    gap: 0.5rem;
+    gap: 5px;
   }
 }
 
@@ -1023,7 +1033,7 @@
   .toolbar-content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
-    gap: 0.5rem;
+    gap: 5px;
     padding: 0;
   }
 
@@ -1101,7 +1111,7 @@
   .toolbar-content-wrapper {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
-    gap: 0.3rem;
+    gap: 5px;
   }
 
   .add-info-section {
