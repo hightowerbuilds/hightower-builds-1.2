@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import './LifeNotesToolbar.css'
 
 interface Note {
@@ -80,10 +80,7 @@ export function LifeNotesToolbar({
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
 
-  // Generate days for the selected month/year
-  const daysInMonth = useMemo(() => {
-    return new Date(selectedYear, selectedMonth + 1, 0).getDate()
-  }, [selectedMonth, selectedYear])
+
 
   // Get the day of week for each day
   const getDayOfWeek = (year: number, month: number, day: number) => {
