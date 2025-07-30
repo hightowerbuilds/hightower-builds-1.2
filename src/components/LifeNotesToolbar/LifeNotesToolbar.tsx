@@ -92,13 +92,7 @@ export function LifeNotesToolbar({
     ]
   }
 
-  const calendar = useMemo(() => (
-    Array.from({ length: daysInMonth }, (_, i) => {
-      const day = (i + 1).toString()
-      const dow = getDayOfWeek(selectedYear, selectedMonth, i + 1)
-      return { day, dow }
-    })
-  ), [daysInMonth, selectedMonth, selectedYear])
+
 
   // Edit/Delete helper functions
   const handleEditStart = (note: Note) => {
@@ -363,28 +357,28 @@ export function LifeNotesToolbar({
           <div className="planet-controls-grid">
             <button
               onClick={onToggleDatesVisibility}
-              className="planet-control-btn"
+              className={`planet-control-btn${!areDatesVisible ? ' hide-state' : ''}`}
             >
               {areDatesVisible ? 'Hide Dates' : 'View Dates'}
             </button>
             
             <button
               onClick={onToggleNotesVisibility}
-              className="planet-control-btn"
+              className={`planet-control-btn${!areNotesVisible ? ' hide-state' : ''}`}
             >
               {areNotesVisible ? 'Hide Notes' : 'View Notes'}
             </button>
             
             <button
               onClick={onToggleRingsVisibility}
-              className="planet-control-btn"
+              className={`planet-control-btn${!areRingsVisible ? ' hide-state' : ''}`}
             >
               {areRingsVisible ? 'Hide Rings' : 'View Rings'}
             </button>
             
             <button
               onClick={onTogglePlanetVisibility}
-              className="planet-control-btn"
+              className={`planet-control-btn${!isPlanetVisible ? ' hide-state' : ''}`}
             >
               {isPlanetVisible ? 'Hide Planet' : 'View Planet'}
             </button>

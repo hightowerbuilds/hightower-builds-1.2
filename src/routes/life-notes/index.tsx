@@ -300,7 +300,7 @@ function PlanetScene({ textRotationDirection, notes, onDayClick, isTextPaused, s
 }
 
 export function LifeNotesPage() {
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   const [textRotationDirection, setTextRotationDirection] = useState(1)
 
   // Set initial state lazily so it's only calculated once

@@ -669,6 +669,17 @@
   transform: scale(0.95);
 }
 
+.planet-control-btn.hide-state {
+  background: rgba(245, 245, 220, 0.2);
+  border: 1px solid #F5F5DC;
+  color: #F5F5DC;
+}
+
+.planet-control-btn.hide-state:hover {
+  background: rgba(245, 245, 220, 0.3);
+  box-shadow: 0 0 8px #F5F5DC;
+}
+
 .toolbar-header {
   display: flex;
   justify-content: space-between;
